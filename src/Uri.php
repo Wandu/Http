@@ -112,9 +112,6 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        if ($this->host !== '' && $this->path === '') {
-            return '/';
-        }
         return $this->path;
     }
 

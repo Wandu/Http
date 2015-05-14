@@ -131,7 +131,7 @@ class UriTest extends PHPUnit_Framework_TestCase
     public function testGetPath()
     {
         $uri = new Uri('http://blog.wani.kr');
-        $this->assertSame('/', $uri->getPath());
+        $this->assertSame('', $uri->getPath());
 
         // The path can either be empty or absolute (starting with a slash) or
         // rootless (not starting with a slash). Implementations MUST support all
@@ -321,7 +321,7 @@ class UriTest extends PHPUnit_Framework_TestCase
         // rootless (not starting with a slash). Implementations MUST support all
         // three syntaxes.
         $this->assertSame('/', $uri->withPath('/')->getPath());
-        $this->assertSame('/', $uri->withPath('')->getPath());
+        $this->assertSame('', $uri->withPath('')->getPath());
         $this->assertSame('abc/def', $uri->withPath('abc/def')->getPath());
 
         // If the path is intended to be domain-relative rather than path relative then
