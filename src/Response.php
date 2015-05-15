@@ -93,8 +93,8 @@ class Response extends Message implements ResponseInterface
 
         $this->statusCode = $statusCode;
         $this->reasonPhrase = $this->filterReasonPhrase($statusCode, $reasonPhrase);
-        $this->initHeaders($headers);
-        $this->body = $body;
+
+        parent::__construct('1.1', $headers, $body);
     }
 
     /**

@@ -27,7 +27,10 @@ class Message implements MessageInterface
     public function __construct($protocolVersion, array $headers = [], StreamInterface $body = null)
     {
         $this->protocolVersion = $protocolVersion;
-        $this->initHeaders($headers);
+        foreach ($headers as $name => $header) {
+            $this->headerNames[strtolower($name)] = $name;
+            $this->headers[$name] = $header;
+        }
         $this->body = $body;
     }
 
@@ -173,16 +176,5 @@ class Message implements MessageInterface
             }
         }
         return true;
-    }
-
-    /**
-     * @param array $headers
-     */
-    protected function initHeaders(array $headers)
-    {
-        $this->headers = $headers;
-        foreach ($headers as $name => $header) {
-            $this->headerNames[strtolower($name)] = $name;
-        }
     }
 }
