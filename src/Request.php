@@ -31,17 +31,18 @@ class Request extends Message implements RequestInterface
     ];
 
     /**
+     * @param string $httpVersion
+     * @param string $method
      * @param UriInterface $uri
-     * @param $method
-     * @param StreamInterface $body
      * @param array $headers
+     * @param StreamInterface $body
      */
     public function __construct(
         $httpVersion,
         $method = null,
         UriInterface $uri = null,
-        StreamInterface $body = null,
-        array $headers = []
+        array $headers = [],
+        StreamInterface $body = null
     ) {
         $this->method = $this->filterMethod($method);
         $this->uri = $uri;
