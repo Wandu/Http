@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 class Response extends Message implements ResponseInterface
 {
-    protected $phrases = [
+    protected static $phrases = [
         // INFORMATIONAL CODES
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -133,7 +133,7 @@ class Response extends Message implements ResponseInterface
         if (!is_numeric($code)) {
             throw new InvalidArgumentException("Invalid status code. It must be a 3-digit integer.");
         }
-        if (!isset($this->phrases[$code])) {
+        if (!isset(static::$phrases[$code])) {
             throw new InvalidArgumentException("Invalid status code \"{$code}\".");
         }
     }
@@ -145,6 +145,6 @@ class Response extends Message implements ResponseInterface
      */
     protected function filterReasonPhrase($code, $reasonPhrase)
     {
-        return $reasonPhrase === '' ? $this->phrases[$code] : $reasonPhrase;
+        return $reasonPhrase === '' ? static::$phrases[$code] : $reasonPhrase;
     }
 }

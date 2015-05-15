@@ -28,7 +28,7 @@ class Uri implements UriInterface
     private $fragment;
 
     /** @var array */
-    protected $allowedSchemes = [
+    protected static $allowedSchemes = [
         'http'  => 80,
         'https' => 443,
     ];
@@ -267,7 +267,7 @@ class Uri implements UriInterface
         if ($scheme === '') {
             return '';
         }
-        if (!isset($this->allowedSchemes[$scheme])) {
+        if (!isset(static::$allowedSchemes[$scheme])) {
             throw new InvalidArgumentException("Unsupported scheme \"{$scheme}\".");
         }
         return $scheme;
@@ -334,7 +334,7 @@ class Uri implements UriInterface
     protected function isNonstandardPort()
     {
         return isset($this->port) &&
-        isset($this->allowedSchemes[$this->scheme]) &&
-        $this->allowedSchemes[$this->scheme] !== $this->port;
+        isset(static::$allowedSchemes[$this->scheme]) &&
+        static::$allowedSchemes[$this->scheme] !== $this->port;
     }
 }
