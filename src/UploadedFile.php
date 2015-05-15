@@ -41,8 +41,8 @@ class UploadedFile implements UploadedFileInterface
         $clientMediaType = null
     ) {
         $this->file = $file;
-        $this->size = (int) $size;
-        $this->error = (int) $error;
+        $this->size = isset($size) ? (int) $size : null;
+        $this->error = isset($error) ? (int) $error : null;
         $this->clientFileName = $clientFileName;
         $this->clientMediaType = $clientMediaType;
     }

@@ -5,10 +5,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
 
-class Response implements ResponseInterface
+class Response extends Message implements ResponseInterface
 {
-    use MessageTrait;
-
     protected $phrases = [
         // INFORMATIONAL CODES
         100 => 'Continue',

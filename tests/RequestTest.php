@@ -48,6 +48,19 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
         $this->assertNotSame($request, $request->withMethod('post'));
         $this->assertEquals('POST', $request->withMethod('post')->getMethod());
+
+        try {
+            $request->withMethod([]);
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Unsupported HTTP method. It must be a string.', $e->getMessage());
+        }
+        try {
+            $request->withMethod('UNKNOWN');
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Unsupported HTTP method. "UNKNOWN" provided.', $e->getMessage());
+        }
     }
 
     public function testWithUri()
