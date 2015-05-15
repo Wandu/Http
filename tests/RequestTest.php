@@ -21,13 +21,13 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $mockUri->shouldReceive('getPath')->andReturn('');
         $mockUri->shouldReceive('getQuery')->andReturn('');
 
-        $request = new Request($mockUri, 'get');
+        $request = new Request('1.1', 'get', $mockUri);
 
         $this->assertEquals('/', $request->getRequestTarget());
         $this->assertEquals('GET', $request->getMethod());
         $this->assertSame($mockUri, $request->getUri());
 
-        $request = new Request();
+        $request = new Request('1.1');
 
         $this->assertEquals('/', $request->getRequestTarget());
         $this->assertEquals(null, $request->getMethod());
@@ -36,7 +36,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testWithRequestTarget()
     {
-        $request = new Request();
+        $request = new Request('1.1');
 
         $this->assertNotSame($request, $request->withRequestTarget('/abc/def'));
         $this->assertEquals('/abc/def', $request->withRequestTarget('/abc/def')->getRequestTarget());
@@ -44,7 +44,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testWithMethod()
     {
-        $request = new Request();
+        $request = new Request('1.1');
 
         $this->assertNotSame($request, $request->withMethod('post'));
         $this->assertEquals('POST', $request->withMethod('post')->getMethod());
@@ -67,7 +67,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $mockUri = Mockery::mock(UriInterface::class);
 
-        $request = new Request();
+        $request = new Request('1.1');
 
         $this->assertNotSame($request, $request->withUri($mockUri, true));
         $this->assertSame($mockUri, $request->withUri($mockUri, true)->getUri());

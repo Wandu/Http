@@ -11,11 +11,11 @@ class Request extends Message implements RequestInterface
     /** @var string */
     protected $method;
 
-    /** @var string */
-    protected $requestTarget;
-
     /** @var UriInterface */
     protected $uri;
+
+    /** @var string */
+    protected $requestTarget;
 
     /** @var array */
     protected $validMethods = [
@@ -37,15 +37,15 @@ class Request extends Message implements RequestInterface
      * @param array $headers
      */
     public function __construct(
-        UriInterface $uri = null,
+        $httpVersion,
         $method = null,
+        UriInterface $uri = null,
         StreamInterface $body = null,
         array $headers = []
     ) {
-        $this->uri = $uri;
         $this->method = $this->filterMethod($method);
-        $this->body = $body;
-        $this->headers = $headers;
+        $this->uri = $uri;
+        parent::__construct($httpVersion, $headers, $body);
     }
 
     /**
