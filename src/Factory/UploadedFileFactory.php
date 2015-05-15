@@ -1,5 +1,7 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Factory;
+
+use Wandu\Http\UploadedFile;
 
 class UploadedFileFactory
 {
@@ -7,7 +9,7 @@ class UploadedFileFactory
      * @param array $files
      * @return array
      */
-    public function fromFiles(array $files)
+    public static function fromFiles(array $files)
     {
         $uploadedFiles = [];
         foreach ($files as $name => $file) {
@@ -30,7 +32,7 @@ class UploadedFileFactory
      * @param array|string $typeDatas
      * @return array
      */
-    protected function factoryFilesTree($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas)
+    protected static function factoryFilesTree($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas)
     {
         if (!is_array($errorDatas)) {
             return new UploadedFile($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas);
