@@ -8,11 +8,12 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testSimple()
     {
-        $this->assertEquals([], UploadedFileFactory::fromFiles([]));
+        $factory = new UploadedFileFactory();
+        $this->assertEquals([], $factory->fromFiles([]));
         $this->assertEquals([
             'main' => new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
             'other' => new UploadedFile('/private/var/abcdefg', 6175, 0, 'img.png', 'image/png')
-        ], UploadedFileFactory::fromFiles([
+        ], $factory->fromFiles([
             'main' => [
                 'name' => 'img.png',
                 'type' => 'image/png',
@@ -32,13 +33,15 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testOneDepth()
     {
+        $factory = new UploadedFileFactory();
+
         // with seq array
         $this->assertEquals([
             'main' => [
                 new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
                 new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png')
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $factory->fromFiles([
             'main' => [
                 'name' => ['img.png', 'img.png'],
                 'type' => ['image/png', 'image/png'],
@@ -54,7 +57,7 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
                 'sub1' => new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
                 'sub2' => new UploadedFile('/private/var/abcdef2', 6172, 0, 'img2.png', 'image/png')
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $factory->fromFiles([
             'main' => [
                 'name' => [
                     'sub1' => 'img.png',
@@ -82,6 +85,8 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testMultiDepth()
     {
+        $factory = new UploadedFileFactory();
+
         $this->assertEquals([
             'main' => [
                 'sub1' => [
@@ -93,7 +98,7 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
                     'sub2' => new UploadedFile('/private/var/abcdefg', 6174, 0, 'sub2_sub2.png', 'image/png')
                 ]
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $factory->fromFiles([
             'main' => [
                 'name' => [
                     'sub1' => ['sub1_0.png', 'sub1_1.png'],

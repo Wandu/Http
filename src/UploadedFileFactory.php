@@ -4,18 +4,10 @@ namespace Wandu\Http;
 class UploadedFileFactory
 {
     /**
-     * @return array
-     */
-    public static function fromGlobals()
-    {
-        return static::fromFiles($_FILES);
-    }
-
-    /**
      * @param array $files
      * @return array
      */
-    public static function fromFiles(array $files)
+    public function fromFiles(array $files)
     {
         $uploadedFiles = [];
         foreach ($files as $name => $file) {
@@ -38,7 +30,7 @@ class UploadedFileFactory
      * @param array|string $typeDatas
      * @return array
      */
-    protected static function factoryFilesTree($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas)
+    protected function factoryFilesTree($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas)
     {
         if (!is_array($errorDatas)) {
             return new UploadedFile($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas);
