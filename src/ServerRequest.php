@@ -26,6 +26,16 @@ class ServerRequest extends Request implements ServerRequestInterface
     /** @var array */
     protected $attributes;
 
+    /**
+     * @param array $serverParams
+     * @param array $cookieParams
+     * @param array $queryParams
+     * @param array $uploadedFiles
+     * @param array|object $parsedBody
+     * @param array $attributes
+     * @param string $httpVersion
+     * @param UriInterface $uri
+     */
     public function __construct(
         array $serverParams = [],
         array $cookieParams = [],
