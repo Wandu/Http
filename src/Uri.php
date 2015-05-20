@@ -46,7 +46,7 @@ class Uri implements UriInterface
 
         $this->userInfo = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
         if (isset($parsedUrl['pass'])) {
-            $this->userInfo .= ':'.$parsedUrl['pass'];
+            $this->userInfo .= ':' . $parsedUrl['pass'];
         }
 
         $this->path = isset($parsedUrl['path']) ? $this->filterPath($parsedUrl['path']) : '';

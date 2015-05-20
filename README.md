@@ -28,8 +28,7 @@ Reference [phly/http](https://github.com/phly/http).
 
 ### Example
 
-```
-<?php
+```php
 $app = new Your\Own\Application();
 $request = Wandu\Http\Factory\ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $response = $app->execute($request);
@@ -117,7 +116,7 @@ new Uri('http://wan2land@blog.wani.kr');
 new Uri('http://wan2land:hello@blog.wani.kr');
 
 // utf-8
-new Uri('/hello/enwl dfk/-_-/한글');
+new Uri('/hello/enwl dfk/-_-/한글'); // getPath -> '/hello/enwl%20dfk/-_-/%ED__%EA%B8_'
 
 // query and fragment
 new Uri('http://blog.wani.kr?hello=world&abc=def');

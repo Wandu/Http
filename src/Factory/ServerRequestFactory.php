@@ -61,7 +61,7 @@ class ServerRequestFactory
         }
         $host = $server['SERVER_NAME'];
         if (isset($server['SERVER_PORT'])) {
-            $host .= ':'. $server['SERVER_PORT'];
+            $host .= ':' . $server['SERVER_PORT'];
         }
         return $host;
     }

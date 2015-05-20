@@ -74,8 +74,7 @@ class Message implements MessageInterface
     public function getHeader($name)
     {
         return $this->hasHeader($name) ?
-            $this->headers[$this->headerNames[strtolower($name)]] :
-            [];
+            $this->headers[$this->headerNames[strtolower($name)]] : [];
     }
 
     /**
