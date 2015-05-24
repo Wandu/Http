@@ -243,7 +243,7 @@ class Uri implements UriInterface
             $uri .= $authority;
         }
         if ('' !== $this->path) {
-            if ($uri !== '' && $this->path[0] !== '/') {
+            if ($uri !== '' && $this->path[0] !== '/' && $this->getAuthority() !== '') {
                 $uri .= '/';
             }
             $uri .= "{$this->path}";

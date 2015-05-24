@@ -417,4 +417,13 @@ class UriTest extends PHPUnit_Framework_TestCase
         $uri = new Uri('nothing#frag');
         $this->assertEquals('nothing#frag', $uri->__toString());
     }
+
+    public function testBugFix()
+    {
+        $uri = new Uri('abcd.com');
+        $this->assertEquals('http://abcd.com', $uri->withScheme('http')->__toString());
+
+        $uri = new Uri('abcd.com/abc/def');
+        $this->assertEquals('http://abcd.com/abc/def', $uri->withScheme('http')->__toString());
+    }
 }
