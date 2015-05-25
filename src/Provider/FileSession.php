@@ -25,7 +25,9 @@ class FileSession implements SessionInterface
 
     public function __destruct()
     {
-        file_put_contents($this->file, '<?php return ' . var_export($this->dataSet, true) . ';');
+        if (count($this->dataSet) > 0) {
+            file_put_contents($this->file, '<?php return ' . var_export($this->dataSet, true) . ';');
+        }
     }
 
     /**
