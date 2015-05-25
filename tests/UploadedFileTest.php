@@ -94,6 +94,13 @@ class UploadedFileTest extends PHPUnit_Framework_TestCase
         // If you wish to move to a stream, use getStream(), as SAPI operations
         // cannot guarantee writing to stream destinations.
 
+        // mores..
+        try {
+            $file->moveTo([]);
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Invalid path provided for move operation. It must be a string.', $e->getMessage());
+        }
 
         @unlink($fileName .'_moved');
     }
