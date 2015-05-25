@@ -3,7 +3,7 @@ namespace Wandu\Session\Provider;
 
 use Wandu\Session\ProviderInterface;
 
-class File implements ProviderInterface
+class FileProvider implements ProviderInterface
 {
     /** @var string */
     private $path;
@@ -16,16 +16,12 @@ class File implements ProviderInterface
         $this->path = $path;
     }
 
-    public function getSession($id)
-    {
-        return new FileSession($this->path, $id);
-    }
-
     /**
-     * {@inheritdoc}
+     * @param string $sessionId
+     * @return FileSession
      */
-    public function remove($id)
+    public function getSession($sessionId)
     {
-        // TODO: Implement remove() method.
+        return new FileSession($this->path, $sessionId);
     }
 }

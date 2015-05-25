@@ -33,7 +33,7 @@ class FileTest extends PHPUnit_Framework_TestCase
     {
         $sessionId = sha1(uniqid());
 
-        $file = new File(__DIR__ . '/sessions');
+        $file = new FileProvider(__DIR__ . '/sessions');
         $session = $file->getSession($sessionId);
 
         $session->set('foo', 'hello');

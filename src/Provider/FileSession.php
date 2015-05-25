@@ -13,11 +13,11 @@ class FileSession implements SessionInterface
 
     /**
      * @param string $path
-     * @param string $id
+     * @param string $sessionId
      */
-    public function __construct($path, $id)
+    public function __construct($path, $sessionId)
     {
-        $this->file = $file = "{$path}/{$id}";
+        $this->file = $file = "{$path}/{$sessionId}";
         if (file_exists($file)) {
             $this->dataSet = require $file;
         }
