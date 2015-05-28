@@ -1,12 +1,30 @@
 <?php
 namespace Wandu\Http\Factory;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Wandu\Http\ServerRequest;
 use Wandu\Http\Uri;
 
 class ServerRequestFactory
 {
-    public static function fromGlobals(array $server, array $get, array $post, array $cookies, array $files)
+    /**
+     * @return ServerRequestInterface
+     */
+    public static function fromGlobals()
+    {
+        return static::create($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+    }
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $cookies
+     * @param array $files
+     * @return ServerRequestInterface
+     */
+    public static function create(array $server, array $get, array $post, array $cookies, array $files)
     {
         return new ServerRequest(
             $server,
@@ -22,7 +40,7 @@ class ServerRequestFactory
 
     /**
      * @param array $server
-     * @return Uri
+     * @return UriInterface
      */
     public static function getUri(array $server)
     {
