@@ -24,7 +24,9 @@ Reference [phly/http](https://github.com/phly/http).
 
 ### ServerRequestFactory
 
-> `ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES)`
+> `ServerRequestFactory::fromGlobals()`
+
+> `ServerRequestFactory::create($server, $get, $post, $cookie, $files)`
 
 ### ResponseSender
 
@@ -34,7 +36,7 @@ Reference [phly/http](https://github.com/phly/http).
 
 ```php
 $app = new Your\Own\Application();
-$request = Wandu\Http\Factory\ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+$request = Wandu\Http\Factory\ServerRequestFactory::fromGlobals();
 $response = $app->execute($request);
 Wandu\Http\Sender\ResponseSender::send($response);
 ```
