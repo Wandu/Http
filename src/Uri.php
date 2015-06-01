@@ -258,6 +258,54 @@ class Uri implements UriInterface
     }
 
     /**
+     * @param Uri $uriToJoin
+     * @return Uri
+     */
+    public function join(Uri $uriToJoin)
+    {
+        // other host
+        if ($uriToJoin->scheme !== '' || $uriToJoin->host !== '') {
+            return clone $uriToJoin;
+        }
+
+        $uriToReturn = clone $this;
+
+        // current path.
+        if ($uriToJoin->path === '' || $uriToJoin->path === '.') {
+            return $uriToReturn;
+        }
+
+        $newPathItems = explode('/', $uriToReturn->path);
+
+        $pathItemToJoin = explode('/', $uriToJoin->path);
+        if (isset($pathItemToJoin[0])) {
+            array_pop($newPathItems);
+        }
+        $newPathItems = array_merge($newPathItems, $pathItemToJoin);
+        $pathItemsToReturn = [];
+        foreach ($newPathItems as $item) {
+            if ($item === '') {
+                $pathItemsToReturn = [$item];
+            } elseif ($item === '.') {
+                continue;
+            } elseif ($item === '..') {
+                array_pop($pathItemsToReturn);
+            } else {
+                array_push($pathItemsToReturn, $item);
+            }
+        }
+        if (isset($pathItemsToReturn[0]) && $pathItemsToReturn[0] !== '') {
+            array_unshift($pathItemsToReturn, '');
+        }
+
+        $uriToReturn->path = implode('/', $pathItemsToReturn);
+        $uriToReturn->query = $uriToJoin->query;
+        $uriToReturn->fragment = $uriToJoin->fragment;
+
+        return $uriToReturn;
+    }
+
+    /**
      * @param string $scheme
      * @return string
      */

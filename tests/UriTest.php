@@ -426,4 +426,132 @@ class UriTest extends PHPUnit_Framework_TestCase
         $uri = new Uri('abcd.com/abc/def');
         $this->assertEquals('http://abcd.com/abc/def', $uri->withScheme('http')->__toString());
     }
+
+    public function urlProvider()
+    {
+        return [
+            // default
+            [
+                'http://wani.kr',
+                '/move-to-page',
+                'http://wani.kr/move-to-page'
+            ],
+
+            // fragment set
+            [
+                'http://wani.kr?query=query#fragment',
+                '/move-to-page',
+                'http://wani.kr/move-to-page'
+            ],
+            [
+                'http://wani.kr',
+                '/move-to-page?query=query#fragment',
+                'http://wani.kr/move-to-page?query=query#fragment'
+            ],
+            [
+                'http://wani.kr?query=other#theotherfragment',
+                '/move-to-page?query=query#fragment',
+                'http://wani.kr/move-to-page?query=query#fragment'
+            ],
+
+            // other target
+            [
+                'http://wani.kr',
+                '../../../move-to-page',
+                'http://wani.kr/move-to-page'
+            ],
+            [
+                'http://wani.kr',
+                './move-to-page',
+                'http://wani.kr/move-to-page'
+            ],
+
+            // file + target
+            [
+                'http://wani.kr/current/next/and-next',
+                '/front/login/page',
+                'http://wani.kr/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                'front/login/page',
+                'http://wani.kr/current/next/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                './front/login/page',
+                'http://wani.kr/current/next/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                '../front/login/page',
+                'http://wani.kr/current/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                '../front/../page',
+                'http://wani.kr/current/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                '',
+                'http://wani.kr/current/next/and-next'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                '.',
+                'http://wani.kr/current/next/and-next'
+            ],
+            [
+                'http://wani.kr/current/next/and-next',
+                '/',
+                'http://wani.kr'
+            ],
+
+            // directory + target
+            [
+                'http://wani.kr/current/next/and-next/',
+                '/front/login/page',
+                'http://wani.kr/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                'front/login/page',
+                'http://wani.kr/current/next/and-next/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                './front/login/page',
+                'http://wani.kr/current/next/and-next/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                '../front/login/page',
+                'http://wani.kr/current/next/front/login/page'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                '',
+                'http://wani.kr/current/next/and-next/'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                '.',
+                'http://wani.kr/current/next/and-next/'
+            ],
+            [
+                'http://wani.kr/current/next/and-next/',
+                '/',
+                'http://wani.kr'
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider urlProvider
+     */
+    public function testJoin($base, $target, $expected)
+    {
+        $this->assertSame($expected, (new Uri($base))->join(new Uri($target))->__toString());
+    }
 }

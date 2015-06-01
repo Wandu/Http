@@ -98,6 +98,20 @@ If you want more simple source, use factory.
 
 > `new Uri($uri)`
 
+#### Uri::join
+
+It executes like urljoin function in python.
+
+```php
+$uri = new Uri('http://wani.kr/hello/world');
+$uriToJoin = new Uri('../other-link');
+
+$uri->join($uriToJoin); // http://wani.kr/other-link
+```
+
+If you want to see more detail test cases, see
+[this page](https://github.com/Wandu/Http/blob/master/tests/UriTest.php#L430).
+
 #### Example.
 
 ```php
