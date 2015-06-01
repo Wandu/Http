@@ -2,6 +2,7 @@
 namespace Wandu\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use InvalidArgumentException;
@@ -35,6 +36,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $attributes
      * @param string $httpVersion
      * @param UriInterface $uri
+     * @param StreamInterface $body
      */
     public function __construct(
         array $serverParams = [],
@@ -44,7 +46,8 @@ class ServerRequest extends Request implements ServerRequestInterface
         $parsedBody = [],
         array $attributes = [],
         $httpVersion = '1.1',
-        UriInterface $uri = null
+        UriInterface $uri = null,
+        StreamInterface $body = null
     ) {
         $this->validArrayOfUploadedFiles($uploadedFiles);
 
@@ -60,7 +63,7 @@ class ServerRequest extends Request implements ServerRequestInterface
             isset($serverParams['REQUEST_METHOD']) ? $serverParams['REQUEST_METHOD'] : 'GET',
             $uri,
             $this->initHeaders($serverParams),
-            new Stream('php://input')
+            isset($body) ? $body : new Stream('php://input')
         );
     }
 

@@ -77,7 +77,7 @@ $stream = new Stream('php://input');
 
 ### ServerReqeust
 
-> `new ServerRequest(array $serverParams = [], array $cookieParams = [], array $queryParams = [], array $uploadedFiles = [], $parsedBody = [], array $attributes = [], $httpVersion = '1.1', UriInterface $uri = null)`
+> `new ServerRequest(array $serverParams = [], array $cookieParams = [], array $queryParams = [], array $uploadedFiles = [], $parsedBody = [], array $attributes = [], $httpVersion = '1.1', UriInterface $uri = null, StreamInterface $body = null)`
 
 You think it's too complicated. But, Let's see the next example!
 
