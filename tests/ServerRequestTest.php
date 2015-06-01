@@ -4,6 +4,7 @@ namespace Wandu\Http;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Mockery;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -112,6 +113,32 @@ class ServerRequestTest extends PHPUnit_Framework_TestCase
                 $e->getMessage()
             );
         }
+    }
+
+    public function testConstructWithApplicationJson()
+    {
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('__toString')->andReturn('{"hello":[1,2,3,4,5]}');
+        $request = new ServerRequest(
+            [
+                'HTTP_CONTENT_TYPE' => 'application/json',
+            ],
+            [], [], [], [], [], '1.1', null, $body
+        );
+
+        $this->assertEquals(['hello' => [1,2,3,4,5]], $request->getParsedBody());
+
+
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('__toString')->andReturn('{"hello":"world"}');
+        $request = new ServerRequest(
+            [
+                'HTTP_CONTENT_TYPE' => 'application/json;charset=UTF-8',
+            ],
+            [], [], [], [], [], '1.1', null, $body
+        );
+
+        $this->assertEquals(['hello' => 'world'], $request->getParsedBody());
     }
 
     public function testWithCookieParams()

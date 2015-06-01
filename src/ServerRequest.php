@@ -65,6 +65,9 @@ class ServerRequest extends Request implements ServerRequestInterface
             $this->initHeaders($serverParams),
             isset($body) ? $body : new Stream('php://input')
         );
+        if (strpos($this->getHeaderLine('content-type'), 'application/json') === 0) {
+            $this->parsedBody = json_decode($this->body->__toString(), true);
+        }
     }
 
     /**
