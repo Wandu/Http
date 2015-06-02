@@ -26,8 +26,8 @@ class UploadedFileFactory
 
     /**
      * @param array|string $fileDatas
-     * @param array|string $sizeDatas
-     * @param array|string $errorDatas
+     * @param array|int $sizeDatas
+     * @param array|int $errorDatas
      * @param array|string $nameDatas
      * @param array|string $typeDatas
      * @return array
