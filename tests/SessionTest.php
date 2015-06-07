@@ -13,23 +13,20 @@ class SessionTest extends PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
-    public function testSessionFromReset()
+    public function testSessionFromNullCookie()
     {
         $mockRequest = Mockery::mock(ServerRequestInterface::class);
         $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
 
-        $mockSession = Mockery::mock(SessionInterface::class);
-        $mockSession->shouldReceive('set')->with('hello', 'world');
-        $mockSession->shouldReceive('get')->with('blabla')->andReturn(null);
+        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler->shouldReceive('read')->with(Mockery::any())->andReturn([]);
 
-        $mockProvider = Mockery::mock(ProviderInterface::class);
-        $mockProvider->shouldReceive('getSession')->andReturn($mockSession);
+        $manager = new Manager('PHPSESSID', $mockHandler);
 
-        $session = new Session('PHPSESSID', $mockRequest, $mockProvider);
-        $session->set('hello', 'world');
-
-        $this->assertNull($session->get('blabla'));
-        $this->assertTrue($session->isReset());
+        $storage = $manager->readFromRequest($mockRequest);
+        $this->assertInstanceOf(Storage::class, $storage);
+        $this->assertEquals([], $storage->toArray());
+        $this->assertTrue($manager->isReset());
     }
 
     public function testSessionFromCookie()
@@ -39,36 +36,40 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'PHPSESSID' => 'aaaa1111bbbb2222'
         ]);
 
-        $mockSession = Mockery::mock(SessionInterface::class);
-        $mockSession->shouldReceive('get')->with('blabla')->andReturn('world~~~?');
+        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler->shouldReceive('read')->with('aaaa1111bbbb2222')->andReturn([
+            'abc' => 'def'
+        ]);
 
-        $mockProvider = Mockery::mock(ProviderInterface::class);
-        $mockProvider->shouldReceive('getSession')->andReturn($mockSession);
+        $manager = new Manager('PHPSESSID', $mockHandler);
 
-        $session = new Session('PHPSESSID', $mockRequest, $mockProvider);
-
-        $this->assertEquals('aaaa1111bbbb2222', $session->getId());
-        $this->assertEquals('world~~~?', $session->get('blabla'));
-        $this->assertFalse($session->isReset());
+        $this->assertEquals(['abc' => 'def'], $manager->readFromRequest($mockRequest)->toArray());
+        $this->assertEquals('aaaa1111bbbb2222', $manager->getId());
+        $this->assertFalse($manager->isReset());
     }
 
-    public function testResponseApplyWithReset()
+    public function testWriteToResponseWithReset()
     {
         $mockRequest = Mockery::mock(ServerRequestInterface::class);
         $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
 
-        $mockSession = Mockery::mock(SessionInterface::class);
-
-        $mockProvider = Mockery::mock(ProviderInterface::class);
-        $mockProvider->shouldReceive('getSession')->andReturn($mockSession);
+        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler->shouldReceive('read')->andReturn(['hello' => 'world']);
+        $mockHandler->shouldReceive('write')->andReturn([
+            'hello' => 'world',
+            'blabla' => 'added'
+        ]);
 
         $mockResponse = Mockery::mock(ResponseInterface::class);
         $mockResponse->shouldReceive('withHeader')
             ->with('Set-Cookie', "#PHPSESSID\\=[a-f0-9]*#")->andReturn(Mockery::self());
 
-        $session = new Session('PHPSESSID', $mockRequest, $mockProvider);
+        $session = new Manager('PHPSESSID', $mockHandler);
 
-        $this->assertInstanceOf(ResponseInterface::class, $session->applyResponse($mockResponse));
+        $storage = $session->readFromRequest($mockRequest);
+        $storage->set('blabla', 'added');
+
+        $this->assertInstanceOf(ResponseInterface::class, $session->writeToResponse($mockResponse, $storage));
     }
 
 
@@ -79,15 +80,18 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'PHPSESSID' => 'aaaa1111bbbb2222'
         ]);
 
-        $mockSession = Mockery::mock(SessionInterface::class);
-
-        $mockProvider = Mockery::mock(ProviderInterface::class);
-        $mockProvider->shouldReceive('getSession')->andReturn($mockSession);
+        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler->shouldReceive('read')->andReturn(['foo' => 'foo 1']);
+        $mockHandler->shouldReceive('write')->andReturn([]);
 
         $mockResponse = Mockery::mock(ResponseInterface::class);
 
-        $session = new Session('PHPSESSID', $mockRequest, $mockProvider);
+        $session = new Manager('PHPSESSID', $mockHandler);
 
-        $this->assertInstanceOf(ResponseInterface::class, $session->applyResponse($mockResponse));
+        $storage = $session->readFromRequest($mockRequest);
+
+        $storage->offsetUnset('foo');
+
+        $this->assertInstanceOf(ResponseInterface::class, $session->writeToResponse($mockResponse, $storage));
     }
 }

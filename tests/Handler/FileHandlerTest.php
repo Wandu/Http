@@ -1,11 +1,10 @@
 <?php
-namespace Wandu\Session\Provider;
+namespace Wandu\Session\Handler;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
-use Psr\Http\Message\ServerRequestInterface;
 
-class FileTest extends PHPUnit_Framework_TestCase
+class FileHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -33,16 +32,26 @@ class FileTest extends PHPUnit_Framework_TestCase
     {
         $sessionId = sha1(uniqid());
 
-        $file = new FileProvider(__DIR__ . '/sessions');
-        $session = $file->getSession($sessionId);
+        $file = new FileHandler(__DIR__ . '/sessions');
+        $session = $file->read($sessionId);
 
-        $session->set('foo', 'hello');
-        $session->set('what', ['abc', 'def']);
+        $this->assertEquals([], $session);
 
-        unset($session);
+        $session['hello'] = 'world';
+        $session['what'] = "um..";
 
-        $session = $file->getSession($sessionId);
-        $this->assertEquals('hello', $session->get('foo'));
-        $this->assertEquals(['abc', 'def'], $session->get('what'));
+        // clear one cycle!
+        $file->write($sessionId, $session);
+
+
+        $this->assertEquals([
+            'hello' => 'world',
+            'what' => 'um..'
+        ], $file->read($sessionId));
+
+        // destroy
+        $file->destroy($sessionId);
+
+        $this->assertEquals([], $file->read($sessionId));
     }
 }
