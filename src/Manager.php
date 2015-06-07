@@ -13,7 +13,7 @@ class Manager
     protected $id;
 
     /** @var SessionHandlerInterface */
-    protected $provider;
+    protected $handler;
 
     /** @var bool */
     protected $reset = false;
@@ -23,13 +23,13 @@ class Manager
 
     /**
      * @param string $name
-     * @param SessionHandlerInterface $provider
+     * @param SessionHandlerInterface $handler
      * @param int $timeout
      */
-    public function __construct($name, SessionHandlerInterface $provider, $timeout = 300)
+    public function __construct($name, SessionHandlerInterface $handler, $timeout = 300)
     {
         $this->name = $name;
-        $this->provider = $provider;
+        $this->handler = $handler;
         $this->timeout = $timeout;
     }
 
@@ -46,7 +46,7 @@ class Manager
             $this->id = $this->generateId();
             $this->reset = true;
         }
-        return new Storage($this->provider->read($this->id));
+        return new Storage($this->handler->read($this->id));
     }
 
     /**
@@ -56,7 +56,7 @@ class Manager
      */
     public function writeToResponse(ResponseInterface $response, Storage $storage)
     {
-        $this->provider->write($this->id, $storage->toArray());
+        $this->handler->write($this->id, $storage->toArray());
         if ($this->reset) {
             return $response->withHeader('Set-Cookie', "{$this->name}={$this->id}");
         }

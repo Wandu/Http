@@ -20,17 +20,25 @@ namespace Your\OwnNamespace;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Wandu\Session\Provider\FileProvider;
-use Wandu\Session\Session;
+use Wandu\Session\Handler\FileHandler;
+use Wandu\Session\Manager;
 
 $request = ''; // PSR7 ServerReqeustInterface
 $response = ''; // PSR7 ResponseInterface
 
-$session = new Session('YourOwnSessName', $request, new FileProvider(__DIR__ . '/sessions'));
-$response = $session->applyResponse($response);
+$manager = new Manager('WanduSess', new FileHandler(__DIR__));
 
-$session->get('hello');
-$session->set('hello', 'what?');
+$session = $manager->readFromRequest($request);
+// your code area
+
+$contents = $session['hello'];
+
+$session['hello'] = 'hello worldzzzzzz';
+
+// your code end
+
+$response = $manager->writeToResponse($response, $session);
+ResponseSender::send($response);
 ```
 
 That's too simple. :D
