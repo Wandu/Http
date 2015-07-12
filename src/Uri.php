@@ -38,7 +38,7 @@ class Uri implements UriInterface
      */
     public function __construct($uri)
     {
-        $parsedUrl = parse_url($uri);
+        $parsedUrl = parse_url(rawurldecode($uri));
 
         $this->scheme = isset($parsedUrl['scheme']) ? $this->filterScheme($parsedUrl['scheme']) : '';
         $this->host = isset($parsedUrl['host']) ? $this->filterHost($parsedUrl['host']) : '';

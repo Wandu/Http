@@ -554,4 +554,12 @@ class UriTest extends PHPUnit_Framework_TestCase
     {
         $this->assertSame($expected, (new Uri($base))->join(new Uri($target))->__toString());
     }
+
+    public function testUnicodeUrl()
+    {
+        $uri1 = new Uri('http://my.test.com/%EC%BD%94%EB%93%9C%EC%9D%B4%EA%B7%B8%EB%82%98%EC%9D%B4%ED%84%B0');
+        $uri2 = new Uri('http://my.test.com/코드이그나이터');
+
+        $this->assertEquals($uri1->getPath(), $uri2->getPath());
+    }
 }
