@@ -9,6 +9,10 @@ class CookieTest extends PHPUnit_Framework_TestCase
     public function testMany()
     {
         $this->assertEquals(
+            "hello=deleted; Expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; HttpOnly",
+            (new Cookie('hello'))->__toString()
+        );
+        $this->assertEquals(
             "hello=world; Path=/; HttpOnly",
             (new Cookie('hello', 'world'))->__toString()
         );
