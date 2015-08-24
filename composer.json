@@ -1,6 +1,6 @@
 {
     "name": "wandu/cookie",
-    "description": "Http Psr-7 Implementation.",
+    "description": "Cookie Library for PSR-7.",
     "keywords": ["wandu", "cookie", "psr7", "psr-7"],
     "license": "MIT",
     "authors": [
