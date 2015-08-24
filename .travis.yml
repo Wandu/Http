@@ -1,0 +1,23 @@
+language: "php"
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.5
+    - php: 5.6
+      env:
+        - EXECUTE_COVERAGE=true
+    - php: 7.0
+    - php: hhvm
+
+before_script:
+  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
+  - composer install
+
+script:
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then ./vendor/bin/phpunit --coverage-clover=coverage.clover ; fi
+  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then ./vendor/bin/phpunit ; fi
+
+after_script:
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then php ocular.phar code-coverage:upload --format=php-clover ./coverage.clover ; fi
