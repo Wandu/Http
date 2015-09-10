@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "psr/http-message": "^1"
+        "psr/http-message": "^1",
+        "wandu/cookie": "^0.0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "4.5.*",
@@ -22,6 +23,11 @@
     "autoload": {
         "psr-4": {
             "Wandu\\Session\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wandu\\Session\\": "tests/"
         }
     },
     "extra": {

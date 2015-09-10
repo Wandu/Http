@@ -1,9 +1,11 @@
 <?php
-namespace Wandu\Session\Handler;
+namespace Wandu\Session\Storage;
 
-use Wandu\Session\SessionHandlerInterface;
+use Wandu\Session\DataSet;
+use Wandu\Session\DataSetInterface;
+use Wandu\Session\StorageAdapterInterface;
 
-class FileHandler implements SessionHandlerInterface
+class FileAdapter implements StorageAdapterInterface
 {
     /** @var string */
     private $fileRoot;
@@ -17,7 +19,7 @@ class FileHandler implements SessionHandlerInterface
     }
 
     /**
-     * @param string $sessionId
+     * {@inheritdoc}
      */
     public function destroy($sessionId)
     {
@@ -25,25 +27,23 @@ class FileHandler implements SessionHandlerInterface
     }
 
     /**
-     * @param string $sessionId
-     * @return array
+     * {@inheritdoc}
      */
     public function read($sessionId)
     {
         $path = $this->fileRoot . '/' . $sessionId;
-        return file_exists($path) ? unserialize(file_get_contents($path)) : [];
+        return DataSet::fromArray(file_exists($path) ? unserialize(file_get_contents($path)) : []);
     }
 
     /**
-     * @param string $sessionId
-     * @param array $data
+     * {@inheritdoc}
      */
-    public function write($sessionId, array $data)
+    public function write($sessionId, DataSetInterface $dataSet)
     {
         $path = $this->fileRoot . '/' . $sessionId;
         file_put_contents(
             $path,
-            serialize($data)
+            serialize($dataSet->toArray())
         );
     }
 }
