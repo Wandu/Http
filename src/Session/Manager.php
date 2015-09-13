@@ -1,12 +1,12 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Manager
 {
-    /** @var StorageAdapterInterface */
+    /** @var \Wandu\Http\Session\StorageAdapterInterface */
     protected $handler;
 
     /** @var bool */
@@ -16,7 +16,7 @@ class Manager
     protected $config;
 
     /**
-     * @param \Wandu\Session\StorageAdapterInterface $handler
+     * @param \Wandu\Http\Session\StorageAdapterInterface $handler
      * @param array $config
      */
     public function __construct(StorageAdapterInterface $handler, array $config = [])

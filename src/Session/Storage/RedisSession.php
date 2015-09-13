@@ -1,8 +1,8 @@
 <?php
-namespace Wandu\Session\Storage;
+namespace Wandu\Http\Session\Storage;
 
 use Predis\Client;
-use Wandu\Session\StorageAdapterInterface;
+use Wandu\Http\Session\StorageAdapterInterface;
 
 class RedisAdapterInterface implements StorageAdapterInterface
 {

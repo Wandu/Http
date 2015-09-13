@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
@@ -21,7 +21,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $mockHandler = Mockery::mock(StorageAdapterInterface::class);
         $mockHandler->shouldReceive('read')->with(Mockery::any())->andReturn([]);
 
-        $manager = new Manager('PHPSESSID', $mockHandler);
+        $manager = new Manager($mockHandler);
 
         $storage = $manager->readFromRequest($mockRequest);
         $this->assertInstanceOf(Storage::class, $storage);
@@ -41,7 +41,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'abc' => 'def'
         ]);
 
-        $manager = new Manager('PHPSESSID', $mockHandler);
+        $manager = new Manager($mockHandler);
 
         $this->assertEquals(['abc' => 'def'], $manager->readFromRequest($mockRequest)->toArray());
         $this->assertEquals('aaaa1111bbbb2222', $manager->getId());
@@ -64,7 +64,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $mockResponse->shouldReceive('withHeader')
             ->with('Set-Cookie', "#PHPSESSID\\=[a-f0-9]*#")->andReturn(Mockery::self());
 
-        $session = new Manager('PHPSESSID', $mockHandler);
+        $session = new Manager($mockHandler);
 
         $storage = $session->readFromRequest($mockRequest);
         $storage->set('blabla', 'added');
@@ -86,7 +86,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
         $mockResponse = Mockery::mock(ResponseInterface::class);
 
-        $session = new Manager('PHPSESSID', $mockHandler);
+        $session = new Manager($mockHandler);
 
         $storage = $session->readFromRequest($mockRequest);
 

@@ -1,15 +1,15 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 use InvalidArgumentException;
 
 class Storage
 {
-    /** @var \Wandu\Session\DataSetInterface */
+    /** @var \Wandu\Http\Session\DataSetInterface */
     protected $dataSet;
 
     /**
-     * @param \Wandu\Session\DataSetInterface $dataSet
+     * @param \Wandu\Http\Session\DataSetInterface $dataSet
      */
     public function __construct(DataSetInterface $dataSet)
     {

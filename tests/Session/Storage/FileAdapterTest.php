@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Session\Storage;
+namespace Wandu\Http\Session\Storage;
 
 class FileAdapterTest extends AdapterBaseTestCase
 {

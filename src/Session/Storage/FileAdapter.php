@@ -1,9 +1,9 @@
 <?php
-namespace Wandu\Session\Storage;
+namespace Wandu\Http\Session\Storage;
 
-use Wandu\Session\DataSet;
-use Wandu\Session\DataSetInterface;
-use Wandu\Session\StorageAdapterInterface;
+use Wandu\Http\Session\DataSet;
+use Wandu\Http\Session\DataSetInterface;
+use Wandu\Http\Session\StorageAdapterInterface;
 
 class FileAdapter implements StorageAdapterInterface
 {

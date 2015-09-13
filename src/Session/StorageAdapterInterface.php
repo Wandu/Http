@@ -1,17 +1,17 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 interface StorageAdapterInterface
 {
     /**
      * @param string $sessionId
-     * @return \Wandu\Session\DataSetInterface $dataSet
+     * @return \Wandu\Http\Session\DataSetInterface $dataSet
      */
     public function read($sessionId);
 
     /**
      * @param $sessionId
-     * @param \Wandu\Session\DataSetInterface $dataSet
+     * @param \Wandu\Http\Session\DataSetInterface $dataSet
      */
     public function write($sessionId, DataSetInterface $dataSet);
 

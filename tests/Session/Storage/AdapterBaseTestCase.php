@@ -1,14 +1,14 @@
 <?php
-namespace Wandu\Session\Storage;
+namespace Wandu\Http\Session\Storage;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
-use Wandu\Session\DataSet;
-use Wandu\Session\DataSetInterface;
+use Wandu\Http\Session\DataSet;
+use Wandu\Http\Session\DataSetInterface;
 
 abstract class AdapterBaseTestCase extends PHPUnit_Framework_TestCase
 {
-    /** @var \Wandu\Session\StorageAdapterInterface */
+    /** @var \Wandu\Http\Session\StorageAdapterInterface */
     protected $adapter;
 
     public function tearDown()

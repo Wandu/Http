@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 use ArrayAccess;
 
@@ -7,7 +7,7 @@ interface DataSetInterface extends ArrayAccess
 {
     /**
      * @param array $dataSet
-     * @return \Wandu\Session\DataSetInterface
+     * @return \Wandu\Http\Session\DataSetInterface
      */
     public static function fromArray(array $dataSet);
 

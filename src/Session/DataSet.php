@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Session;
+namespace Wandu\Http\Session;
 
 class DataSet implements DataSetInterface
 {

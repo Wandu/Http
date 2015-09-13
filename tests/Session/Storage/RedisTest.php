@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Session\Storage;
+namespace Wandu\Http\Session\Storage;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
