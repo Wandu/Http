@@ -142,3 +142,34 @@ new Uri('/hello/enwl dfk/-_-/한글'); // getPath -> '/hello/enwl%20dfk/-_-/%ED_
 new Uri('http://blog.wani.kr?hello=world&abc=def');
 new Uri('http://blog.wani.kr/path/name?hello=world#fragment');
 ```
+
+## Session
+
+```php
+<?php
+namespace Your\OwnNamespace;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Wandu\Session\Handler\FileHandler;
+use Wandu\Session\Manager;
+
+$request = ''; // PSR7 ServerReqeustInterface
+$response = ''; // PSR7 ResponseInterface
+
+$manager = new Manager('WanduSess', new FileHandler(__DIR__));
+
+$session = $manager->readFromRequest($request);
+// your code area
+
+$contents = $session['hello'];
+
+$session['hello'] = 'hello worldzzzzzz';
+
+// your code end
+
+$response = $manager->writeToResponse($response, $session);
+ResponseSender::send($response);
+```
+
+That's too simple. :D
