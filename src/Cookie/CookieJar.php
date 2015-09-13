@@ -4,10 +4,11 @@ namespace Wandu\Http\Cookie;
 use DateTime;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Wandu\Http\Contracts\CookieJarInterface;
 
-class CookieJar
+class CookieJar implements CookieJarInterface
 {
-    /** @var \Wandu\Cookie\Cookie[] */
+    /** @var \Wandu\Http\Cookie\Cookie[] */
     protected $setCookies;
 
     /**
@@ -38,6 +39,15 @@ class CookieJar
     {
         $this->setCookies[$name] = new Cookie($name, $value, isset($expire) ? $expire->format('U') : null);
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function has($name)
+    {
+        return isset($this->cookies[$name]);
     }
 
     /**

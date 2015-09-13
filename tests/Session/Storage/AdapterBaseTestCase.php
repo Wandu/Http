@@ -3,12 +3,12 @@ namespace Wandu\Http\Session\Storage;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
-use Wandu\Http\Session\DataSet;
-use Wandu\Http\Session\DataSetInterface;
+use Wandu\Http\Contracts\SessionInterface;
+use Wandu\Http\Session\Session;
 
 abstract class AdapterBaseTestCase extends PHPUnit_Framework_TestCase
 {
-    /** @var \Wandu\Http\Session\StorageAdapterInterface */
+    /** @var \Wandu\Http\Session\SessionAdapterInterface */
     protected $adapter;
 
     public function tearDown()
@@ -23,7 +23,7 @@ abstract class AdapterBaseTestCase extends PHPUnit_Framework_TestCase
         }
         $session = $this->adapter->read($this->getRandomSessionId());
 
-        $this->assertInstanceOf(DataSetInterface::class, $session);
+        $this->assertInstanceOf(SessionInterface::class, $session);
         $this->assertEquals([], $session->toArray());
     }
 
@@ -34,7 +34,7 @@ abstract class AdapterBaseTestCase extends PHPUnit_Framework_TestCase
         }
         $sessionId = $this->getRandomSessionId();
 
-        $session = new DataSet();
+        $session = new Session();
         $session['hello'] = 'world';
         $session['what'] = "um..";
 

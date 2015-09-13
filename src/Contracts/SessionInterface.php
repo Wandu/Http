@@ -6,6 +6,11 @@ use ArrayAccess;
 interface SessionInterface extends ArrayAccess
 {
     /**
+     * @return array
+     */
+    public function toArray();
+
+    /**
      * @param string $name
      * @return mixed
      */

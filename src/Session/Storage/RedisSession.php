@@ -2,9 +2,9 @@
 namespace Wandu\Http\Session\Storage;
 
 use Predis\Client;
-use Wandu\Http\Session\StorageAdapterInterface;
+use Wandu\Http\Session\SessionAdapterInterface;
 
-class RedisAdapterInterface implements StorageAdapterInterface
+class RedisAdapterInterface implements SessionAdapterInterface
 {
     /** @var Client */
     private $client;

@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Manager
 {
-    /** @var \Wandu\Http\Session\StorageAdapterInterface */
+    /** @var \Wandu\Http\Session\SessionAdapterInterface */
     protected $handler;
 
     /** @var bool */
@@ -16,10 +16,10 @@ class Manager
     protected $config;
 
     /**
-     * @param \Wandu\Http\Session\StorageAdapterInterface $handler
+     * @param \Wandu\Http\Session\SessionAdapterInterface $handler
      * @param array $config
      */
-    public function __construct(StorageAdapterInterface $handler, array $config = [])
+    public function __construct(SessionAdapterInterface $handler, array $config = [])
     {
         $this->handler = $handler;
         $this->config = $config + [
@@ -30,7 +30,7 @@ class Manager
 
     /**
      * @param ServerRequestInterface $request
-     * @return Storage
+     * @return Session
      */
     public function readFromRequest(ServerRequestInterface $request)
     {
@@ -41,15 +41,15 @@ class Manager
             $this->sessionId = $this->generateId();
             $this->reset = true;
         }
-        return new Storage($this->sessionId, $this->handler->read($this->sessionId));
+        return new Session($this->sessionId, $this->handler->read($this->sessionId));
     }
 
     /**
      * @param ResponseInterface $response
-     * @param Storage $storage
+     * @param Session $storage
      * @return ResponseInterface
      */
-    public function writeToResponse(ResponseInterface $response, Storage $storage)
+    public function writeToResponse(ResponseInterface $response, Session $storage)
     {
         $this->handler->write($this->id, $storage->toArray());
         if ($this->reset) {
