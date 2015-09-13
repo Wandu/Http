@@ -13,7 +13,6 @@
          verbose="true"
         >
     <testsuites>
-<<<<<<< HEAD
         <testsuite name="Wandu Http Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>

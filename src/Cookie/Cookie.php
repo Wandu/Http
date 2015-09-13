@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Cookie;
+namespace Wandu\Http\Cookie;
 
 use InvalidArgumentException;
 
