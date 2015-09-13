@@ -6,31 +6,26 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Manager
 {
-    /** @var string */
-    protected $name;
-
-    /** @var string */
-    protected $id;
-
-    /** @var SessionHandlerInterface */
+    /** @var StorageAdapterInterface */
     protected $handler;
 
     /** @var bool */
     protected $reset = false;
 
-    /** @var int */
-    protected $timeout;
+    /** @var array */
+    protected $config;
 
     /**
-     * @param string $name
-     * @param SessionHandlerInterface $handler
-     * @param int $timeout
+     * @param \Wandu\Session\StorageAdapterInterface $handler
+     * @param array $config
      */
-    public function __construct($name, SessionHandlerInterface $handler, $timeout = 300)
+    public function __construct(StorageAdapterInterface $handler, array $config = [])
     {
-        $this->name = $name;
         $this->handler = $handler;
-        $this->timeout = $timeout;
+        $this->config = $config + [
+                'timeout' => 300,
+                'name' => 'WdSessId',
+            ];
     }
 
     /**
@@ -40,13 +35,13 @@ class Manager
     public function readFromRequest(ServerRequestInterface $request)
     {
         $cookies = $request->getCookieParams();
-        if (isset($cookies[$this->name])) {
-            $this->id = $cookies[$this->name];
+        if (isset($cookies[$this->config['name']])) {
+            $this->sessionId = $cookies[$this->config['name']];
         } else {
-            $this->id = $this->generateId();
+            $this->sessionId = $this->generateId();
             $this->reset = true;
         }
-        return new Storage($this->handler->read($this->id));
+        return new Storage($this->sessionId, $this->handler->read($this->sessionId));
     }
 
     /**

@@ -18,7 +18,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $mockRequest = Mockery::mock(ServerRequestInterface::class);
         $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
 
-        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
         $mockHandler->shouldReceive('read')->with(Mockery::any())->andReturn([]);
 
         $manager = new Manager('PHPSESSID', $mockHandler);
@@ -36,7 +36,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'PHPSESSID' => 'aaaa1111bbbb2222'
         ]);
 
-        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
         $mockHandler->shouldReceive('read')->with('aaaa1111bbbb2222')->andReturn([
             'abc' => 'def'
         ]);
@@ -53,7 +53,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $mockRequest = Mockery::mock(ServerRequestInterface::class);
         $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
 
-        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
         $mockHandler->shouldReceive('read')->andReturn(['hello' => 'world']);
         $mockHandler->shouldReceive('write')->andReturn([
             'hello' => 'world',
@@ -80,7 +80,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'PHPSESSID' => 'aaaa1111bbbb2222'
         ]);
 
-        $mockHandler = Mockery::mock(SessionHandlerInterface::class);
+        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
         $mockHandler->shouldReceive('read')->andReturn(['foo' => 'foo 1']);
         $mockHandler->shouldReceive('write')->andReturn([]);
 
