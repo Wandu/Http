@@ -4,12 +4,18 @@ namespace Wandu\Http;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Mockery;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use RuntimeException;
 
 class RequestTest extends PHPUnit_Framework_TestCase
 {
+    /** @var \Wandu\Http\Request */
+    protected $request;
+
+    public function setUp()
+    {
+        $this->request = new Request('1.1');
+    }
+
     public function tearDown()
     {
         Mockery::close();
@@ -18,6 +24,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     public function testConstructor()
     {
         $mockUri = Mockery::mock(UriInterface::class);
+
         $mockUri->shouldReceive('getPath')->andReturn('');
         $mockUri->shouldReceive('getQuery')->andReturn('');
 
@@ -36,27 +43,23 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testWithRequestTarget()
     {
-        $request = new Request('1.1');
-
-        $this->assertNotSame($request, $request->withRequestTarget('/abc/def'));
-        $this->assertEquals('/abc/def', $request->withRequestTarget('/abc/def')->getRequestTarget());
+        $this->assertNotSame($this->request, $this->request->withRequestTarget('/abc/def'));
+        $this->assertEquals('/abc/def', $this->request->withRequestTarget('/abc/def')->getRequestTarget());
     }
 
     public function testWithMethod()
     {
-        $request = new Request('1.1');
-
-        $this->assertNotSame($request, $request->withMethod('post'));
-        $this->assertEquals('POST', $request->withMethod('post')->getMethod());
+        $this->assertNotSame($this->request, $this->request->withMethod('post'));
+        $this->assertEquals('POST', $this->request->withMethod('post')->getMethod());
 
         try {
-            $request->withMethod([]);
+            $this->request->withMethod([]);
             $this->fail();
         } catch (InvalidArgumentException $e) {
             $this->assertEquals('Unsupported HTTP method. It must be a string.', $e->getMessage());
         }
         try {
-            $request->withMethod('UNKNOWN');
+            $this->request->withMethod('UNKNOWN');
             $this->fail();
         } catch (InvalidArgumentException $e) {
             $this->assertEquals('Unsupported HTTP method. "UNKNOWN" provided.', $e->getMessage());
@@ -67,9 +70,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $mockUri = Mockery::mock(UriInterface::class);
 
-        $request = new Request('1.1');
-
-        $this->assertNotSame($request, $request->withUri($mockUri, true));
-        $this->assertSame($mockUri, $request->withUri($mockUri, true)->getUri());
+        $this->assertNotSame($this->request, $this->request->withUri($mockUri, true));
+        $this->assertSame($mockUri, $this->request->withUri($mockUri, true)->getUri());
     }
 }
