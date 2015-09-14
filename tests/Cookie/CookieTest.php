@@ -22,12 +22,7 @@ class CookieTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals(
             "hello=world; Path=/hello; Domain=blog.wani.kr; Secure",
-            (new Cookie('hello', 'world', null, [
-                'path' => '/hello',
-                'domain' => 'blog.wani.kr',
-                'httponly' => false,
-                'secure' => true,
-            ]))->__toString()
+            (new Cookie('hello', 'world', null, '/hello', 'blog.wani.kr', true, false))->__toString()
         );
     }
 }

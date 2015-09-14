@@ -2,21 +2,22 @@
 namespace Wandu\Http\Cookie;
 
 use DateTime;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
 
 class CookieJar implements CookieJarInterface
 {
+    /** @var array */
+    protected $cookies;
+
     /** @var \Wandu\Http\Cookie\Cookie[] */
     protected $setCookies;
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param array $cookieParams
      */
-    public function __construct(ServerRequestInterface $request = null)
+    public function __construct(array $cookieParams = [])
     {
-        $this->cookies = isset($request) ? $request->getCookieParams() : [];
+        $this->cookies = $cookieParams;
         $this->setCookies = [];
     }
 
@@ -58,17 +59,5 @@ class CookieJar implements CookieJarInterface
     {
         $this->setCookies[$name] = new Cookie($name);
         return $this;
-    }
-
-    /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function withSetCookieHeader(ResponseInterface $response)
-    {
-        foreach ($this->setCookies as $setCookie) {
-            $response = $response->withAddedHeader('Set-Cookie', $setCookie->__toString());
-        }
-        return $response;
     }
 }

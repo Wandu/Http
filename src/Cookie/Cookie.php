@@ -17,31 +17,36 @@ class Cookie
     /** @var int */
     protected $expire;
 
-    /** @var array */
-    protected $meta;
+    /** @var string */
+    protected $path;
 
-    /** @var array  */
-    static protected $options = [
-        'secure',
-        'httponly'
-    ];
+    /** @var string */
+    protected $domain;
 
-    /** @var array */
-    static protected $keys = [
-        'path' => 'Path',
-        'secure' => 'Secure',
-        'httponly' => 'HttpOnly',
-        'domain' => 'Domain',
-    ];
+    /** @var bool */
+    protected $secure;
+
+    /** @var bool */
+    protected $httpOnly;
 
     /**
-     * @param string $name
+     * @param $name
      * @param string $value
-     * @param string $expireAsTimeStamp
-     * @param array $meta
+     * @param int $expireAsTimeStamp
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httpOnly
      */
-    public function __construct($name, $value = null, $expireAsTimeStamp = null, $meta = [])
-    {
+    public function __construct(
+        $name,
+        $value = null,
+        $expireAsTimeStamp = null,
+        $path = '/',
+        $domain = null,
+        $secure = false,
+        $httpOnly = true
+    ) {
         if (!$name) {
             throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
@@ -52,11 +57,66 @@ class Cookie
         $this->name = $name;
         $this->value = $value;
         $this->expire = $expireAsTimeStamp;
-        $this->meta = $meta + [
-                'path' => '/',
-                'secure' => false,
-                'httponly' => true,
-            ];
+        $this->path = $path;
+        $this->domain = $domain;
+        $this->secure = $secure;
+        $this->httpOnly = $httpOnly;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpire()
+    {
+        return $this->expire;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return $this->secure;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isHttpOnly()
+    {
+        return $this->httpOnly;
     }
 
     /**
@@ -73,16 +133,17 @@ class Cookie
         } else {
             $stringToReturn .= 'deleted; Expires='.gmdate('D, d-M-Y H:i:s T', 0);
         }
-        foreach ($this->meta as $key => $value) {
-            $lowerKey = strtolower($key);
-            $key = static::$keys[$lowerKey];
-            if (in_array($lowerKey, static::$options)) {
-                if ($value) {
-                    $stringToReturn .= "; {$key}";
-                }
-            } else {
-                $stringToReturn .= "; {$key}={$value}";
-            }
+        if (isset($this->path)) {
+            $stringToReturn .= '; Path=' . $this->path;
+        }
+        if (isset($this->domain)) {
+            $stringToReturn .= '; Domain=' . $this->domain;
+        }
+        if ($this->isSecure()) {
+            $stringToReturn .= '; Secure';
+        }
+        if ($this->isHttpOnly()) {
+            $stringToReturn .= '; HttpOnly';
         }
         return $stringToReturn;
     }
