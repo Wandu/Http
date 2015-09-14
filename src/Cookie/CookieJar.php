@@ -1,7 +1,9 @@
 <?php
 namespace Wandu\Http\Cookie;
 
+use ArrayIterator;
 use DateTime;
+use Traversable;
 use Wandu\Http\Contracts\CookieJarInterface;
 
 class CookieJar implements CookieJarInterface
@@ -27,6 +29,9 @@ class CookieJar implements CookieJarInterface
      */
     public function get($name)
     {
+        if (isset($this->setCookies[$name])) {
+            return $this->setCookies[$name]->getValue();
+        }
         return isset($this->cookies[$name]) ? $this->cookies[$name] : null;
     }
 
@@ -48,7 +53,7 @@ class CookieJar implements CookieJarInterface
      */
     public function has($name)
     {
-        return isset($this->cookies[$name]);
+        return $this->get($name) !== null;
     }
 
     /**
@@ -59,5 +64,45 @@ class CookieJar implements CookieJarInterface
     {
         $this->setCookies[$name] = new Cookie($name);
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->setCookies);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        $this->remove($offset);
     }
 }
