@@ -32,7 +32,7 @@ class Cookie
     protected $httpOnly;
 
     /**
-     * @param $name
+     * @param string $name
      * @param string $value
      * @param \DateTime $expire
      * @param string $path
@@ -52,7 +52,6 @@ class Cookie
         if (!$name) {
             throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
-        // from PHP source code
         if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(sprintf('The cookie name "%s" contains invalid characters.', $name));
         }

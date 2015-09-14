@@ -3,7 +3,6 @@ namespace Wandu\Http\Cookie;
 
 use ArrayIterator;
 use DateTime;
-use Traversable;
 use Wandu\Http\Contracts\CookieJarInterface;
 
 class CookieJar implements CookieJarInterface
