@@ -1,6 +1,8 @@
 <?php
 namespace Wandu\Http\Cookie;
 
+use DateTime;
+use DateTimeZone;
 use InvalidArgumentException;
 
 /**
@@ -14,7 +16,7 @@ class Cookie
     /** @var string */
     protected $value;
 
-    /** @var int */
+    /** @var \DateTime */
     protected $expire;
 
     /** @var string */
@@ -32,7 +34,7 @@ class Cookie
     /**
      * @param $name
      * @param string $value
-     * @param int $expireAsTimeStamp
+     * @param \DateTime $expire
      * @param string $path
      * @param string $domain
      * @param bool $secure
@@ -41,7 +43,7 @@ class Cookie
     public function __construct(
         $name,
         $value = null,
-        $expireAsTimeStamp = null,
+        DateTime $expire = null,
         $path = '/',
         $domain = null,
         $secure = false,
@@ -56,7 +58,7 @@ class Cookie
         }
         $this->name = $name;
         $this->value = $value;
-        $this->expire = $expireAsTimeStamp;
+        $this->expire = $expire;
         $this->path = $path;
         $this->domain = $domain;
         $this->secure = $secure;
@@ -128,10 +130,11 @@ class Cookie
         if ($this->value) {
             $stringToReturn .= urlencode($this->value);
             if (isset($this->expire)) {
-                $stringToReturn .= '; Expires='.gmdate('D, d-M-Y H:i:s T', $this->expire);
+                $stringToReturn .= '; Expires=' .
+                    $this->expire->setTimezone(new DateTimeZone('GMT'))->format(DateTime::COOKIE);
             }
         } else {
-            $stringToReturn .= 'deleted; Expires='.gmdate('D, d-M-Y H:i:s T', 0);
+            $stringToReturn .= 'deleted; Expires=Thursday, 01-Jan-1970 00:00:00 GMT';
         }
         if (isset($this->path)) {
             $stringToReturn .= '; Path=' . $this->path;
