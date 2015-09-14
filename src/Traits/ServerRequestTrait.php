@@ -167,7 +167,7 @@ trait ServerRequestTrait
      * @param array $serverParams
      * @return array
      */
-    protected function initHeaders(array $serverParams)
+    protected function getHeadersFromServerParams(array $serverParams)
     {
         $headers = array();
         foreach ($serverParams as $key => $value) {

@@ -45,7 +45,7 @@ class ServerRequest extends Request implements ServerRequestInterface
             $httpVersion,
             isset($serverParams['REQUEST_METHOD']) ? $serverParams['REQUEST_METHOD'] : 'GET',
             $uri,
-            $this->initHeaders($serverParams),
+            $this->getHeadersFromServerParams($serverParams),
             isset($body) ? $body : new Stream('php://input')
         );
         if (strpos($this->getHeaderLine('content-type'), 'application/json') === 0) {
