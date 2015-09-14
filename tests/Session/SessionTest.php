@@ -3,95 +3,85 @@ namespace Wandu\Http\Session;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use InvalidArgumentException;
 
 class SessionTest extends PHPUnit_Framework_TestCase
 {
+    /** @var \Wandu\Http\Session\Session */
+    private $session;
+
+    public function setUp()
+    {
+        $this->session = new Session([
+            'id' => 37,
+            'username' => 'wan2land'
+        ]);
+    }
+
     public function tearDown()
     {
         Mockery::close();
     }
 
-    public function testSessionFromNullCookie()
+    public function testInvalidName()
     {
-        $mockRequest = Mockery::mock(ServerRequestInterface::class);
-        $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
-
-        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
-        $mockHandler->shouldReceive('read')->with(Mockery::any())->andReturn([]);
-
-        $manager = new Manager($mockHandler);
-
-        $storage = $manager->readFromRequest($mockRequest);
-        $this->assertInstanceOf(Storage::class, $storage);
-        $this->assertEquals([], $storage->toArray());
-        $this->assertTrue($manager->isReset());
+        try {
+            $this->session->set(30, 30);
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('The session name must be string; "30"', $e->getMessage());
+        }
+        try {
+            $this->session->set('', 30);
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('The session name cannot be empty.', $e->getMessage());
+        }
     }
 
-    public function testSessionFromCookie()
+    public function testGet()
     {
-        $mockRequest = Mockery::mock(ServerRequestInterface::class);
-        $mockRequest->shouldReceive('getCookieParams')->andReturn([
-            'PHPSESSID' => 'aaaa1111bbbb2222'
-        ]);
-
-        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
-        $mockHandler->shouldReceive('read')->with('aaaa1111bbbb2222')->andReturn([
-            'abc' => 'def'
-        ]);
-
-        $manager = new Manager($mockHandler);
-
-        $this->assertEquals(['abc' => 'def'], $manager->readFromRequest($mockRequest)->toArray());
-        $this->assertEquals('aaaa1111bbbb2222', $manager->getId());
-        $this->assertFalse($manager->isReset());
+        $this->assertEquals(37, $this->session->get('id'));
+        $this->assertNull($this->session->get('not_exists_key'));
     }
 
-    public function testWriteToResponseWithReset()
+    public function testSetAndRemove()
     {
-        $mockRequest = Mockery::mock(ServerRequestInterface::class);
-        $mockRequest->shouldReceive('getCookieParams')->andReturn([]);
+        // first
+        $this->assertEquals(37, $this->session->get('id'));
+        $this->asserttrue($this->session->has('id'));
 
-        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
-        $mockHandler->shouldReceive('read')->andReturn(['hello' => 'world']);
-        $mockHandler->shouldReceive('write')->andReturn([
-            'hello' => 'world',
-            'blabla' => 'added'
-        ]);
+        $this->assertNull($this->session->get('_new'));
+        $this->assertFalse($this->session->has('_new'));
 
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('withHeader')
-            ->with('Set-Cookie', "#PHPSESSID\\=[a-f0-9]*#")->andReturn(Mockery::self());
+        // set
+        $this->session->set('_new', "new value!");
+        $this->assertEquals('new value!', $this->session->get('_new'));
+        $this->assertTrue($this->session->has('_new'));
 
-        $session = new Manager($mockHandler);
+        $this->session->remove('_new');
+        $this->assertNull($this->session->get('_new'));
+        $this->assertFalse($this->session->has('_new'));
 
-        $storage = $session->readFromRequest($mockRequest);
-        $storage->set('blabla', 'added');
-
-        $this->assertInstanceOf(ResponseInterface::class, $session->writeToResponse($mockResponse, $storage));
+        $this->session->remove('id');
+        $this->assertNull($this->session->get('id'));
+        $this->assertFalse($this->session->has('id'));
     }
 
-
-    public function testResponseApply()
+    public function testArrayAccess()
     {
-        $mockRequest = Mockery::mock(ServerRequestInterface::class);
-        $mockRequest->shouldReceive('getCookieParams')->andReturn([
-            'PHPSESSID' => 'aaaa1111bbbb2222'
-        ]);
+        $this->assertSame($this->session->get('id'), $this->session['id']);
+        $this->assertSame($this->session->get('unknown'), $this->session['unknown']);
 
-        $mockHandler = Mockery::mock(StorageAdapterInterface::class);
-        $mockHandler->shouldReceive('read')->andReturn(['foo' => 'foo 1']);
-        $mockHandler->shouldReceive('write')->andReturn([]);
+        $this->assertSame($this->session->has('id'), isset($this->session['id']));
+        $this->assertSame($this->session->has('unknown'), isset($this->session['unknown']));
 
-        $mockResponse = Mockery::mock(ResponseInterface::class);
+        $this->assertFalse($this->session->has('added'));
+        $this->session['added'] = 'added!';
+        $this->assertTrue($this->session->has('added'));
 
-        $session = new Manager($mockHandler);
-
-        $storage = $session->readFromRequest($mockRequest);
-
-        $storage->offsetUnset('foo');
-
-        $this->assertInstanceOf(ResponseInterface::class, $session->writeToResponse($mockResponse, $storage));
+        $this->assertTrue($this->session->has('id'));
+        unset($this->session['id']);
+        $this->assertFalse($this->session->has('id'));
     }
 }

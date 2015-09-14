@@ -28,10 +28,10 @@ class Session implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name)
+    public function get($name, $default = null)
     {
         $this->validNameArgument($name);
-        return $this->dataSet[$name];
+        return isset($this->dataSet[$name]) ? $this->dataSet[$name] : $default;
     }
 
     /**
@@ -69,7 +69,10 @@ class Session implements SessionInterface
     protected function validNameArgument($name)
     {
         if (!is_string($name)) {
-            throw new InvalidArgumentException("parameter '{$name}' must be string.");
+            throw new InvalidArgumentException(sprintf('The session name must be string; "%s"', $name));
+        }
+        if ($name === '') {
+            throw new InvalidArgumentException('The session name cannot be empty.');
         }
     }
 
