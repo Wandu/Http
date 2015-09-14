@@ -64,6 +64,23 @@ class CookieJarTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['hello', 'user', 'unknown'], $this->checkCookieAndGetKeys($this->cookies));
     }
 
+    public function testArrayAccess()
+    {
+        $this->assertSame($this->cookies->get('user'), $this->cookies['user']);
+        $this->assertSame($this->cookies->get('unknown'), $this->cookies['unknown']);
+
+        $this->assertSame($this->cookies->has('user'), isset($this->cookies['user']));
+        $this->assertSame($this->cookies->has('unknown'), isset($this->cookies['unknown']));
+
+        $this->assertFalse($this->cookies->has('added'));
+        $this->cookies['added'] = 'added!';
+        $this->assertTrue($this->cookies->has('added'));
+
+        $this->assertTrue($this->cookies->has('user'));
+        unset($this->cookies['user']);
+        $this->assertFalse($this->cookies->has('user'));
+    }
+
     protected function checkCookieAndGetKeys(Traversable $iterator)
     {
         $iterateKeys = [];
