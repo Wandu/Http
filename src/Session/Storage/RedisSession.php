@@ -2,7 +2,7 @@
 namespace Wandu\Http\Session\Storage;
 
 use Predis\Client;
-use Wandu\Http\Session\SessionAdapterInterface;
+use Wandu\Http\Contracts\SessionAdapterInterface;
 
 class RedisAdapterInterface implements SessionAdapterInterface
 {

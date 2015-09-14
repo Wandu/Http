@@ -1,7 +1,5 @@
 <?php
-namespace Wandu\Http\Session;
-
-use Wandu\Http\Contracts\SessionInterface;
+namespace Wandu\Http\Contracts;
 
 interface SessionAdapterInterface
 {

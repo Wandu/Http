@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Extension;
+namespace Wandu\Http\Contracts\Extension;
 
 use Psr\Http\Message\MessageInterface as PsrMessageInterface;
 use Wandu\Http\Contracts\CookieJarInterface;

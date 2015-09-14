@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Extension;
+namespace Wandu\Http\Contracts\Extension;
 
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 

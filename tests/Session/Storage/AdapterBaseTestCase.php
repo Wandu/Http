@@ -8,7 +8,7 @@ use Wandu\Http\Session\Session;
 
 abstract class AdapterBaseTestCase extends PHPUnit_Framework_TestCase
 {
-    /** @var \Wandu\Http\Session\SessionAdapterInterface */
+    /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
     protected $adapter;
 
     public function tearDown()

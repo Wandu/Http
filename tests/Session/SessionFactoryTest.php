@@ -5,6 +5,7 @@ use DateTime;
 use PHPUnit_Framework_TestCase;
 use Mockery;
 use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Contracts\SessionAdapterInterface;
 use Wandu\Http\Contracts\SessionInterface;
 
 class SessionFactoryTest extends PHPUnit_Framework_TestCase

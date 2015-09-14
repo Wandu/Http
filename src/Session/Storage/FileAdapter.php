@@ -3,7 +3,7 @@ namespace Wandu\Http\Session\Storage;
 
 use Wandu\Http\Contracts\SessionInterface;
 use Wandu\Http\Session\Session;
-use Wandu\Http\Session\SessionAdapterInterface;
+use Wandu\Http\Contracts\SessionAdapterInterface;
 
 class FileAdapter implements SessionAdapterInterface
 {

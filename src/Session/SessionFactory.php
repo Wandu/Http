@@ -4,10 +4,11 @@ namespace Wandu\Http\Session;
 use DateTime;
 use DateInterval;
 use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Contracts\SessionAdapterInterface;
 
 class SessionFactory
 {
-    /** @var \Wandu\Http\Session\SessionAdapterInterface */
+    /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
     protected $handler;
 
     /** @var bool */
@@ -17,7 +18,7 @@ class SessionFactory
     protected $config;
 
     /**
-     * @param \Wandu\Http\Session\SessionAdapterInterface $handler
+     * @param \Wandu\Http\Contracts\SessionAdapterInterface $handler
      * @param array $config
      */
     public function __construct(SessionAdapterInterface $handler, array $config = [])
