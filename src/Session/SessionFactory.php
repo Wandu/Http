@@ -9,7 +9,7 @@ use Wandu\Http\Contracts\SessionAdapterInterface;
 class SessionFactory
 {
     /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
-    protected $handler;
+    protected $adapter;
 
     /** @var bool */
     protected $reset = false;
@@ -18,12 +18,12 @@ class SessionFactory
     protected $config;
 
     /**
-     * @param \Wandu\Http\Contracts\SessionAdapterInterface $handler
+     * @param \Wandu\Http\Contracts\SessionAdapterInterface $adapter
      * @param array $config
      */
-    public function __construct(SessionAdapterInterface $handler, array $config = [])
+    public function __construct(SessionAdapterInterface $adapter, array $config = [])
     {
-        $this->handler = $handler;
+        $this->adapter = $adapter;
         $this->config = $config + [
                 'timeout' => 3600,
                 'name' => 'WdSessId',
@@ -44,7 +44,7 @@ class SessionFactory
                 (new DateTime())->setTimestamp(time() + $this->config['timeout'])
             );
         }
-        return $this->handler->read($cookieJar->get($cookieName));
+        return $this->adapter->read($cookieJar->get($cookieName));
     }
 
     /**
@@ -52,6 +52,6 @@ class SessionFactory
      */
     protected function generateId()
     {
-        return sha1(uniqid());
+        return sha1($this->config['name'] . uniqid());
     }
 }
