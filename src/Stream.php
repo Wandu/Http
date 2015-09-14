@@ -11,9 +11,9 @@ class Stream implements StreamInterface
     protected $resource;
 
     /**
-     * @param $stream
+     * @param string $stream
      * @param string $mode
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct($stream = 'php://memory', $mode = 'r')
     {
@@ -213,7 +213,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     protected function isAvailableAndException()
     {
