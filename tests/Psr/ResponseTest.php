@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;

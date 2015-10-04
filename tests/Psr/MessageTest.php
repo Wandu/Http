@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
@@ -35,6 +35,8 @@ class MessageTest extends PHPUnit_Framework_TestCase
 
     public function testProtocolVersion()
     {
+        $message = $this->message->withProtocolVersion('1.0');
+
         // The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
         $this->assertEquals("1.0", $this->message->getProtocolVersion());
 

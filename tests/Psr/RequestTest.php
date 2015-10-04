@@ -1,19 +1,20 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Mockery;
 use Psr\Http\Message\UriInterface;
+use Wandu\Http\Psr\Request;
 
 class RequestTest extends PHPUnit_Framework_TestCase
 {
-    /** @var \Wandu\Http\Request */
+    /** @var \Wandu\Http\Psr\Request */
     protected $request;
 
     public function setUp()
     {
-        $this->request = new Request('1.1');
+        $this->request = new Request();
     }
 
     public function tearDown()
@@ -28,13 +29,13 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $mockUri->shouldReceive('getPath')->andReturn('');
         $mockUri->shouldReceive('getQuery')->andReturn('');
 
-        $request = new Request('1.1', 'get', $mockUri);
+        $request = new Request('get', $mockUri);
 
         $this->assertEquals('/', $request->getRequestTarget());
         $this->assertEquals('GET', $request->getMethod());
         $this->assertSame($mockUri, $request->getUri());
 
-        $request = new Request('1.1');
+        $request = new Request();
 
         $this->assertEquals('/', $request->getRequestTarget());
         $this->assertEquals(null, $request->getMethod());

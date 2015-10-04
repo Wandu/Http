@@ -1,10 +1,11 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Wandu\Http\Psr\Stream;
 
 class UploadedFile implements UploadedFileInterface
 {

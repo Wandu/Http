@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;

@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
@@ -14,7 +14,7 @@ class Message implements MessageInterface
      * @param array $headers
      * @param StreamInterface $body
      */
-    public function __construct($protocolVersion, array $headers = [], StreamInterface $body = null)
+    public function __construct($protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)
     {
         $this->protocolVersion = $protocolVersion;
         foreach ($headers as $name => $header) {

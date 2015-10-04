@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use PHPUnit_Framework_TestCase;
 use Mockery;
@@ -7,6 +7,7 @@ use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileTest extends PHPUnit_Framework_TestCase
 {

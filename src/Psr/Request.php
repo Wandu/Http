@@ -1,9 +1,10 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Wandu\Http\Psr\Message;
 use Wandu\Http\Traits\RequestTrait;
 
 class Request extends Message implements RequestInterface
@@ -11,21 +12,21 @@ class Request extends Message implements RequestInterface
     use RequestTrait;
 
     /**
-     * @param string $httpVersion
+     * @param string $protocolVersion
      * @param string $method
      * @param UriInterface $uri
      * @param array $headers
      * @param StreamInterface $body
      */
     public function __construct(
-        $httpVersion,
         $method = null,
         UriInterface $uri = null,
+        $protocolVersion = '1.1',
         array $headers = [],
         StreamInterface $body = null
     ) {
         $this->method = $this->filterMethod($method);
         $this->uri = $uri;
-        parent::__construct($httpVersion, $headers, $body);
+        parent::__construct($protocolVersion, $headers, $body);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -12,12 +12,14 @@ class Response extends Message implements ResponseInterface
     /**
      * @param int $statusCode
      * @param string $reasonPhrase
+     * @param string $protocolVersion
      * @param array $headers
-     * @param \Psr\Http\Message\StreamInterface|null $body
+     * @param \Psr\Http\Message\StreamInterface $body
      */
     public function __construct(
         $statusCode = 200,
         $reasonPhrase = '',
+        $protocolVersion = '1.1',
         array $headers = [],
         StreamInterface $body = null
     ) {
@@ -26,6 +28,6 @@ class Response extends Message implements ResponseInterface
         $this->statusCode = $statusCode;
         $this->reasonPhrase = $this->filterReasonPhrase($statusCode, $reasonPhrase);
 
-        parent::__construct('1.1', $headers, $body);
+        parent::__construct($protocolVersion, $headers, $body);
     }
 }
