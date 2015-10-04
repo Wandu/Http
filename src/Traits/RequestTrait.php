@@ -2,7 +2,6 @@
 namespace Wandu\Http\Traits;
 
 use InvalidArgumentException;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 trait RequestTrait
@@ -30,11 +29,11 @@ trait RequestTrait
     ];
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getRequestTarget()
     {
-        if (isset($this->requestTarget)) {
+        if (isset($this->requestTarget) && $this->requestTarget !== '') {
             return $this->requestTarget;
         }
         if (!isset($this->uri)) {
@@ -51,7 +50,8 @@ trait RequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $requestTarget
+     * @return static
      */
     public function withRequestTarget($requestTarget)
     {
@@ -61,7 +61,7 @@ trait RequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return \Psr\Http\Message\UriInterface
      */
     public function getUri()
     {
@@ -69,7 +69,9 @@ trait RequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param \Psr\Http\Message\UriInterface $uri
+     * @param bool $preserveHost
+     * @return static
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
@@ -88,7 +90,7 @@ trait RequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getMethod()
     {
@@ -96,7 +98,8 @@ trait RequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $method
+     * @return static
      */
     public function withMethod($method)
     {

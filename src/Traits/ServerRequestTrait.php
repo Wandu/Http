@@ -25,7 +25,7 @@ trait ServerRequestTrait
     protected $attributes;
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getServerParams()
     {
@@ -33,7 +33,7 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getCookieParams()
     {
@@ -41,7 +41,8 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $cookies
+     * @return static
      */
     public function withCookieParams(array $cookies)
     {
@@ -51,7 +52,7 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getQueryParams()
     {
@@ -59,7 +60,8 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $query
+     * @return static
      */
     public function withQueryParams(array $query)
     {
@@ -69,7 +71,7 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getUploadedFiles()
     {
@@ -77,7 +79,8 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $uploadedFiles
+     * @return static
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -88,7 +91,7 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getParsedBody()
     {
@@ -96,17 +99,18 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param null|array|object $parsedBody
+     * @return static
      */
-    public function withParsedBody($data)
+    public function withParsedBody($parsedBody)
     {
         $new = clone $this;
-        $new->parsedBody = $data;
+        $new->parsedBody = $parsedBody;
         return $new;
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getAttributes()
     {
@@ -114,7 +118,9 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
      */
     public function getAttribute($name, $default = null)
     {
@@ -125,7 +131,9 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param mixed $value
+     * @return \Wandu\Http\Traits\ServerRequestTrait
      */
     public function withAttribute($name, $value)
     {
@@ -135,7 +143,8 @@ trait ServerRequestTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @return static
      */
     public function withoutAttribute($name)
     {

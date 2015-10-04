@@ -12,7 +12,11 @@ trait RequestTestTrait
 
     public function testGetRequestTarget()
     {
-        $this->assertSame('/', $this->request->getRequestTarget());
+        $request = $this->request;
+        $requestWithBlank = $this->request->withRequestTarget('');
+
+        $this->assertSame('/', $request->getRequestTarget());
+        $this->assertSame('/', $requestWithBlank->getRequestTarget());
     }
 
     public function testWithRequestTarget()
@@ -62,5 +66,45 @@ trait RequestTestTrait
         $this->assertSame($mockUri, $requestWithUri->getUri());
         $this->assertSame('/abc/def?hello=world', $requestWithUri->getRequestTarget());
     }
-}
 
+    public function testWithBlankUri()
+    {
+        $mockUri = Mockery::mock(UriInterface::class);
+        $mockUri->shouldReceive('getPath')->andReturn('');
+        $mockUri->shouldReceive('getQuery')->andReturn('');
+
+        $requestWithUri = $this->request->withUri($mockUri, true);
+
+        $this->assertSame('/', $requestWithUri->getRequestTarget());
+    }
+
+    public function testWithUriTrue()
+    {
+        /**
+         * You can opt-in to preserving the original state of the Host header by
+         * setting `$preserveHost` to `true`. When `$preserveHost` is set to
+         * `true`, this method interacts with the Host header in the following ways:
+         *
+         * - If the the Host header is missing or empty, and the new URI contains
+         *   a host component, this method MUST update the Host header in the returned
+         *   request.
+         * - If the Host header is missing or empty, and the new URI does not contain a
+         *   host component, this method MUST NOT update the Host header in the returned
+         *   request.
+         * - If a Host header is present and non-empty, this method MUST NOT update
+         *   the Host header in the returned request.
+        */
+
+        $mockUri = Mockery::mock(UriInterface::class);
+        $mockUri->shouldReceive('getHost')->andReturn('localhost');
+        $mockUri->shouldReceive('getPort')->andReturn(8888);
+        $mockUri->shouldReceive('getPath')->andReturn('/');
+        $mockUri->shouldReceive('getQuery')->andReturn('');
+
+        $requestWithUri = $this->request->withUri($mockUri);
+
+        $this->assertEquals('/', $requestWithUri->getRequestTarget());
+        $this->assertEquals('localhost:8888', $requestWithUri->getHeaderLine('host'));
+
+    }
+}

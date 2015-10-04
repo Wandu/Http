@@ -88,7 +88,7 @@ trait ResponseTrait
     /**
      * @param int $code
      * @param string $reasonPhrase
-     * @return self
+     * @return static
      */
     public function withStatus($code, $reasonPhrase = '')
     {

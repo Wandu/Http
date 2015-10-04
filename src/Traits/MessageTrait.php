@@ -28,7 +28,7 @@ trait MessageTrait
 
     /**
      * @param string $version
-     * @return self
+     * @return static
      */
     public function withProtocolVersion($version)
     {
@@ -76,7 +76,7 @@ trait MessageTrait
     /**
      * @param string $name
      * @param string|string[] $value
-     * @return self
+     * @return static
      */
     public function withHeader($name, $value)
     {
@@ -91,7 +91,7 @@ trait MessageTrait
     /**
      * @param string $name
      * @param string|string[] $value
-     * @return self
+     * @return static
      */
     public function withAddedHeader($name, $value)
     {
@@ -132,7 +132,7 @@ trait MessageTrait
 
     /**
      * @param \Psr\Http\Message\StreamInterface $body
-     * @return self
+     * @return static
      */
     public function withBody(StreamInterface $body)
     {
@@ -144,7 +144,7 @@ trait MessageTrait
     /**
      * @param mixed $value
      * @return array
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function filterHeaderValue($value)
     {
