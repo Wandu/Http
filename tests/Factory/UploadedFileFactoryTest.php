@@ -1,9 +1,9 @@
 <?php
 namespace Wandu\Http\Factory;
 
-use PHPUnit_Framework_TestCase;
 use Mockery;
-use Wandu\Http\UploadedFile;
+use PHPUnit_Framework_TestCase;
+use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 {

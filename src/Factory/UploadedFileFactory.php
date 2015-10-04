@@ -1,7 +1,7 @@
 <?php
 namespace Wandu\Http\Factory;
 
-use Wandu\Http\UploadedFile;
+use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileFactory
 {
