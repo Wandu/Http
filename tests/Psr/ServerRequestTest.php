@@ -1,10 +1,9 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
 use Mockery;
-use Psr\Http\Message\StreamInterface;
+use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -29,10 +28,10 @@ class ServerRequestTest extends PHPUnit_Framework_TestCase
         // message
         $this->assertEquals('1.1', $request->getProtocolVersion());
         $this->assertEquals([], $request->getHeaders());
-        $this->assertInstanceOf(Stream::class, $request->getBody());
+        $this->assertNull($request->getBody());
 
         // request
-        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals(null, $request->getMethod());
         $this->assertEquals(null, $request->getUri());
         $this->assertEquals('/', $request->getRequestTarget());
     }
@@ -73,8 +72,15 @@ class ServerRequestTest extends PHPUnit_Framework_TestCase
             ['profileImage' => $mockFile],
             ['id' => 'wan2land'],
             ['status' => 'join'],
+            'GET',
+            $mockUri,
             '2.0',
-            $mockUri
+            [
+                'host' => ['localhost:8002'],
+                'connection' => ['keep-alive'],
+                'user-agent' => ['Mozilla/5.0'],
+                'cookie' => ['PHPSESSID=32eo4tk9dcaacb2f3hqg0s6s54'],
+            ]
         );
         $this->assertEquals(['PHPSESSID' => '32eo4tk9dcaacb2f3hqg0s6s54'], $request->getCookieParams());
         $this->assertEquals(['page' => 1, 'order' => false], $request->getQueryParams());
@@ -87,19 +93,9 @@ class ServerRequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([
             'host' => ['localhost:8002'],
             'connection' => ['keep-alive'],
-            'content-length' => ['56854'],
-            'pragma' => ['no-cache'],
-            'cache-control' => ['no-cache'],
-            'accept' => ['text/html','application/xhtml+xml','application/xml;q=0.9','image/webp','*/*;q=0.8'],
-            'origin' => ['http://localhost:8002'],
-            'user-agent' => ['Mozilla/5.0']
+            'user-agent' => ['Mozilla/5.0'],
+            'cookie' => ['PHPSESSID=32eo4tk9dcaacb2f3hqg0s6s54'],
         ], $request->getHeaders());
-        $this->assertInstanceOf(Stream::class, $request->getBody());
-
-        // request
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals($mockUri, $request->getUri());
-        $this->assertEquals('/abc/def?hello=world', $request->getRequestTarget());
     }
 
     public function testConstructWithFail()
@@ -113,32 +109,6 @@ class ServerRequestTest extends PHPUnit_Framework_TestCase
                 $e->getMessage()
             );
         }
-    }
-
-    public function testConstructWithApplicationJson()
-    {
-        $body = Mockery::mock(StreamInterface::class);
-        $body->shouldReceive('__toString')->andReturn('{"hello":[1,2,3,4,5]}');
-        $request = new ServerRequest(
-            [
-                'HTTP_CONTENT_TYPE' => 'application/json',
-            ],
-            [], [], [], [], [], '1.1', null, $body
-        );
-
-        $this->assertEquals(['hello' => [1,2,3,4,5]], $request->getParsedBody());
-
-
-        $body = Mockery::mock(StreamInterface::class);
-        $body->shouldReceive('__toString')->andReturn('{"hello":"world"}');
-        $request = new ServerRequest(
-            [
-                'HTTP_CONTENT_TYPE' => 'application/json;charset=UTF-8',
-            ],
-            [], [], [], [], [], '1.1', null, $body
-        );
-
-        $this->assertEquals(['hello' => 'world'], $request->getParsedBody());
     }
 
     public function testWithCookieParams()

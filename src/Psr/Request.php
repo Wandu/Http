@@ -4,7 +4,6 @@ namespace Wandu\Http\Psr;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use Wandu\Http\Psr\Message;
 use Wandu\Http\Traits\RequestTrait;
 
 class Request extends Message implements RequestInterface

@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http;
+namespace Wandu\Http\Psr;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -15,21 +15,25 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $cookieParams
      * @param array $queryParams
      * @param array $uploadedFiles
-     * @param array|object $parsedBody
+     * @param array $parsedBody
      * @param array $attributes
-     * @param string $httpVersion
-     * @param UriInterface $uri
-     * @param StreamInterface $body
+     * @param string $method
+     * @param \Psr\Http\Message\UriInterface|null $uri
+     * @param string $protocolVersion
+     * @param array $headers
+     * @param \Psr\Http\Message\StreamInterface|null $body
      */
     public function __construct(
         array $serverParams = [],
         array $cookieParams = [],
         array $queryParams = [],
         array $uploadedFiles = [],
-        $parsedBody = [],
+        array $parsedBody = [],
         array $attributes = [],
-        $httpVersion = '1.1',
+        $method = null,
         UriInterface $uri = null,
+        $protocolVersion = '1.1',
+        array $headers = [],
         StreamInterface $body = null
     ) {
         $this->validArrayOfUploadedFiles($uploadedFiles);
@@ -41,15 +45,6 @@ class ServerRequest extends Request implements ServerRequestInterface
         $this->parsedBody = $parsedBody;
         $this->attributes = $attributes;
 
-        parent::__construct(
-            $httpVersion,
-            isset($serverParams['REQUEST_METHOD']) ? $serverParams['REQUEST_METHOD'] : 'GET',
-            $uri,
-            $this->getHeadersFromServerParams($serverParams),
-            isset($body) ? $body : new Stream('php://input')
-        );
-        if (strpos($this->getHeaderLine('content-type'), 'application/json') === 0) {
-            $this->parsedBody = json_decode($this->body->__toString(), true);
-        }
+        parent::__construct($method, $uri, $protocolVersion, $headers, $body);
     }
 }

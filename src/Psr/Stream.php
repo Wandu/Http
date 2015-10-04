@@ -2,8 +2,8 @@
 namespace Wandu\Http\Psr;
 
 use InvalidArgumentException;
-use RuntimeException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 class Stream implements StreamInterface
 {
