@@ -42,7 +42,7 @@ class CookieJar implements CookieJarInterface
      */
     public function set($name, $value, DateTime $expire = null)
     {
-        $this->setCookies[$name] = new Cookie($name, $value, isset($expire) ? $expire->format('U') : null);
+        $this->setCookies[$name] = new Cookie($name, $value, isset($expire) ? $expire : null);
         return $this;
     }
 
