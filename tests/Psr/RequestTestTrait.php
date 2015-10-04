@@ -1,0 +1,66 @@
+<?php
+namespace Wandu\Http\Psr;
+
+use InvalidArgumentException;
+use Mockery;
+use Psr\Http\Message\UriInterface;
+
+trait RequestTestTrait
+{
+    /** @var \Psr\Http\Message\RequestInterface */
+    protected $request;
+
+    public function testGetRequestTarget()
+    {
+        $this->assertSame('/', $this->request->getRequestTarget());
+    }
+
+    public function testWithRequestTarget()
+    {
+        $this->assertNotSame($this->request, $this->request->withRequestTarget('/abc/def'));
+        $this->assertEquals('/abc/def', $this->request->withRequestTarget('/abc/def')->getRequestTarget());
+    }
+
+    public function testGetMethod()
+    {
+        $this->assertEquals(null, $this->request->getMethod());
+    }
+
+    public function testWithMethod()
+    {
+        $this->assertNotSame($this->request, $this->request->withMethod('post'));
+        $this->assertEquals('POST', $this->request->withMethod('post')->getMethod());
+
+        try {
+            $this->request->withMethod([]);
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Unsupported HTTP method. It must be a string.', $e->getMessage());
+        }
+        try {
+            $this->request->withMethod('UNKNOWN');
+            $this->fail();
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Unsupported HTTP method. "UNKNOWN" provided.', $e->getMessage());
+        }
+    }
+
+    public function testGetUri()
+    {
+        $this->assertSame(null, $this->request->getUri());
+    }
+
+    public function testWithUri()
+    {
+        $mockUri = Mockery::mock(UriInterface::class);
+        $mockUri->shouldReceive('getPath')->andReturn('/abc/def');
+        $mockUri->shouldReceive('getQuery')->andReturn('hello=world');
+
+        $requestWithUri = $this->request->withUri($mockUri, true);
+
+        $this->assertNotSame($this->request, $requestWithUri);
+        $this->assertSame($mockUri, $requestWithUri->getUri());
+        $this->assertSame('/abc/def?hello=world', $requestWithUri->getRequestTarget());
+    }
+}
+
