@@ -130,7 +130,7 @@ class Cookie
             $stringToReturn .= urlencode($this->value);
             if (isset($this->expire)) {
                 $stringToReturn .= '; Expires=' .
-                    $this->expire->setTimezone(new DateTimeZone('GMT'))->format(DateTime::COOKIE);
+                    $this->expire->setTimezone(new DateTimeZone('GMT'))->format("l, d-M-Y H:i:s T");
             }
         } else {
             $stringToReturn .= 'deleted; Expires=Thursday, 01-Jan-1970 00:00:00 GMT';
