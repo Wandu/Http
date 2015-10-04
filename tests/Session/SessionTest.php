@@ -12,7 +12,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->session = new Session([
+        $this->session = new Session('namename', [
             'id' => 37,
             'username' => 'wan2land'
         ]);

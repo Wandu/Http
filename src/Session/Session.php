@@ -6,15 +6,28 @@ use Wandu\Http\Contracts\SessionInterface;
 
 class Session implements SessionInterface
 {
+    /** @var string */
+    protected $id;
+
     /** @var array */
     protected $dataSet;
 
     /**
+     * @param string $id
      * @param array $dataSet
      */
-    public function __construct(array $dataSet = [])
+    public function __construct($id, array $dataSet = [])
     {
+        $this->id = $id;
         $this->dataSet = $dataSet;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -42,6 +55,11 @@ class Session implements SessionInterface
         $this->validNameArgument($name);
         $this->dataSet[$name] = $value;
         return $this;
+    }
+
+    public function flash($name, $value)
+    {
+
     }
 
     /**

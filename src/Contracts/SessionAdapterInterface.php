@@ -10,10 +10,10 @@ interface SessionAdapterInterface
     public function read($sessionId);
 
     /**
-     * @param $sessionId
-     * @param \Wandu\Http\Contracts\SessionInterface $session
+     * @param string $sessionId
+     * @param array $dataSet
      */
-    public function write($sessionId, SessionInterface $session);
+    public function write($sessionId, array $dataSet);
 
     /**
      * @param string $sessionId

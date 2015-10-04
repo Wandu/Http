@@ -1,8 +1,6 @@
 <?php
 namespace Wandu\Http\Session\Storage;
 
-use Wandu\Http\Contracts\SessionInterface;
-use Wandu\Http\Session\Session;
 use Wandu\Http\Contracts\SessionAdapterInterface;
 
 class FileAdapter implements SessionAdapterInterface
@@ -32,18 +30,18 @@ class FileAdapter implements SessionAdapterInterface
     public function read($sessionId)
     {
         $path = $this->fileRoot . '/' . $sessionId;
-        return new Session(file_exists($path) ? unserialize(file_get_contents($path)) : []);
+        return file_exists($path) ? unserialize(file_get_contents($path)) : [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function write($sessionId, SessionInterface $session)
+    public function write($sessionId, array $dataSet)
     {
         $path = $this->fileRoot . '/' . $sessionId;
         file_put_contents(
             $path,
-            serialize($session->toArray())
+            serialize($dataSet)
         );
     }
 }

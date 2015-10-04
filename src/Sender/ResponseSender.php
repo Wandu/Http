@@ -2,6 +2,7 @@
 namespace Wandu\Http\Sender;
 
 use Psr\Http\Message\ResponseInterface;
+use Wandu\Http\Cookie\Cookie;
 
 class ResponseSender
 {
@@ -13,9 +14,13 @@ class ResponseSender
 
         header("HTTP/{$protocolVersion} $statusCode $reasonPhrase");
         foreach ($response->getHeaders() as $name => $values) {
-            foreach ($values as $value) {
-                header(sprintf('%s: %s', $name, $value), false);
+            if (strtolower($name) === 'set-cookie') {
+                foreach ($values as $cookie) {
+                    header(sprintf('Set-Cookie: %s', $cookie), false);
+                }
+                break;
             }
+            header(sprintf('%s: %s', $name, $response->getHeaderLine($name)));
         }
         echo $response->getBody();
     }

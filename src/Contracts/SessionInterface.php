@@ -11,6 +11,11 @@ interface SessionInterface extends ArrayAccess
     public function toArray();
 
     /**
+     * @return string
+     */
+    public function getId();
+
+    /**
      * @param string $name
      * @param mixed $default
      * @return mixed

@@ -162,34 +162,4 @@ trait ServerRequestTrait
             }
         }
     }
-
-    /**
-     * @param array $serverParams
-     * @return array
-     */
-    protected function getHeadersFromServerParams(array $serverParams)
-    {
-        $headers = array();
-        foreach ($serverParams as $key => $value) {
-            if (strpos($key, 'HTTP_COOKIE') === 0) {
-                // Cookies are handled using the $_COOKIE superglobal
-                continue;
-            }
-            if ($value && strpos($key, 'HTTP_') === 0) {
-                $name = strtr(substr($key, 5), '_', ' ');
-                $name = strtr(ucwords(strtolower($name)), ' ', '-');
-                $name = strtolower($name);
-                $headers[$name] = explode(',', $value);
-                continue;
-            }
-            if ($value && strpos($key, 'CONTENT_') === 0) {
-                $name = substr($key, 8); // Content-
-                $name = 'Content-' . (($name == 'MD5') ? $name : ucfirst(strtolower($name)));
-                $name = strtolower($name);
-                $headers[$name] = explode(',', $value);
-                continue;
-            }
-        }
-        return $headers;
-    }
 }

@@ -23,6 +23,14 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->setCookies + $this->cookies;
+    }
+
+    /**
      * @param string $name
      * @return string|null
      */

@@ -8,6 +8,11 @@ use IteratorAggregate;
 interface CookieJarInterface extends ArrayAccess, IteratorAggregate
 {
     /**
+     * @return array
+     */
+    public function toArray();
+
+    /**
      * @param string $name
      * @return string|null
      */

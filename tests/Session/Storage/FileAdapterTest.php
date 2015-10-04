@@ -1,7 +1,9 @@
 <?php
 namespace Wandu\Http\Session\Storage;
 
-class FileAdapterTest extends AdapterBaseTestCase
+use PHPUnit_Framework_TestCase;
+
+class FileAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -24,5 +26,41 @@ class FileAdapterTest extends AdapterBaseTestCase
             is_dir("{$directory}/{$file}") ? $this->deleteAll("{$directory}/{$file}") : unlink("{$directory}/{$file}");
         }
         return rmdir($directory);
+    }
+
+    public function testEmptySession()
+    {
+        if (!isset($this->adapter)) {
+            $this->markTestSkipped('there is no adapter! :-)');
+        }
+        $session = $this->adapter->read(sha1(uniqid()));
+
+        $this->assertEquals([], $session);
+    }
+
+    public function testWriteSession()
+    {
+        if (!isset($this->adapter)) {
+            $this->markTestSkipped('there is no adapter! :-)');
+        }
+        $sessionId = sha1(uniqid());
+
+        // write
+        $this->adapter->write($sessionId, [
+            'hello' => 'world',
+            'what' => 'um..'
+        ]);
+
+        // then data
+        $this->assertEquals([
+            'hello' => 'world',
+            'what' => 'um..'
+        ], $this->adapter->read($sessionId));
+
+        // destroy
+        $this->adapter->destroy($sessionId);
+
+        // then blank
+        $this->assertEquals([], $this->adapter->read($sessionId));
     }
 }

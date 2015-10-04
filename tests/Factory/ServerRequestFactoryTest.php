@@ -1,9 +1,8 @@
 <?php
 namespace Wandu\Http\Factory;
 
-use PHPUnit_Framework_TestCase;
 use Mockery;
-use Wandu\Http\UploadedFile;
+use PHPUnit_Framework_TestCase;
 
 class ServerRequestFactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -29,4 +28,33 @@ class ServerRequestFactoryTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals('http://0.0.0.0:8002/abk?sdnkf', ServerRequestFactory::getUri($server)->__toString());
     }
+
+
+//    public function testConstructWithApplicationJson()
+//    {
+//        $body = Mockery::mock(StreamInterface::class);
+//        $body->shouldReceive('__toString')->andReturn('{"hello":[1,2,3,4,5]}');
+//        $request = new ServerRequest(
+//            [
+//                'HTTP_CONTENT_TYPE' => 'application/json',
+//            ],
+//            [], [], [], [], [], 'GET', null, '1.1', [], $body
+//        );
+//
+//        $this->assertEquals(['hello' => [1,2,3,4,5]], $request->getParsedBody());
+//
+//
+//        $body = Mockery::mock(StreamInterface::class);
+//        $body->shouldReceive('__toString')->andReturn('{"hello":"world"}');
+//        $request = new ServerRequest(
+//            [
+//                'HTTP_CONTENT_TYPE' => 'application/json;charset=UTF-8',
+//            ],
+//            [], [], [], [], [], '1.1', null, $body
+//        );
+//
+//        $this->assertEquals(['hello' => 'world'], $request->getParsedBody());
+//    }
+
+
 }

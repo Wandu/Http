@@ -2,11 +2,11 @@
 namespace Wandu\Http\Session;
 
 use DateTime;
-use DateInterval;
 use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\SessionAdapterInterface;
+use Wandu\Http\Contracts\SessionInterface;
 
-class SessionFactory
+class SessionManager
 {
     /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
     protected $adapter;
@@ -36,15 +36,27 @@ class SessionFactory
      */
     public function fromCookieJar(CookieJarInterface $cookieJar)
     {
-        $cookieName = $this->config['name'];
-        if (!$cookieJar->has($cookieName)) {
+        $sessionName = $this->config['name'];
+        if (!$cookieJar->has($sessionName)) {
+            $sessionId = $this->generateId();
+            return new Session($sessionId, []);
+        }
+        $sessionId = $cookieJar->get($sessionName);
+        return new Session($sessionId, $this->adapter->read($sessionId));
+    }
+
+    public function toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
+    {
+        $sessionName = $this->config['name'];
+        $this->adapter->write($session->getId(), $session->toArray());
+        if (!$cookieJar->has($sessionName)) {
+            $sessionId = $this->generateId();
             $cookieJar->set(
-                $cookieName,
-                $this->generateId(),
+                $sessionName,
+                $sessionId,
                 (new DateTime())->setTimestamp(time() + $this->config['timeout'])
             );
         }
-        return $this->adapter->read($cookieJar->get($cookieName));
     }
 
     /**
