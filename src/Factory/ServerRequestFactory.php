@@ -37,7 +37,7 @@ class ServerRequestFactory
         $body = new Stream($bodyResource);
         $headers = static::getHeadersFromServerParams($server);
 
-        if (in_array('application/json', $headers['content-type'])) {
+        if (isset($headers['content-type']) && in_array('application/json', $headers['content-type'])) {
             $post = json_decode($body->__toString(), true);
         }
         return new ServerRequest(
@@ -117,7 +117,7 @@ class ServerRequestFactory
      * @param array $serverParams
      * @return array
      */
-    protected function getHeadersFromServerParams(array $serverParams)
+    protected static function getHeadersFromServerParams(array $serverParams)
     {
         $headers = array();
         foreach ($serverParams as $key => $value) {

@@ -16,6 +16,56 @@ Reference [phly/http](https://github.com/phly/http).
 
 ---
 
+## Basic Usage
+
+```php
+<?php
+use Wandu\Http\Cookie\CookieManager;
+use Wandu\Http\Factory\ServerRequestFactory;
+use Wandu\Http\Psr\Response;
+use Wandu\Http\Sender\ResponseSender;
+use Wandu\Http\Session\SessionManager;
+use Wandu\Http\Session\Storage\FileAdapter;
+
+require __DIR__ .'/vendor/autoload.php';
+
+date_default_timezone_set('UTC');
+
+$request = ServerRequestFactory::fromGlobals();
+$cookieManager = new CookieManager();
+$cookie = $cookieManager->fromServerRequest($request);
+
+$sessionManager = new SessionManager(new FileAdapter(__DIR__));
+$session = $sessionManager->fromCookieJar($cookie);
+
+// -- start controller --
+
+//$cookie->set('cookie1', 'new!!');
+//$cookie->set('cookie2', 'new222');
+
+//$session->set('sess1', '!!');
+//$session->set('sess2', '??');
+
+echo "<h3>Cookie!!</h3>";
+echo "<pre>";
+print_r($cookie->toArray());
+echo "</pre>";
+echo "<h3>Session!!</h3>";
+echo "<pre>";
+print_r($session->toArray());
+echo "</pre>";
+
+$response = new Response();
+
+// -- end controller --
+$sessionManager->toCookieJar($session, $cookie);
+$response = $cookieManager->toResponse($cookie, $response);
+
+ResponseSender::send($response);
+
+```
+
+
 ## Document
 
 ### UploadedFileFactory
@@ -142,34 +192,3 @@ new Uri('/hello/enwl dfk/-_-/한글'); // getPath -> '/hello/enwl%20dfk/-_-/%ED_
 new Uri('http://blog.wani.kr?hello=world&abc=def');
 new Uri('http://blog.wani.kr/path/name?hello=world#fragment');
 ```
-
-## Session
-
-```php
-<?php
-namespace Your\OwnNamespace;
-
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Wandu\Session\Handler\FileHandler;
-use Wandu\Session\Manager;
-
-$request = ''; // PSR7 ServerReqeustInterface
-$response = ''; // PSR7 ResponseInterface
-
-$manager = new Manager('WanduSess', new FileHandler(__DIR__));
-
-$session = $manager->readFromRequest($request);
-// your code area
-
-$contents = $session['hello'];
-
-$session['hello'] = 'hello worldzzzzzz';
-
-// your code end
-
-$response = $manager->writeToResponse($response, $session);
-ResponseSender::send($response);
-```
-
-That's too simple. :D
