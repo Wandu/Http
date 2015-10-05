@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Session\Storage;
+namespace Wandu\Http\Session\Adapter;
 
 use Wandu\Http\Contracts\SessionAdapterInterface;
 
@@ -8,12 +8,17 @@ class FileAdapter implements SessionAdapterInterface
     /** @var string */
     private $fileRoot;
 
+    /** @var int */
+    private $expire;
+
     /**
      * @param string $fileRoot
+     * @param int $expire
      */
-    public function __construct($fileRoot)
+    public function __construct($fileRoot, $expire = 1800)
     {
         $this->fileRoot = $fileRoot;
+        $this->expire = $expire;
     }
 
     /**
@@ -30,7 +35,13 @@ class FileAdapter implements SessionAdapterInterface
     public function read($sessionId)
     {
         $path = $this->fileRoot . '/' . $sessionId;
-        return file_exists($path) ? unserialize(file_get_contents($path)) : [];
+        if (file_exists($path)) {
+            $dataSet = unserialize(file_get_contents($path));
+            if (isset($dataSet['expire']) && $dataSet['expire'] > time()) {
+                return $dataSet['dataset'];
+            }
+        }
+        return [];
     }
 
     /**
@@ -41,7 +52,10 @@ class FileAdapter implements SessionAdapterInterface
         $path = $this->fileRoot . '/' . $sessionId;
         file_put_contents(
             $path,
-            serialize($dataSet)
+            serialize([
+                'expire' => time() + $this->expire,
+                'dataset' => $dataSet,
+            ])
         );
     }
 }

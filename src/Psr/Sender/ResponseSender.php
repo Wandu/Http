@@ -1,11 +1,13 @@
 <?php
-namespace Wandu\Http\Sender;
+namespace Wandu\Http\Psr\Sender;
 
 use Psr\Http\Message\ResponseInterface;
-use Wandu\Http\Cookie\Cookie;
 
 class ResponseSender
 {
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     */
     public static function send(ResponseInterface $response)
     {
         $statusCode = $response->getStatusCode();

@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Session\Storage;
+namespace Wandu\Http\Session\Adapter;
 
 use PHPUnit_Framework_TestCase;
 

@@ -1,20 +1,30 @@
 <?php
-namespace Wandu\Http\Factory;
+namespace Wandu\Http\Psr\Factory;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\StreamInterface;
 use Wandu\Http\Psr\ServerRequest;
 use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;
 
 class ServerRequestFactory
 {
+    /** @var \Wandu\Http\Psr\Factory\UploadedFileFactory */
+    protected $fileFactory;
+
+    /**
+     * @param \Wandu\Http\Psr\Factory\UploadedFileFactory $fileFactory
+     */
+    public function __construct(UploadedFileFactory $fileFactory)
+    {
+        $this->fileFactory = $fileFactory;
+    }
+
     /**
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public static function fromGlobals()
+    public function fromGlobals()
     {
-        return static::create($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, 'php://input');
+        return $this->factory($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new Stream('php://input'));
     }
 
     /**
@@ -23,49 +33,51 @@ class ServerRequestFactory
      * @param array $post
      * @param array $cookies
      * @param array $files
-     * @param string $bodyResource
+     * @param \Psr\Http\Message\StreamInterface $stream
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public static function create(
+    public function factory(
         array $server,
         array $get,
         array $post,
         array $cookies,
         array $files,
-        $bodyResource
+        StreamInterface $stream = null
     ) {
-        $body = new Stream($bodyResource);
-        $headers = static::getHeadersFromServerParams($server);
+        if (!isset($stream)) {
+            $stream = new Stream('php://memory');
+        }
+        $headers = $this->getHeadersFromServerParams($server);
 
-        if (isset($headers['content-type']) && in_array('application/json', $headers['content-type'])) {
-            $post = json_decode($body->__toString(), true);
+        if (isset($headers['content-type']) && strpos($headers['content-type'][0], 'application/json') === 0) {
+            $post = json_decode($stream->__toString(), true);
         }
         return new ServerRequest(
             $server,
             $cookies,
             $get,
-            UploadedFileFactory::fromFiles($files),
+            $this->fileFactory->fromFiles($files),
             $post,
             [],
             isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET',
-            static::getUri($server),
+            $this->getUri($server),
             '1.1',
             $headers,
-            $body
+            $stream
         );
     }
 
     /**
      * @param array $server
-     * @return UriInterface
+     * @return \Wandu\Http\Psr\Uri
      */
-    public static function getUri(array $server)
+    protected function getUri(array $server)
     {
-        $stringUri = static::getHostAndPort($server);
+        $stringUri = $this->getHostAndPort($server);
         if ($stringUri !== '') {
-            $stringUri = static::getScheme($server) . '://' . $stringUri;
+            $stringUri = $this->getScheme($server) . '://' . $stringUri;
         }
-        $stringUri .= static::getRequestUri($server);
+        $stringUri .= $this->getRequestUri($server);
         return new Uri($stringUri);
     }
 
@@ -73,7 +85,7 @@ class ServerRequestFactory
      * @param array $server
      * @return string
      */
-    public static function getScheme(array $server)
+    protected function getScheme(array $server)
     {
         if ((isset($server['HTTPS']) && $server['HTTPS'] !== 'off')
             || (isset($server['HTTP_X_FORWAREDED_PROTO']) && $server['HTTP_X_FORWAREDED_PROTO'] === 'https')) {
@@ -86,7 +98,7 @@ class ServerRequestFactory
      * @param array $server
      * @return string
      */
-    public static function getHostAndPort(array $server)
+    protected function getHostAndPort(array $server)
     {
         if (isset($server['HTTP_HOST'])) {
             return $server['HTTP_HOST'];
@@ -105,7 +117,7 @@ class ServerRequestFactory
      * @param array $server
      * @return string
      */
-    public static function getRequestUri(array $server)
+    protected function getRequestUri(array $server)
     {
         if (isset($server['REQUEST_URI'])) {
             return $server['REQUEST_URI'];
@@ -117,7 +129,7 @@ class ServerRequestFactory
      * @param array $serverParams
      * @return array
      */
-    protected static function getHeadersFromServerParams(array $serverParams)
+    protected function getHeadersFromServerParams(array $serverParams)
     {
         $headers = array();
         foreach ($serverParams as $key => $value) {

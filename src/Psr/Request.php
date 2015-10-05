@@ -11,11 +11,11 @@ class Request extends Message implements RequestInterface
     use RequestTrait;
 
     /**
-     * @param string $protocolVersion
      * @param string $method
-     * @param UriInterface $uri
+     * @param \Psr\Http\Message\UriInterface $uri
+     * @param string $protocolVersion
      * @param array $headers
-     * @param StreamInterface $body
+     * @param \Psr\Http\Message\StreamInterface $body
      */
     public function __construct(
         $method = null,

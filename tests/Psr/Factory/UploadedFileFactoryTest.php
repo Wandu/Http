@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Factory;
+namespace Wandu\Http\Psr\Factory;
 
 use Mockery;
 use PHPUnit_Framework_TestCase;
@@ -7,7 +7,7 @@ use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 {
-    /** @var \Wandu\Http\Factory\UploadedFileFactory */
+    /** @var \Wandu\Http\Psr\Factory\UploadedFileFactory */
     protected $factory;
 
     public function setUp()

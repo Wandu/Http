@@ -6,7 +6,7 @@ use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\SessionAdapterInterface;
 use Wandu\Http\Contracts\SessionInterface;
 
-class SessionManager
+class SessionFactory
 {
     /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
     protected $adapter;
@@ -45,6 +45,10 @@ class SessionManager
         return new Session($sessionId, $this->adapter->read($sessionId));
     }
 
+    /**
+     * @param \Wandu\Http\Contracts\SessionInterface $session
+     * @param \Wandu\Http\Contracts\CookieJarInterface $cookieJar
+     */
     public function toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
     {
         $sessionName = $this->config['name'];

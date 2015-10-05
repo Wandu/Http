@@ -12,7 +12,7 @@ class Message implements MessageInterface
     /**
      * @param string $protocolVersion
      * @param array $headers
-     * @param StreamInterface $body
+     * @param \Psr\Http\Message\StreamInterface|null $body
      */
     public function __construct($protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)
     {

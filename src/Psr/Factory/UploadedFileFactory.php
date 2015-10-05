@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Factory;
+namespace Wandu\Http\Psr\Factory;
 
 use Wandu\Http\Psr\UploadedFile;
 

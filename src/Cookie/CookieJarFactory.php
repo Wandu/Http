@@ -5,7 +5,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
 
-class CookieManager
+class CookieJarFactory
 {
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request

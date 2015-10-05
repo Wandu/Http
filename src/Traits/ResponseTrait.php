@@ -11,6 +11,7 @@ trait ResponseTrait
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
+
         // SUCCESS CODES
         200 => 'OK',
         201 => 'Created',
@@ -21,6 +22,7 @@ trait ResponseTrait
         206 => 'Partial Content',
         207 => 'Multi-status',
         208 => 'Already Reported',
+
         // REDIRECTION CODES
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
@@ -30,6 +32,7 @@ trait ResponseTrait
         305 => 'Use Proxy',
         306 => 'Switch Proxy', // Deprecated
         307 => 'Temporary Redirect',
+
         // CLIENT ERROR
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -58,6 +61,7 @@ trait ResponseTrait
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
+
         // SERVER ERROR
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
