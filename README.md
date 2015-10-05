@@ -19,32 +19,29 @@ Reference [phly/http](https://github.com/phly/http).
 ## Basic Usage
 
 ```php
-<?php
-use Wandu\Http\Cookie\CookieManager;
-use Wandu\Http\Factory\ServerRequestFactory;
+use Wandu\Http\Cookie\CookieJarFactory;
+use Wandu\Http\Psr\Factory\ServerRequestFactory;
+use Wandu\Http\Psr\Factory\UploadedFileFactory;
 use Wandu\Http\Psr\Response;
-use Wandu\Http\Sender\ResponseSender;
-use Wandu\Http\Session\SessionManager;
-use Wandu\Http\Session\Storage\FileAdapter;
+use Wandu\Http\Psr\Sender\ResponseSender;
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\FileAdapter;
 
-require __DIR__ .'/vendor/autoload.php';
+$requestFactory = new ServerRequestFactory(new UploadedFileFactory());
+$request = $requestFactory->fromGlobals();
 
-date_default_timezone_set('UTC');
+$cookieFactory = new CookieJarFactory();
+$cookie = $cookieFactory->fromServerRequest($request);
 
-$request = ServerRequestFactory::fromGlobals();
-$cookieManager = new CookieManager();
-$cookie = $cookieManager->fromServerRequest($request);
-
-$sessionManager = new SessionManager(new FileAdapter(__DIR__));
-$session = $sessionManager->fromCookieJar($cookie);
+$sessionFactory = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+$session = $sessionFactory->fromCookieJar($cookie);
 
 // -- start controller --
+//$cookie->set('cookie3', 'new33!!');
+//$cookie->set('cookie4', 'new444');
 
-//$cookie->set('cookie1', 'new!!');
-//$cookie->set('cookie2', 'new222');
-
-//$session->set('sess1', '!!');
-//$session->set('sess2', '??');
+//$session->set('sess3', '!!');
+//$session->set('sess4', '??');
 
 echo "<h3>Cookie!!</h3>";
 echo "<pre>";
@@ -58,37 +55,12 @@ echo "</pre>";
 $response = new Response();
 
 // -- end controller --
-$sessionManager->toCookieJar($session, $cookie);
-$response = $cookieManager->toResponse($cookie, $response);
+$sessionFactory->toCookieJar($session, $cookie);
 
-ResponseSender::send($response);
+$response = $cookieFactory->toResponse($cookie, $response);
 
-```
+(new ResponseSender)->send($response);
 
-
-## Document
-
-### UploadedFileFactory
-
-> `UploadedFileFactory::fromFiles($_FILES)`
-
-### ServerRequestFactory
-
-> `ServerRequestFactory::fromGlobals()`
-
-> `ServerRequestFactory::create($server, $get, $post, $cookie, $files)`
-
-### ResponseSender
-
-> `ResponseSender::send(ResponseInterface $response)`
-
-### Example
-
-```php
-$app = new Your\Own\Application();
-$request = Wandu\Http\Factory\ServerRequestFactory::fromGlobals();
-$response = $app->execute($request);
-Wandu\Http\Sender\ResponseSender::send($response);
 ```
 
 It's so simple! :D
@@ -115,30 +87,43 @@ $stream = new Stream('php://input');
 
 ### Message
 
-> `new Message($protocolVersion, array $headers = [], StreamInterface $body = null)`
+> `new Message($protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
 
 ### Response
 
-> `new Response($statusCode = 200, $reasonPhrase = '', array $headers = [], StreamInterface $body = null)`
+> `new Response($statusCode = 200, $reasonPhrase = '', $protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
 
 ### Request
 
-> `new Request($httpVersion, $method = null, UriInterface $uri = null, array $headers = [], StreamInterface $body = null)`
+> `new Request($method = null, UriInterface $uri = null, $protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
 
 ### ServerReqeust
 
-> `new ServerRequest(array $serverParams = [], array $cookieParams = [], array $queryParams = [], array $uploadedFiles = [], $parsedBody = [], array $attributes = [], $httpVersion = '1.1', UriInterface $uri = null, StreamInterface $body = null)`
+> __construct
 
-You think it's too complicated. But, Let's see the next example!
-
-#### Example.
-
-```php
-$uri = new Uri();
-$request = new ServerRequest($_SERVER, $_COOKIE, $_GET, UploadedFileFactory::fromFiles($_FILES), $_POST, [], '1.1', $uri);
+```
+@param array $serverParams
+@param array $cookieParams
+@param array $queryParams
+@param array $uploadedFiles
+@param array $parsedBody
+@param array $attributes
+@param string $method
+@param \Psr\Http\Message\UriInterface|null $uri
+@param string $protocolVersion
+@param array $headers
+@param \Psr\Http\Message\StreamInterface|null $body
 ```
 
-If you want more simple source, use factory.
+You think it's too complicated. If you want more simple source, use factory.
+
+```php
+$requestFactory = new ServerRequestFactory(new UploadedFileFactory());
+$serverRequest = $requestFactory->fromGlobals();
+
+$serverRequest; // instanceof ServerRequestInterface
+```
+
 
 ### UploadedFile
 
