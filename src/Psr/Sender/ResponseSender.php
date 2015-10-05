@@ -8,7 +8,7 @@ class ResponseSender
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
      */
-    public static function send(ResponseInterface $response)
+    public function send(ResponseInterface $response)
     {
         $statusCode = $response->getStatusCode();
         $reasonPhrase = $response->getReasonPhrase();
