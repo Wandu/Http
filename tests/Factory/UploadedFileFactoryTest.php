@@ -7,13 +7,21 @@ use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
 {
+    /** @var \Wandu\Http\Factory\UploadedFileFactory */
+    protected $factory;
+
+    public function setUp()
+    {
+        $this->factory = new UploadedFileFactory();
+    }
+
     public function testSimple()
     {
-        $this->assertEquals([], UploadedFileFactory::fromFiles([]));
+        $this->assertEquals([], $this->factory->fromFiles([]));
         $this->assertEquals([
             'main' => new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
             'other' => new UploadedFile('/private/var/abcdefg', 6175, 0, 'img.png', 'image/png')
-        ], UploadedFileFactory::fromFiles([
+        ], $this->factory->fromFiles([
             'main' => [
                 'name' => 'img.png',
                 'type' => 'image/png',
@@ -39,7 +47,7 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
                 new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
                 new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png')
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $this->factory->fromFiles([
             'main' => [
                 'name' => ['img.png', 'img.png'],
                 'type' => ['image/png', 'image/png'],
@@ -55,7 +63,7 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
                 'sub1' => new UploadedFile('/private/var/abcdefg', 6171, 0, 'img.png', 'image/png'),
                 'sub2' => new UploadedFile('/private/var/abcdef2', 6172, 0, 'img2.png', 'image/png')
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $this->factory->fromFiles([
             'main' => [
                 'name' => [
                     'sub1' => 'img.png',
@@ -94,7 +102,7 @@ class UploadedFileFactoryTest extends PHPUnit_Framework_TestCase
                     'sub2' => new UploadedFile('/private/var/abcdefg', 6174, 0, 'sub2_sub2.png', 'image/png')
                 ]
             ]
-        ], UploadedFileFactory::fromFiles([
+        ], $this->factory->fromFiles([
             'main' => [
                 'name' => [
                     'sub1' => ['sub1_0.png', 'sub1_1.png'],
