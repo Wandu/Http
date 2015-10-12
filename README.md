@@ -20,46 +20,45 @@ Reference [phly/http](https://github.com/phly/http).
 
 ```php
 use Wandu\Http\Cookie\CookieJarFactory;
+use Wandu\Http\Psr\Factory\ResponseFactory;
 use Wandu\Http\Psr\Factory\ServerRequestFactory;
 use Wandu\Http\Psr\Factory\UploadedFileFactory;
-use Wandu\Http\Psr\Response;
 use Wandu\Http\Psr\Sender\ResponseSender;
-use Wandu\Http\Session\SessionFactory;
 use Wandu\Http\Session\Adapter\FileAdapter;
+use Wandu\Http\Session\SessionFactory;
 
 $requestFactory = new ServerRequestFactory(new UploadedFileFactory());
 $request = $requestFactory->fromGlobals();
 
-$cookieFactory = new CookieJarFactory();
-$cookie = $cookieFactory->fromServerRequest($request);
+$cookieManager = new CookieJarFactory();
+$cookie = $cookieManager->fromServerRequest($request);
 
-$sessionFactory = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
-$session = $sessionFactory->fromCookieJar($cookie);
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+$session = $sessionManager->fromCookieJar($cookie);
 
-// -- start controller --
-//$cookie->set('cookie3', 'new33!!');
-//$cookie->set('cookie4', 'new444');
+$responseFactory = new ResponseFactory();
+$response = $responseFactory->capture(function () use ($cookie, $session) {
+    //$cookie->set('cookie3', 'new33!!');
+    //$cookie->set('cookie4', 'new444');
+    //
+    //$session->set('sess3', '!!');
+    //$session->set('sess4', '??');
 
-//$session->set('sess3', '!!');
-//$session->set('sess4', '??');
+    echo "<h3>Cookie!!</h3>";
+    echo "<pre>";
+    print_r($cookie->toArray());
+    echo "</pre>";
+    echo "<h3>Session!!</h3>";
+    echo "<pre>";
+    print_r($session->toArray());
+    echo "</pre>";
+});
 
-echo "<h3>Cookie!!</h3>";
-echo "<pre>";
-print_r($cookie->toArray());
-echo "</pre>";
-echo "<h3>Session!!</h3>";
-echo "<pre>";
-print_r($session->toArray());
-echo "</pre>";
+$sessionManager->toCookieJar($session, $cookie);
+$response = $cookieManager->toResponse($cookie, $response);
 
-$response = new Response();
-
-// -- end controller --
-$sessionFactory->toCookieJar($session, $cookie);
-
-$response = $cookieFactory->toResponse($cookie, $response);
-
-(new ResponseSender)->send($response);
+$responseSender = new ResponseSender;
+$responseSender->send($response);
 
 ```
 
