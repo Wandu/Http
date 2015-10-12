@@ -1,6 +1,7 @@
 <?php
 namespace Wandu\Http\Psr\Factory;
 
+use Closure;
 use InvalidArgumentException;
 use Wandu\Http\Psr\Response;
 use Wandu\Http\Psr\Stream\StringStream;
@@ -22,6 +23,21 @@ class ResponseFactory
             $headers,
             isset($content) ? new StringStream($content) : null
         );
+    }
+
+    /**
+     * @param \Closure $area
+     * @param int $status
+     * @param array $headers
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function capture(Closure $area, $status = 200, array $headers = [])
+    {
+        ob_start();
+        $area();
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return $this->create($contents, $status, $headers);
     }
 
     /**
