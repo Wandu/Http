@@ -172,7 +172,7 @@ Wandu\Http\Psr\Uri::join(
 )
 ```
 
-** Wandu\Http\Psr\Uri::join **
+**Wandu\Http\Psr\Uri::join**
 
 It executes like urljoin function in python.
 
@@ -186,7 +186,7 @@ $uri->join($uriToJoin); // http://wani.kr/other-link
 If you want to see more detail test cases, see
 [this page](https://github.com/Wandu/Http/blob/master/tests/UriTest.php#L430).
 
-** Example. **
+**Example.**
 
 ```php
 // case in-sensitive
@@ -227,7 +227,7 @@ Wandu\Http\Psr\Factory\UploadedFileFactory::fromFiles(
 )
 ```
 
-** Example. **
+**Example.**
 
 ```php
 use Wandu\Http\Psr\Factory\UploadedFileFactory;
@@ -247,7 +247,7 @@ Wandu\Http\Psr\Factory\ServerRequestFactory::__construct(
 Wandu\Http\Psr\Factory\ServerRequestFactory::fromGlobals()
 ```
 
-** Example. **
+**Example.**
 
 ```php
 use Wandu\Http\Psr\Factory\ServerRequestFactory;
@@ -259,5 +259,89 @@ $serverRequest = $requestFactory->fromGlobals();
 $serverRequest; // instanceof ServerRequestInterface
 ```
 
-### Cookie & Session
+#### ResponseSender
 
+```php
+Wandu\Http\Psr\Sender\ResponseSender::send(
+    Psr\Http\Message\ResponseInterface $response
+) :void
+```
+
+### Cookie
+
+#### CookieJar
+
+`Wandu\Http\Cookie\CookieJar` is implementation of `Wandu\Http\Contracts\CookieJarInterface`
+
+```php
+Wandu\Http\Cookie\CookieJar::get(string $name) :string
+
+Wandu\Http\Cookie\CookieJar::set(string $name, string $value, DateTime $expire = null) :self
+
+Wandu\Http\Cookie\CookieJar::has(string $name) :bool
+
+Wandu\Http\Cookie\CookieJar::remove(string $name) :self
+```
+
+#### CookieJarFactory
+
+This is useful for bringing a cookie jar object(`CookieJarInterface`) from the server request object(`ServerRequestInterface`). And a cookie jar object brought from the server request object must apply to the response object(`ResponseInterface`).
+
+```php
+// from ServerRequestInterface
+Wandu\Http\Cookie\CookieJarFactory::fromServerRequest(
+    Psr\Http\Message\ServerRequestInterface $request
+) :Wandu\Http\Contracts\CookieJarInterface
+
+// to ResponseInterface
+Wandu\Http\Cookie\CookieJarFactory::toResponse(
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar,
+    Psr\Http\Message\ResponseInterface $response
+) :Psr\Http\Message\ResponseInterface
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Cookie\CookieJarFactory;
+use Wandu\Http\Psr\Response;
+use Wandu\Http\Psr\ServerRequest;
+
+$cookieFactory = new CookieJarFactory();
+$cookie = $cookieFactory->fromServerRequest($request); // request is a ServerRequest object.
+
+// -- start controller --
+//$cookie->set('cookie3', 'new33!!');
+//$cookie->set('cookie4', 'new444');
+
+$response = new Response();
+$response = $cookieFactory->toResponse($cookie, $response);
+```
+
+### Session
+
+#### Session
+
+`Wandu\Http\Session\Session` is implementation of `Wandu\Http\Contracts\SessionInterface`
+
+```php
+Wandu\Http\Session\Session::getId() :string
+
+Wandu\Http\Session\Session::get(string $name, mixed $default = null) :mixed
+
+Wandu\Http\Session\Session::set(string $name, mixed $value) :self
+
+Wandu\Http\Session\Session::flash(string $name, mixed $value) :self
+
+Wandu\Http\Session\Session::has(string $name) :bool
+
+Wandu\Http\Session\Session::remove(string $name) :self
+```
+
+#### SessionFactory
+
+...
+
+### Session Adapter
+
+...
