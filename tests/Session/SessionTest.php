@@ -84,4 +84,16 @@ class SessionTest extends PHPUnit_Framework_TestCase
         unset($this->session['id']);
         $this->assertFalse($this->session->has('id'));
     }
+
+    /**
+     * @issue #4 add session flash method
+     * @ref https://github.com/Wandu/Http/issues/4
+     */
+    public function testFlash()
+    {
+        $this->session->flash('flash', 'hello world!');
+
+        $this->assertEquals('hello world!', $this->session->get('flash'));
+        $this->assertNull($this->session->get('flash'));
+    }
 }

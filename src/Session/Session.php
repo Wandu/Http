@@ -44,6 +44,11 @@ class Session implements SessionInterface
     public function get($name, $default = null)
     {
         $this->validNameArgument($name);
+        if (isset($this->dataSet['_flash'][$name])) {
+            $resultToReturn = $this->dataSet['_flash'][$name];
+            unset($this->dataSet['_flash'][$name]);
+            return $resultToReturn;
+        }
         return isset($this->dataSet[$name]) ? $this->dataSet[$name] : $default;
     }
 
@@ -57,9 +62,17 @@ class Session implements SessionInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function flash($name, $value)
     {
-
+        unset($this->dataSet[$name]);
+        if (!isset($this->dataSet['_flash'])) {
+            $this->dataSet['_flash'] = [];
+        }
+        $this->dataSet['_flash'][$name] = $value;
+        return $this;
     }
 
     /**

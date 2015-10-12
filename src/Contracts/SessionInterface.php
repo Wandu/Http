@@ -31,6 +31,13 @@ interface SessionInterface extends ArrayAccess
 
     /**
      * @param string $name
+     * @param mixed $value
+     * @return self
+     */
+    public function flash($name, $value);
+
+    /**
+     * @param string $name
      * @return bool
      */
     public function has($name);
