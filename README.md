@@ -65,13 +65,20 @@ $response = $cookieFactory->toResponse($cookie, $response);
 
 It's so simple! :D
 
-## Api
+## Documents
 
-### Stream
+### Psr7 Implementations
 
-> `new Stream($stream = 'php://memory', $mode = 'r')`
+#### Stream
 
-#### Example.
+```php
+Wandu\Http\Psr\Stream::__construct(
+    string $stream = 'php://memory',
+    string $mode = 'r'
+)
+```
+
+**Example.**
 
 Read / Write Stream.
 
@@ -85,55 +92,87 @@ From HTTP Request body.
 $stream = new Stream('php://input');
 ```
 
-### Message
-
-> `new Message($protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
-
-### Response
-
-> `new Response($statusCode = 200, $reasonPhrase = '', $protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
-
-### Request
-
-> `new Request($method = null, UriInterface $uri = null, $protocolVersion = '1.1', array $headers = [], StreamInterface $body = null)`
-
-### ServerReqeust
-
-> __construct
-
-```
-@param array $serverParams
-@param array $cookieParams
-@param array $queryParams
-@param array $uploadedFiles
-@param array $parsedBody
-@param array $attributes
-@param string $method
-@param \Psr\Http\Message\UriInterface|null $uri
-@param string $protocolVersion
-@param array $headers
-@param \Psr\Http\Message\StreamInterface|null $body
-```
-
-You think it's too complicated. If you want more simple source, use factory.
+#### Message
 
 ```php
-$requestFactory = new ServerRequestFactory(new UploadedFileFactory());
-$serverRequest = $requestFactory->fromGlobals();
-
-$serverRequest; // instanceof ServerRequestInterface
+Wandu\Http\Psr\Message::__construct(
+    string $protocolVersion = '1.1',
+    array $headers = [],
+    Psr\Http\Message\StreamInterface $body = null
+)
 ```
 
+#### Response
 
-### UploadedFile
+```php
+Wandu\Http\Psr\Response::__construct(
+    int $statusCode = 200,
+    string $reasonPhrase = '',
+    string $protocolVersion = '1.1',
+    array $headers = [],
+    Psr\Http\Message\StreamInterface $body = null
+)
+```
 
-> `new UploadedFile($file = null, $size = null, $error = null, $clientFileName = null, $clientMediaType = null)`
+#### Request
 
-### Uri
+```php
+Wandu\Http\Psr\Request::__construct(
+    string $method = null,
+    Psr\Http\Message\UriInterface $uri = null,
+    string $protocolVersion = '1.1',
+    array $headers = [],
+    Psr\Http\Message\StreamInterface $body = null
+)
+```
 
-> `new Uri($uri)`
+#### ServerRequest
 
-#### Uri::join
+```php
+Wandu\Http\Psr\ServerRequest::__construct(
+    array $serverParams = [],
+    array $cookieParams = [],
+    array $queryParams = [],
+    array $uploadedFiles = [],
+    array $parsedBody = [],
+    array $attributes = [],
+    string $method = null,
+    Psr\Http\Message\UriInterface $uri = null,
+    string $protocolVersion = '1.1',
+    array $headers = [],
+    Psr\Http\Message\StreamInterface $body = null
+)
+```
+
+You think it's too complicated. If you want more simple source, use [ServerRequestFactory](#serverrequestfactory).
+
+#### UploadedFile
+
+```php
+Wandu\Http\Psr\UploadedFile::__construct(
+    string $file = null,
+    int $size = null,
+    int $error = null,
+    string $clientFileName = null,
+    string $clientMediaType = null
+)
+```
+
+You think it's too complicated also. If you want more simple source, use [UploadedFileFactory](#uploadedfilefactory).
+
+#### Uri
+
+```php
+Wandu\Http\Psr\Uri::__construct(
+    string $uri
+)
+
+Wandu\Http\Psr\Uri::join(
+    Wandu\Http\Psr\Uri $uri
+)
+```
+
+** Wandu\Http\Psr\Uri::join **
 
 It executes like urljoin function in python.
 
@@ -147,7 +186,7 @@ $uri->join($uriToJoin); // http://wani.kr/other-link
 If you want to see more detail test cases, see
 [this page](https://github.com/Wandu/Http/blob/master/tests/UriTest.php#L430).
 
-#### Example.
+** Example. **
 
 ```php
 // case in-sensitive
@@ -177,3 +216,48 @@ new Uri('/hello/enwl dfk/-_-/한글'); // getPath -> '/hello/enwl%20dfk/-_-/%ED_
 new Uri('http://blog.wani.kr?hello=world&abc=def');
 new Uri('http://blog.wani.kr/path/name?hello=world#fragment');
 ```
+
+### Factory Classes
+
+#### UploadedFileFactory
+
+```php
+Wandu\Http\Psr\Factory\UploadedFileFactory::fromFiles(
+    array $files
+)
+```
+
+** Example. **
+
+```php
+use Wandu\Http\Psr\Factory\UploadedFileFactory;
+
+$factory = new UploadedFileFactory();
+$treeOfFiles = $factory->fromFiles($_FILES);
+$treeOfFiles; // array of UploadedFile object.
+```
+
+#### ServerRequestFactory
+
+```php
+Wandu\Http\Psr\Factory\ServerRequestFactory::__construct(
+    Wandu\Http\Psr\Factory\UploadedFileFactory $fileFactory
+)
+
+Wandu\Http\Psr\Factory\ServerRequestFactory::fromGlobals()
+```
+
+** Example. **
+
+```php
+use Wandu\Http\Psr\Factory\ServerRequestFactory;
+use Wandu\Http\Psr\Factory\UploadedFileFactory;
+
+$requestFactory = new ServerRequestFactory(new UploadedFileFactory());
+$serverRequest = $requestFactory->fromGlobals();
+
+$serverRequest; // instanceof ServerRequestInterface
+```
+
+### Cookie & Session
+
