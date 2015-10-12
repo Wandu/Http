@@ -135,6 +135,9 @@ class StringStream implements StreamInterface
      */
     public function getContents()
     {
+        if ($this->context === '') {
+            return '';
+        }
         $result = substr($this->context, $this->cursor);
         $this->cursor = strlen($this->context);
         return $result;

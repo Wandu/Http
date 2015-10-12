@@ -61,4 +61,9 @@ trait StreamTestTrait
         $this->assertEquals("ll Developers!", $this->stream->getContents());
         $this->assertEquals("Hello World,Hum...ll Developers!", $this->stream->__toString());
     }
+
+    public function testNullToString()
+    {
+        $this->assertSame('', $this->stream->__toString());
+    }
 }
