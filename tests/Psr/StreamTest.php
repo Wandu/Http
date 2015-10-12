@@ -8,6 +8,13 @@ use RuntimeException;
 
 class StreamTest extends PHPUnit_Framework_TestCase
 {
+    use StreamTestTrait;
+
+    public function setUp()
+    {
+        $this->stream = new Stream('php://memory', 'w+');
+    }
+
     public function testConstruct()
     {
         new Stream();
@@ -23,21 +30,9 @@ class StreamTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testWrite()
+    public function testGetMetaDataSeekable()
     {
-        $stream = new Stream('php://memory', "w+");
-        $stream->write("what the?");
-        $this->assertEquals('what the?', $stream->__toString());
-    }
-
-    public function testMetadata()
-    {
-        $stream = new Stream('php://memory', "w+");
-
-        $this->assertTrue(is_array($stream->getMetadata()));
-
-        $this->assertEquals(1, $stream->getMetadata('seekable'));
-        $this->assertNull($stream->getMetadata('unknown.........'));
+        $this->assertEquals(1, $this->stream->getMetadata('seekable'));
     }
 
     public function testIsWritableAndReadable()
@@ -77,33 +72,6 @@ class StreamTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($stream->isReadable());
 
         @unlink($fileName);
-    }
-
-    public function testReadAndWrite()
-    {
-
-        $stream = new Stream('php://memory', 'w+');
-
-        $this->assertEquals(0, $stream->getSize());
-
-        $stream->write("Hello World, And All Developers!");
-
-        $this->assertEquals(32, $stream->getSize()); // size
-
-        $this->assertEquals(32, $stream->tell()); // pointer
-
-        $stream->rewind();
-
-        $this->assertEquals(0, $stream->tell());
-
-        $this->assertFalse($stream->eof());
-
-
-        $this->assertEquals("Hell", $stream->read(4));
-        $this->assertEquals("o World, ", $stream->read(9));
-        $this->assertEquals("And All Developers!", $stream->getContents());
-
-        $this->assertTrue($stream->eof());
     }
 
     public function testCloseAndException()

@@ -118,10 +118,9 @@ class Stream implements StreamInterface
         if (!$this->isSeekable()) {
             throw new RuntimeException('Stream is not seekable');
         }
-        if (0 !== $result = fseek($this->resource, $offset, $whence)) {
+        if (0 !== fseek($this->resource, $offset, $whence)) {
             throw new RuntimeException('Error seeking within stream.');
         }
-        return $result;
     }
 
     /**
@@ -129,7 +128,7 @@ class Stream implements StreamInterface
      */
     public function rewind()
     {
-        return $this->seek(0);
+        $this->seek(0);
     }
 
     /**
