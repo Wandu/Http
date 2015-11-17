@@ -339,7 +339,36 @@ Wandu\Http\Session\Session::remove(string $name) :self
 
 #### SessionFactory
 
-...
+This is useful for bringing a session object(`SessionInterface`) from the cookie jar  object(`CookieJarInterface`). And a session object brought from the cookie jar object must apply to the same cookie jar object(`CookieJarInterface`).
+
+```php
+// from CookieJarInterface
+Wandu\Http\Session\SessionFactory::fromCookieJar(
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar
+) :Wandu\Http\Contracts\SessionInterface
+
+// to CookieJarInterface
+Wandu\Http\Session\SessionFactory::toCookieJar(
+    Wandu\Http\Contracts\SessionInterface $session,
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar
+) :void
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\FileAdapter;
+
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess')); // default Adapter
+$session = $sessionManager->fromCookieJar($cookie); // $cookie is the instance of CookieJarInterface
+
+//$session->set('sess3', '!!');
+//$session->set('sess4', '??');
+
+$sessionManager->toCookieJar($session, $cookie);
+```
 
 ### Session Adapter
 
