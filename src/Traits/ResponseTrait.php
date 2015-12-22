@@ -61,6 +61,7 @@ trait ResponseTrait
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
+        451 => 'Unavailable For Legal Reasons',
 
         // SERVER ERROR
         500 => 'Internal Server Error',
