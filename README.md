@@ -372,4 +372,29 @@ $sessionManager->toCookieJar($session, $cookie);
 
 ### Session Adapter
 
-...
+There are two adapters.
+
+ - `FileAdapter`
+ - `RedisAdapter`
+ 
+#### File Adapter
+
+**Example.**
+
+```php
+$redisClient = new \Predis\Client();
+$sessionManager = new SessionFactory(new RedisAdapter($redisClient));
+```
+
+#### Redis Adapter
+
+**Example.**
+
+```php
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+```
+
+### Parameter
+
+#### Parameter
+
