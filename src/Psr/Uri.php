@@ -12,7 +12,7 @@ class Uri implements UriInterface
     /** @var string */
     private $host;
 
-    /** @var string */
+    /** @var int */
     private $port;
 
     /** @var string */

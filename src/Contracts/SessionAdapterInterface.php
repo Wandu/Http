@@ -5,7 +5,7 @@ interface SessionAdapterInterface
 {
     /**
      * @param string $sessionId
-     * @return \Wandu\Http\Contracts\SessionInterface
+     * @return array
      */
     public function read($sessionId);
 

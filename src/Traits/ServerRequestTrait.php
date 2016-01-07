@@ -133,7 +133,7 @@ trait ServerRequestTrait
     /**
      * @param string $name
      * @param mixed $value
-     * @return \Wandu\Http\Traits\ServerRequestTrait
+     * @return static
      */
     public function withAttribute($name, $value)
     {
