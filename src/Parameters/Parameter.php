@@ -24,6 +24,9 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
      */
     public function getAll()
     {
+        if (isset($this->fallback)) {
+            return $this->params + $this->fallback->getAll();
+        }
         return $this->params;
     }
 

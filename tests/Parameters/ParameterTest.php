@@ -38,6 +38,24 @@ class ParameterTest extends PHPUnit_Framework_TestCase
         ], $params->getAll());
     }
 
+    public function testGetAllWithFallback()
+    {
+        $fallbacks = new Parameter([
+            'string1' => 'string 1 fallback!',
+            'fallback' => 'fallback!',
+        ]);
+        $params = new Parameter([
+            'string1' => 'string 1!',
+            'string2' => 'string 2!',
+        ], $fallbacks);
+
+        $this->assertSame([
+            'string1' => 'string 1!',
+            'string2' => 'string 2!',
+            'fallback' => 'fallback!',
+        ], $params->getAll());
+    }
+
     public function testGetWithDefault()
     {
         $params = new Parameter([
