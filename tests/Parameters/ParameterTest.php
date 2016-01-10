@@ -28,6 +28,16 @@ class ParameterTest extends PHPUnit_Framework_TestCase
         $this->assertNull($params->get('null', "Other Value!!"));
     }
 
+    public function testGetAll()
+    {
+        $params = new Parameter([
+            'null' => null,
+        ]);
+        $this->assertSame([
+            'null' => null,
+        ], $params->getAll());
+    }
+
     public function testGetWithDefault()
     {
         $params = new Parameter([

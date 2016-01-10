@@ -20,10 +20,15 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     }
 
     /**
-     * @param string $key
-     * @param mixed $default
-     * @param array $option
-     * @return mixed
+     * {@inheritdoc}
+     */
+    public function getAll()
+    {
+        return $this->params;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function get($key, $default = null, array $option = [])
     {
