@@ -55,12 +55,14 @@ class SessionFactory
         $this->adapter->write($session->getId(), $session->toArray());
         if (!$cookieJar->has($sessionName)) {
             $sessionId = $this->generateId();
-            $cookieJar->set(
-                $sessionName,
-                $sessionId,
-                (new DateTime())->setTimestamp(time() + $this->config['timeout'])
-            );
+        } else {
+            $sessionId = $cookieJar->get($sessionName);
         }
+        $cookieJar->set(
+            $sessionName,
+            $sessionId,
+            (new DateTime())->setTimestamp(time() + $this->config['timeout'])
+        );
     }
 
     /**
