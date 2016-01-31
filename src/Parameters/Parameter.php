@@ -22,30 +22,48 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     /**
      * {@inheritdoc}
      */
-    public function getAll()
+    public function toArray(array $casts = [])
     {
-        if (isset($this->fallback)) {
-            return $this->params + $this->fallback->getAll();
+        $arrayToReturn = $this->params;
+        foreach ($casts as $name => $cast) {
+            $arrayToReturn[$name] = $this->applyCasting($arrayToReturn[$name], $cast);
         }
-        return $this->params;
+        if (isset($this->fallback)) {
+            return $arrayToReturn + $this->fallback->toArray($casts);
+        }
+        return $arrayToReturn;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null, array $option = [])
+    public function get($key, $default = null, $cast = null)
     {
         if (array_key_exists($key, $this->params)) {
             $value = $this->params[$key];
         } elseif (isset($this->fallback)) {
-            $value = $this->fallback->get($key, $default, $option);
+            $value = $this->fallback->get($key, $default, $cast);
         } else {
             $value = $default;
         }
-        if (isset($option['cast'])) {
-            $value = $this->applyCasting($value, $option['cast']);
+        if (isset($cast)) {
+            $value = $this->applyCasting($value, $cast);
         }
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has($key)
+    {
+        if (array_key_exists($key, $this->params)) {
+            return true;
+        }
+        if (isset($this->fallback) && $this->fallback->has($key)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -55,7 +73,7 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
      */
     protected function applyCasting($value, $type)
     {
-        if (strpos($type, '[]') !== false || $type === 'array') {
+        if (($p = strpos($type, '[]')) !== false || $type === 'array') {
             if (!is_array($value)) {
                 if (strpos($value, ',') !== false) {
                     $value = explode(',', $value);
@@ -63,52 +81,31 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
                     $value = [$value];
                 }
             }
+            if ($type === 'array') {
+                return $value;
+            }
+            $typeInArray = substr($type, 0, $p);
+            return array_map(function ($item) use ($typeInArray) {
+                return $this->applyCasting($item, $typeInArray);
+            }, $value);
         }
         switch ($type) {
             case 'string':
                 if (is_array($value)) {
-                    $value = implode(',', $value);
+                    return implode(',', $value);
                 }
                 break;
-            case "integer":
-            case "int":
-                $value = (int) $value;
-                break;
-            case "integer[]":
-            case "int[]":
-                $value = array_map(function ($item) {
-                    return (integer) $item;
-                }, $value);
-                break;
-            case "float":
-                $value = (float) $value;
-                break;
             case "number":
-            case "double":
-                $value = (double) $value;
-                break;
-            case "float[]":
-                $value = array_map(function ($item) {
-                    return (float) $item;
-                }, $value);
-                break;
-            case "number[]":
-            case "double[]":
-                $value = array_map(function ($item) {
-                    return (double) $item;
-                }, $value);
+                $type = 'float';
                 break;
             case "bool":
             case "boolean":
-                $value = (bool) $value;
-                break;
-            case "bool[]":
-            case "boolean[]":
-                $value = array_map(function ($item) {
-                    return (bool) $item;
-                }, $value);
+                if ($value === 'false') {
+                    $value = false;
+                }
                 break;
         }
+        settype($value, $type);
         return $value;
     }
 }

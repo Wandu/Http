@@ -4,15 +4,22 @@ namespace Wandu\Http\Parameters;
 interface ParameterInterface
 {
     /**
+     * @param array $casts
      * @return array
      */
-    public function getAll();
+    public function toArray(array $casts = []);
 
     /**
      * @param string $key
      * @param mixed $default
-     * @param array $option
+     * @param string $cast
      * @return mixed
      */
-    public function get($key, $default = null, array $option = []);
+    public function get($key, $default = null, $cast = null);
+
+    /**
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key);
 }
