@@ -7,6 +7,16 @@ use RuntimeException;
 
 class UploadedFile implements UploadedFileInterface
 {
+    const OK = 0;
+    const ERR_MAX_INI_SIZE = 1;
+    const ERR_MAX_FORM_SIZE = 2;
+    const ERR_UPLOAD_PARTIAL = 3;
+    const ERR_NO_FILE = 4;
+    // 5
+    const ERR_NO_TEMP_DIR = 6;
+    const ERR_CANNOT_WRITE = 7;
+    const ERR_EXTENSION = 8;
+
     /** @var string */
     protected $file;
 
