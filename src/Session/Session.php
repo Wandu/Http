@@ -33,7 +33,7 @@ class Session implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function toArray()
+    public function toArray(array $casts = [])
     {
         return $this->dataSet;
     }
@@ -41,7 +41,7 @@ class Session implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, $default = null)
+    public function get($name, $default = null, $cast = null)
     {
         $this->validNameArgument($name);
         if (isset($this->dataSet['_flash'][$name])) {

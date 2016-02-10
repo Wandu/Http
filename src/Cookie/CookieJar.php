@@ -23,9 +23,9 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray()
+    public function toArray(array $casts = [])
     {
         $resultToReturn = [];
         foreach ($this->setCookies as $name => $setCookie) {
@@ -35,10 +35,9 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @param string $name
-     * @return string|null
+     * {@inheritdoc}
      */
-    public function get($name)
+    public function get($name, $default = null, $cast = null)
     {
         if (isset($this->setCookies[$name])) {
             return $this->setCookies[$name]->getValue();
@@ -47,10 +46,7 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @param string $name
-     * @param string $value
-     * @param \DateTime $expire
-     * @return self
+     * {@inheritdoc}
      */
     public function set($name, $value, DateTime $expire = null)
     {
@@ -59,8 +55,7 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * {@inheritdoc}
      */
     public function has($name)
     {
@@ -68,8 +63,7 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @param string $name
-     * @return self
+     * {@inheritdoc}
      */
     public function remove($name)
     {

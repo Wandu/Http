@@ -1,17 +1,21 @@
 <?php
 namespace Wandu\Http\Parameters;
 
+use Wandu\Http\Contracts\ParameterInterface;
+use Wandu\Http\Contracts\ParsedBodyInterface;
+use Wandu\Http\Contracts\QueryParamsInterface;
+
 class Parameter implements QueryParamsInterface, ParsedBodyInterface
 {
     /** @var array */
     protected $params;
 
-    /** @var \Wandu\Http\Parameters\ParameterInterface */
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
     protected $fallback;
 
     /**
      * @param array $params
-     * @param \Wandu\Http\Parameters\ParameterInterface $fallback
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
      */
     public function __construct(array $params = [], ParameterInterface $fallback = null)
     {
@@ -46,10 +50,7 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
         } else {
             $value = $default;
         }
-        if (isset($cast)) {
-            $value = $this->applyCasting($value, $cast);
-        }
-        return $value;
+        return $this->applyCasting($value, $cast);
     }
 
     /**
@@ -71,8 +72,11 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
      * @param string $type
      * @return mixed
      */
-    protected function applyCasting($value, $type)
+    protected function applyCasting($value, $type = null)
     {
+        if (!isset($type)) {
+            return $value;
+        }
         if (($p = strpos($type, '[]')) !== false || $type === 'array') {
             if (!is_array($value)) {
                 if (strpos($value, ',') !== false) {
