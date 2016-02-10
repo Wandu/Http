@@ -5,19 +5,8 @@ use ArrayAccess;
 use DateTime;
 use IteratorAggregate;
 
-interface CookieJarInterface extends ArrayAccess, IteratorAggregate
+interface CookieJarInterface extends ArrayAccess, IteratorAggregate, ParameterInterface
 {
-    /**
-     * @return array
-     */
-    public function toArray();
-
-    /**
-     * @param string $name
-     * @return string|null
-     */
-    public function get($name);
-
     /**
      * @param string $name
      * @param string $value
@@ -25,12 +14,6 @@ interface CookieJarInterface extends ArrayAccess, IteratorAggregate
      * @return self
      */
     public function set($name, $value, DateTime $expire = null);
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function has($name);
 
     /**
      * @param string $name
