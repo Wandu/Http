@@ -48,6 +48,7 @@ class SessionFactory
     /**
      * @param \Wandu\Http\Contracts\SessionInterface $session
      * @param \Wandu\Http\Contracts\CookieJarInterface $cookieJar
+     * @return \Wandu\Http\Contracts\SessionInterface $session
      */
     public function toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
     {
@@ -63,6 +64,7 @@ class SessionFactory
             $sessionId,
             (new DateTime())->setTimestamp(time() + $this->config['timeout'])
         );
+        return $session;
     }
 
     /**
