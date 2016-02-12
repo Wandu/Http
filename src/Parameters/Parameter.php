@@ -4,6 +4,7 @@ namespace Wandu\Http\Parameters;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Contracts\ParsedBodyInterface;
 use Wandu\Http\Contracts\QueryParamsInterface;
+use Wandu\Http\Support\Caster;
 
 class Parameter implements QueryParamsInterface, ParsedBodyInterface
 {
@@ -30,7 +31,7 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     {
         $arrayToReturn = $this->params;
         foreach ($casts as $name => $cast) {
-            $arrayToReturn[$name] = $this->applyCasting($arrayToReturn[$name], $cast);
+            $arrayToReturn[$name] = (new Caster($arrayToReturn[$name]))->cast($cast);
         }
         if (isset($this->fallback)) {
             return $arrayToReturn + $this->fallback->toArray($casts);
@@ -50,7 +51,7 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
         } else {
             $value = $default;
         }
-        return $this->applyCasting($value, $cast);
+        return (new Caster($value))->cast($cast);
     }
 
     /**
@@ -68,48 +69,10 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     }
 
     /**
-     * @param mixed $value
-     * @param string $type
-     * @return mixed
+     * {@inheritdoc}
      */
-    protected function applyCasting($value, $type = null)
+    public function setData(array $dataSet)
     {
-        if (!isset($type)) {
-            return $value;
-        }
-        if (($p = strpos($type, '[]')) !== false || $type === 'array') {
-            if (!is_array($value)) {
-                if (strpos($value, ',') !== false) {
-                    $value = explode(',', $value);
-                } else {
-                    $value = [$value];
-                }
-            }
-            if ($type === 'array') {
-                return $value;
-            }
-            $typeInArray = substr($type, 0, $p);
-            return array_map(function ($item) use ($typeInArray) {
-                return $this->applyCasting($item, $typeInArray);
-            }, $value);
-        }
-        switch ($type) {
-            case 'string':
-                if (is_array($value)) {
-                    return implode(',', $value);
-                }
-                break;
-            case "number":
-                $type = 'float';
-                break;
-            case "bool":
-            case "boolean":
-                if ($value === 'false') {
-                    $value = false;
-                }
-                break;
-        }
-        settype($value, $type);
-        return $value;
+        // TODO: Implement setData() method.
     }
 }
