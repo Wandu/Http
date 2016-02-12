@@ -4,21 +4,22 @@ namespace Wandu\Http\Cookie;
 use ArrayIterator;
 use DateTime;
 use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Contracts\ParameterInterface;
+use Wandu\Http\Parameters\Parameter;
+use Wandu\Http\Support\Caster;
 
-class CookieJar implements CookieJarInterface
+class CookieJar extends Parameter implements CookieJarInterface
 {
-    /** @var array */
-    protected $cookies;
-
     /** @var \Wandu\Http\Cookie\Cookie[] */
     protected $setCookies;
 
     /**
      * @param array $cookieParams
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
      */
-    public function __construct(array $cookieParams = [])
+    public function __construct(array $cookieParams = [], ParameterInterface $fallback = null)
     {
-        $this->cookies = $cookieParams;
+        parent::__construct($cookieParams, $fallback);
         $this->setCookies = [];
     }
 
@@ -31,7 +32,7 @@ class CookieJar implements CookieJarInterface
         foreach ($this->setCookies as $name => $setCookie) {
             $resultToReturn[$name] = $setCookie->getValue();
         }
-        return $resultToReturn + $this->cookies;
+        return $resultToReturn + parent::toArray($casts);
     }
 
     /**
@@ -40,9 +41,9 @@ class CookieJar implements CookieJarInterface
     public function get($name, $default = null, $cast = null)
     {
         if (isset($this->setCookies[$name])) {
-            return $this->setCookies[$name]->getValue();
+            return (new Caster($this->setCookies[$name]->getValue()))->cast($cast);
         }
-        return isset($this->cookies[$name]) ? $this->cookies[$name] : null;
+        return parent::get($name, $default, $cast);
     }
 
     /**
@@ -59,7 +60,10 @@ class CookieJar implements CookieJarInterface
      */
     public function has($name)
     {
-        return $this->get($name) !== null;
+        if (array_key_exists($name, $this->setCookies) && $this->setCookies[$name]->getValue()) {
+            return true;
+        }
+        return parent::has($name);
     }
 
     /**
@@ -68,6 +72,7 @@ class CookieJar implements CookieJarInterface
     public function remove($name)
     {
         $this->setCookies[$name] = new Cookie($name);
+        unset($this->params[$name]);
         return $this;
     }
 

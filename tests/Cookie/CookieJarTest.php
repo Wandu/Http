@@ -4,14 +4,42 @@ namespace Wandu\Http\Cookie;
 use PHPUnit_Framework_TestCase;
 use Mockery;
 use Traversable;
+use Wandu\Http\Contracts\ParameterInterfaceTestTrait;
 
 class CookieJarTest extends PHPUnit_Framework_TestCase
 {
+    use ParameterInterfaceTestTrait;
+
     /** @var \Wandu\Http\Cookie\CookieJar */
     private $cookies;
 
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param1;
+
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param2;
+
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param3;
+
     public function setUp()
     {
+        $this->param1 = new CookieJar([
+            'string' => 'string!',
+            'number' => '10',
+        ]);
+        $this->param2 = new CookieJar([
+            'null' => null,
+        ]);
+
+        $this->param3 = new CookieJar([
+            'string1' => 'string 1!',
+            'string2' => 'string 2!',
+        ], new CookieJar([
+            'string1' => 'string 1 fallback!',
+            'fallback' => 'fallback!',
+        ]));
+
         $this->cookies = new CookieJar([
             'user' => '0000-1111-2222-3333',
         ]);
