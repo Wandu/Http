@@ -66,6 +66,163 @@ It's so simple! :D
 
 ## Documents
 
+### File Uploader
+
+Wandu Http는 PSR7에서 사용하기 쉽게 몇가지 기능들을 제공하고 있습니다. 그 중 하나가 바로 File Uploader입니다.
+
+**Example.**
+
+```php
+$request; // ServerRequestInterface.
+
+$uploader = new \Wandu\Http\Psr\File\Uploader(__DIR__ . '/files');
+
+$uploader->uploadFiles($request->getUploadedFiles()); // uploaded files' name return.
+```
+
+### Cookie
+
+#### CookieJar
+
+`Wandu\Http\Cookie\CookieJar` is implementation of `Wandu\Http\Contracts\CookieJarInterface`
+
+```php
+Wandu\Http\Cookie\CookieJar::get(string $name) :string
+
+Wandu\Http\Cookie\CookieJar::set(string $name, string $value, DateTime $expire = null) :self
+
+Wandu\Http\Cookie\CookieJar::has(string $name) :bool
+
+Wandu\Http\Cookie\CookieJar::remove(string $name) :self
+```
+
+#### CookieJarFactory
+
+This is useful for bringing a cookie jar object(`CookieJarInterface`) from the server request object(`ServerRequestInterface`). And a cookie jar object brought from the server request object must apply to the response object(`ResponseInterface`).
+
+```php
+// from ServerRequestInterface
+Wandu\Http\Cookie\CookieJarFactory::fromServerRequest(
+    Psr\Http\Message\ServerRequestInterface $request
+) :Wandu\Http\Contracts\CookieJarInterface
+
+// to ResponseInterface
+Wandu\Http\Cookie\CookieJarFactory::toResponse(
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar,
+    Psr\Http\Message\ResponseInterface $response
+) :Psr\Http\Message\ResponseInterface
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Cookie\CookieJarFactory;
+use Wandu\Http\Psr\Response;
+use Wandu\Http\Psr\ServerRequest;
+
+$cookieFactory = new CookieJarFactory();
+$cookie = $cookieFactory->fromServerRequest($request); // request is a ServerRequest object.
+
+// -- start controller --
+//$cookie->set('cookie3', 'new33!!');
+//$cookie->set('cookie4', 'new444');
+
+$response = new Response();
+$response = $cookieFactory->toResponse($cookie, $response);
+```
+
+### Session
+
+#### Session
+
+`Wandu\Http\Session\Session` is implementation of `Wandu\Http\Contracts\SessionInterface`
+
+```php
+Wandu\Http\Session\Session::getId() :string
+
+Wandu\Http\Session\Session::get(string $name, mixed $default = null) :mixed
+
+Wandu\Http\Session\Session::set(string $name, mixed $value) :self
+
+Wandu\Http\Session\Session::flash(string $name, mixed $value) :self
+
+Wandu\Http\Session\Session::has(string $name) :bool
+
+Wandu\Http\Session\Session::remove(string $name) :self
+```
+
+#### SessionFactory
+
+This is useful for bringing a session object(`SessionInterface`) from the cookie jar  object(`CookieJarInterface`). And a session object brought from the cookie jar object must apply to the same cookie jar object(`CookieJarInterface`).
+
+```php
+// from CookieJarInterface
+Wandu\Http\Session\SessionFactory::fromCookieJar(
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar
+) :Wandu\Http\Contracts\SessionInterface
+
+// to CookieJarInterface
+Wandu\Http\Session\SessionFactory::toCookieJar(
+    Wandu\Http\Contracts\SessionInterface $session,
+    Wandu\Http\Contracts\CookieJarInterface $cookieJar
+) :void
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\FileAdapter;
+
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess')); // default Adapter
+$session = $sessionManager->fromCookieJar($cookie); // $cookie is the instance of CookieJarInterface
+
+//$session->set('sess3', '!!');
+//$session->set('sess4', '??');
+
+$sessionManager->toCookieJar($session, $cookie);
+```
+
+### Session Adapter
+
+There are two adapters.
+
+ - `FileAdapter`
+ - `RedisAdapter`
+ 
+#### File Adapter
+
+**Example.**
+
+```php
+$redisClient = new \Predis\Client();
+$sessionManager = new SessionFactory(new RedisAdapter($redisClient));
+```
+
+#### Redis Adapter
+
+**Example.**
+
+```php
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+```
+
+#### Global Adapter (for, refactoring only)
+
+리팩토링 할 때만 사용하여 주십시오. 그 외에는 권장하지 않습니다.
+
+**Example.**
+
+```php
+$sessionManager = new SessionFactory(new GlobalAdapter());
+```
+
+### Parameter
+
+#### Parameter
+
+
 ### Psr7 Implementations
 
 #### Stream
@@ -261,140 +418,7 @@ $serverRequest; // instanceof ServerRequestInterface
 #### ResponseSender
 
 ```php
-Wandu\Http\Psr\Sender\ResponseSender::send(
+Wandu\Http\Psr\Sender\ResponseSender::sendToGlobal(
     Psr\Http\Message\ResponseInterface $response
 ) :void
 ```
-
-### Cookie
-
-#### CookieJar
-
-`Wandu\Http\Cookie\CookieJar` is implementation of `Wandu\Http\Contracts\CookieJarInterface`
-
-```php
-Wandu\Http\Cookie\CookieJar::get(string $name) :string
-
-Wandu\Http\Cookie\CookieJar::set(string $name, string $value, DateTime $expire = null) :self
-
-Wandu\Http\Cookie\CookieJar::has(string $name) :bool
-
-Wandu\Http\Cookie\CookieJar::remove(string $name) :self
-```
-
-#### CookieJarFactory
-
-This is useful for bringing a cookie jar object(`CookieJarInterface`) from the server request object(`ServerRequestInterface`). And a cookie jar object brought from the server request object must apply to the response object(`ResponseInterface`).
-
-```php
-// from ServerRequestInterface
-Wandu\Http\Cookie\CookieJarFactory::fromServerRequest(
-    Psr\Http\Message\ServerRequestInterface $request
-) :Wandu\Http\Contracts\CookieJarInterface
-
-// to ResponseInterface
-Wandu\Http\Cookie\CookieJarFactory::toResponse(
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar,
-    Psr\Http\Message\ResponseInterface $response
-) :Psr\Http\Message\ResponseInterface
-```
-
-**Example.**
-
-```php
-use Wandu\Http\Cookie\CookieJarFactory;
-use Wandu\Http\Psr\Response;
-use Wandu\Http\Psr\ServerRequest;
-
-$cookieFactory = new CookieJarFactory();
-$cookie = $cookieFactory->fromServerRequest($request); // request is a ServerRequest object.
-
-// -- start controller --
-//$cookie->set('cookie3', 'new33!!');
-//$cookie->set('cookie4', 'new444');
-
-$response = new Response();
-$response = $cookieFactory->toResponse($cookie, $response);
-```
-
-### Session
-
-#### Session
-
-`Wandu\Http\Session\Session` is implementation of `Wandu\Http\Contracts\SessionInterface`
-
-```php
-Wandu\Http\Session\Session::getId() :string
-
-Wandu\Http\Session\Session::get(string $name, mixed $default = null) :mixed
-
-Wandu\Http\Session\Session::set(string $name, mixed $value) :self
-
-Wandu\Http\Session\Session::flash(string $name, mixed $value) :self
-
-Wandu\Http\Session\Session::has(string $name) :bool
-
-Wandu\Http\Session\Session::remove(string $name) :self
-```
-
-#### SessionFactory
-
-This is useful for bringing a session object(`SessionInterface`) from the cookie jar  object(`CookieJarInterface`). And a session object brought from the cookie jar object must apply to the same cookie jar object(`CookieJarInterface`).
-
-```php
-// from CookieJarInterface
-Wandu\Http\Session\SessionFactory::fromCookieJar(
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar
-) :Wandu\Http\Contracts\SessionInterface
-
-// to CookieJarInterface
-Wandu\Http\Session\SessionFactory::toCookieJar(
-    Wandu\Http\Contracts\SessionInterface $session,
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar
-) :void
-```
-
-**Example.**
-
-```php
-use Wandu\Http\Contracts\CookieJarInterface;
-use Wandu\Http\Session\SessionFactory;
-use Wandu\Http\Session\Adapter\FileAdapter;
-
-$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess')); // default Adapter
-$session = $sessionManager->fromCookieJar($cookie); // $cookie is the instance of CookieJarInterface
-
-//$session->set('sess3', '!!');
-//$session->set('sess4', '??');
-
-$sessionManager->toCookieJar($session, $cookie);
-```
-
-### Session Adapter
-
-There are two adapters.
-
- - `FileAdapter`
- - `RedisAdapter`
- 
-#### File Adapter
-
-**Example.**
-
-```php
-$redisClient = new \Predis\Client();
-$sessionManager = new SessionFactory(new RedisAdapter($redisClient));
-```
-
-#### Redis Adapter
-
-**Example.**
-
-```php
-$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
-```
-
-### Parameter
-
-#### Parameter
-
