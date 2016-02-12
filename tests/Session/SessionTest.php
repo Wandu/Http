@@ -4,14 +4,42 @@ namespace Wandu\Http\Session;
 use PHPUnit_Framework_TestCase;
 use Mockery;
 use InvalidArgumentException;
+use Wandu\Http\Contracts\ParameterInterfaceTestTrait;
 
 class SessionTest extends PHPUnit_Framework_TestCase
 {
+    use ParameterInterfaceTestTrait;
+
     /** @var \Wandu\Http\Session\Session */
     private $session;
 
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param1;
+
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param2;
+
+    /** @var \Wandu\Http\Contracts\ParameterInterface */
+    protected $param3;
+
     public function setUp()
     {
+        $this->param1 = new Session(1, [
+            'string' => 'string!',
+            'number' => '10',
+        ]);
+        $this->param2 = new Session(1, [
+            'null' => null,
+        ]);
+
+        $this->param3 = new Session(1, [
+            'string1' => 'string 1!',
+            'string2' => 'string 2!',
+        ], new Session(1, [
+            'string1' => 'string 1 fallback!',
+            'fallback' => 'fallback!',
+        ]));
+
         $this->session = new Session('namename', [
             'id' => 37,
             'username' => 'wan2land'
@@ -94,6 +122,23 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $this->session->flash('flash', 'hello world!');
 
         $this->assertEquals('hello world!', $this->session->get('flash'));
+        $this->assertNull($this->session->get('flash'));
+    }
+
+    public function testHasWithFlash()
+    {
+        $this->session->flash('flash', 'hello world!');
+
+        $this->assertTrue($this->session->has('flash'));
+        $this->assertTrue($this->session->has('flash'));
+        $this->assertTrue($this->session->has('flash'));
+
+        $this->assertEquals('hello world!', $this->session->get('flash'));
+
+        $this->assertFalse($this->session->has('flash'));
+        $this->assertFalse($this->session->has('flash'));
+        $this->assertFalse($this->session->has('flash'));
+
         $this->assertNull($this->session->get('flash'));
     }
 }
