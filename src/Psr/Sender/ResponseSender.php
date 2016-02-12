@@ -8,7 +8,7 @@ class ResponseSender
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
      */
-    public function send(ResponseInterface $response)
+    public function sendToGlobal(ResponseInterface $response)
     {
         $statusCode = $response->getStatusCode();
         $reasonPhrase = $response->getReasonPhrase();
@@ -25,5 +25,14 @@ class ResponseSender
             header(sprintf('%s: %s', $name, $response->getHeaderLine($name)));
         }
         echo $response->getBody();
+    }
+
+    /**
+     * @deprecated
+     * @param \Psr\Http\Message\ResponseInterface $response
+     */
+    public function send(ResponseInterface $response)
+    {
+        $this->sendToGlobal($response);
     }
 }
