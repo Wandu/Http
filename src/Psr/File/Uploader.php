@@ -7,8 +7,15 @@ use Wandu\Http\Psr\UploadedFile;
 
 class Uploader
 {
-    public function __construct($basePath)
+    /**
+     * @param string $basePath
+     * @param bool $createBasePath
+     */
+    public function __construct($basePath, $createBasePath = false)
     {
+        if ($createBasePath && !is_dir($basePath) && !file_exists($basePath)) {
+            mkdir($basePath, 0777, true);
+        }
         if (!is_dir($basePath)) {
             throw new InvalidArgumentException("the base path is not a directory!");
         }

@@ -11,6 +11,10 @@ class UploaderTest extends PHPUnit_Framework_TestCase
     public function testSuccessToConstruct()
     {
         new Uploader(__DIR__);
+
+        // not exists directory
+        new Uploader(__DIR__ . '/notexists', true);
+        rmdir(__DIR__ . '/notexists');
     }
 
     public function testFailToConstruct()
