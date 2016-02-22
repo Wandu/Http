@@ -39,7 +39,7 @@ class SessionFactory
         $sessionName = $this->config['name'];
         if (!$cookieJar->has($sessionName)) {
             $sessionId = $this->generateId();
-            return new Session($sessionId, []);
+            return new Session($sessionId, $this->adapter->read($sessionId));
         }
         $sessionId = $cookieJar->get($sessionName);
         return new Session($sessionId, $this->adapter->read($sessionId));
