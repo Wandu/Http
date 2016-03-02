@@ -4,6 +4,7 @@ namespace Wandu\Http\Psr\Factory;
 use Psr\Http\Message\StreamInterface;
 use Wandu\Http\Psr\ServerRequest;
 use Wandu\Http\Psr\Stream;
+use Wandu\Http\Psr\Stream\PhpInputStream;
 use Wandu\Http\Psr\Uri;
 
 class ServerRequestFactory
@@ -24,7 +25,7 @@ class ServerRequestFactory
      */
     public function fromGlobals()
     {
-        return $this->factory($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new Stream('php://input'));
+        return $this->factory($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new PhpInputStream());
     }
 
     /**
@@ -49,8 +50,21 @@ class ServerRequestFactory
         }
         $headers = $this->getHeadersFromServerParams($server);
 
-        if (isset($headers['content-type']) && strpos($headers['content-type'][0], 'application/json') === 0) {
-            $post = json_decode($stream->__toString(), true);
+        // exists body, but not exists posts
+        $bodyContent = $stream->__toString();
+        if ($bodyContent !== '' && count($post) === 0) {
+            if (isset($headers['content-type'])) {
+                // do not define multipart/form-data
+                // because, it use only in POST method.
+                // ref. en: https://issues.apache.org/jira/browse/FILEUPLOAD-197#comment-13595136
+                // ref. kr: https://blog.outsider.ne.kr/1001
+                if (strpos($headers['content-type'][0], 'application/json') === 0) {
+                    $jsonBody = json_decode($bodyContent, true);
+                    $post = $jsonBody ? $jsonBody : $post;
+                } elseif (strpos($headers['content-type'][0], 'application/x-www-form-urlencoded') === 0) {
+                    parse_str($bodyContent, $post);
+                }
+            }
         }
         return new ServerRequest(
             $server,
