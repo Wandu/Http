@@ -4,6 +4,7 @@ namespace Wandu\Http\Psr\Factory;
 use Closure;
 use InvalidArgumentException;
 use Wandu\Http\Psr\Response;
+use Wandu\Http\Psr\Stream\GeneratorStream;
 use Wandu\Http\Psr\Stream\StringStream;
 
 class ResponseFactory
@@ -86,5 +87,22 @@ class ResponseFactory
         return $this->create(null, $status, $headers)
             ->withStatus($status)
             ->withAddedHeader('Location', $path);
+    }
+
+    /**
+     * @param \Closure $generator
+     * @param int $status
+     * @param array $headers
+     * @return \Wandu\Http\Psr\Response
+     */
+    public function generator(Closure $generator, $status = 200, array $headers = [])
+    {
+        return new Response(
+            $status,
+            '',
+            '1.1',
+            $headers,
+            new GeneratorStream($generator)
+        );
     }
 }
