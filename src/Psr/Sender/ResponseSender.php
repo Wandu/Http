@@ -28,6 +28,33 @@ class ResponseSender
     }
 
     /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @return string
+     */
+    public function parseToSocketBody(ResponseInterface $response)
+    {
+        $lines = [];
+
+        $statusCode = $response->getStatusCode();
+        $reasonPhrase = $response->getReasonPhrase();
+        $protocolVersion = $response->getProtocolVersion();
+
+        $lines[] = "HTTP/{$protocolVersion} $statusCode $reasonPhrase";
+
+        foreach ($response->getHeaders() as $name => $values) {
+            if (strtolower($name) === 'set-cookie') {
+                foreach ($values as $cookie) {
+                    $lines[] = sprintf('Set-Cookie: %s', $cookie);
+                }
+                break;
+            }
+            $lines[] = sprintf('%s: %s', $name, $response->getHeaderLine($name));
+        }
+
+        return implode(" \r\n", $lines) . "\r\n\r\n" . $response->getBody()->__toString();
+    }
+
+    /**
      * @deprecated
      * @param \Psr\Http\Message\ResponseInterface $response
      */
