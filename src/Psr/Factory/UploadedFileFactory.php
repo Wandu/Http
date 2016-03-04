@@ -6,10 +6,20 @@ use Wandu\Http\Psr\UploadedFile;
 class UploadedFileFactory
 {
     /**
+     * @deprecated
      * @param array $files
      * @return array
      */
     public function fromFiles(array $files)
+    {
+        return $this->createFromFiles($files);
+    }
+
+    /**
+     * @param array $files
+     * @return array
+     */
+    public function createFromFiles(array $files)
     {
         $uploadedFiles = [];
         foreach ($files as $name => $file) {
