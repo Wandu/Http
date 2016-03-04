@@ -9,6 +9,8 @@ use Wandu\Http\Psr\Uri;
 
 class ServerRequestFactory
 {
+    use HelperTrait;
+
     /** @var \Wandu\Http\Psr\Factory\UploadedFileFactory */
     protected $fileFactory;
 
@@ -21,11 +23,34 @@ class ServerRequestFactory
     }
 
     /**
+     * @deprecated
      * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function fromGlobals()
     {
+        return $this->createFromGlobals();
+    }
+
+    /**
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public function createFromGlobals()
+    {
         return $this->factory($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new PhpInputStream());
+    }
+
+    /**
+     * @param string $body
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public function fromSocketBody($body)
+    {
+        $lines = array_map('trim', explode("\n", $body));
+        $blankKey = array_search('', $lines);
+
+        $phpServer = $this->getPhpServerValuesFromPlainHeader(array_slice($lines, 0, $blankKey));
+
+        return $this->factory($phpServer, [], [], [], []);
     }
 
     /**
@@ -48,7 +73,7 @@ class ServerRequestFactory
         if (!isset($stream)) {
             $stream = new Stream('php://memory');
         }
-        $headers = $this->getHeadersFromServerParams($server);
+        $headers = $this->getPsrHeadersFromServerParams($server);
 
         // exists body, but not exists posts
         $bodyContent = $stream->__toString();
@@ -79,6 +104,27 @@ class ServerRequestFactory
             $headers,
             $stream
         );
+    }
+
+    /**
+     * Parse plain headers.
+     *
+     * @param array $plainHeaders
+     * @return array
+     */
+    protected function getPhpServerValuesFromPlainHeader(array $plainHeaders)
+    {
+        $httpInformation = explode(' ', array_shift($plainHeaders));
+        $servers = [
+            'REQUEST_METHOD' => $httpInformation[0],
+            'REQUEST_URI' => $httpInformation[1],
+            'SERVER_PROTOCOL' => $httpInformation[2],
+        ];
+        foreach ($plainHeaders as $plainHeader) {
+            list($key, $value) = array_map('trim', explode(':', $plainHeader, 2));
+            $servers['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $value;
+        }
+        return $servers;
     }
 
     /**
@@ -137,35 +183,5 @@ class ServerRequestFactory
             return $server['REQUEST_URI'];
         }
         return '/';
-    }
-
-    /**
-     * @param array $serverParams
-     * @return array
-     */
-    protected function getHeadersFromServerParams(array $serverParams)
-    {
-        $headers = array();
-        foreach ($serverParams as $key => $value) {
-            if (strpos($key, 'HTTP_COOKIE') === 0) {
-                // Cookies are handled using the $_COOKIE superglobal
-                continue;
-            }
-            if ($value && strpos($key, 'HTTP_') === 0) {
-                $name = strtr(substr($key, 5), '_', ' ');
-                $name = strtr(ucwords(strtolower($name)), ' ', '-');
-                $name = strtolower($name);
-                $headers[$name] = explode(',', $value);
-                continue;
-            }
-            if ($value && strpos($key, 'CONTENT_') === 0) {
-                $name = substr($key, 8); // Content-
-                $name = 'Content-' . (($name == 'MD5') ? $name : ucfirst(strtolower($name)));
-                $name = strtolower($name);
-                $headers[$name] = explode(',', $value);
-                continue;
-            }
-        }
-        return $headers;
     }
 }
