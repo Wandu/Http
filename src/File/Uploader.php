@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Psr\File;
+namespace Wandu\Http\File;
 
 use InvalidArgumentException;
 use RuntimeException;
