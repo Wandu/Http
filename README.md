@@ -14,9 +14,13 @@ Http Psr-7(Based on 1.0.0) Implementation. More details: [www.php-fig.org/psr/ps
 
 Reference [phly/http](https://github.com/phly/http).
 
----
+## Intro
+
+Wandu Http는 PSR-7를 구현한 컴포넌트입니다. 그리고 PSR-7에서 제시한 규격 이외에 Session, Cookie, Paramater(ParsedBody 및 QueryParams) 등을 제공하고 있습니다.
 
 ## Basic Usage
+
+일반적인 PHP 사용환경에서는 다음과 같은 순서로 동작시킬 수 있습니다.
 
 ```php
 use Wandu\Http\Cookie\CookieJarFactory;

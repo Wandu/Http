@@ -6,7 +6,6 @@ use DateTime;
 use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Parameters\Parameter;
-use Wandu\Http\Support\Caster;
 
 class CookieJar extends Parameter implements CookieJarInterface
 {
@@ -26,24 +25,24 @@ class CookieJar extends Parameter implements CookieJarInterface
     /**
      * {@inheritdoc}
      */
-    public function toArray(array $casts = [])
+    public function toArray()
     {
         $resultToReturn = [];
         foreach ($this->setCookies as $name => $setCookie) {
             $resultToReturn[$name] = $setCookie->getValue();
         }
-        return $resultToReturn + parent::toArray($casts);
+        return $resultToReturn + parent::toArray();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($name, $default = null, $cast = null)
+    public function get($name, $default = null)
     {
-        if (isset($this->setCookies[$name])) {
-            return (new Caster($this->setCookies[$name]->getValue()))->cast($cast);
+        if (isset($this->setCookies[$name]) && $this->setCookies[$name]->getValue()) {
+            return $this->setCookies[$name]->getValue();
         }
-        return parent::get($name, $default, $cast);
+        return parent::get($name, $default);
     }
 
     /**
@@ -60,7 +59,7 @@ class CookieJar extends Parameter implements CookieJarInterface
      */
     public function has($name)
     {
-        if (array_key_exists($name, $this->setCookies) && $this->setCookies[$name]->getValue()) {
+        if (isset($this->setCookies[$name]) && $this->setCookies[$name]->getValue()) {
             return true;
         }
         return parent::has($name);

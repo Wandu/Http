@@ -5,7 +5,6 @@ use InvalidArgumentException;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Contracts\SessionInterface;
 use Wandu\Http\Parameters\Parameter;
-use Wandu\Http\Support\Caster;
 
 class Session extends Parameter implements SessionInterface
 {
@@ -34,15 +33,15 @@ class Session extends Parameter implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, $default = null, $cast = null)
+    public function get($name, $default = null)
     {
         $this->validNameArgument($name);
         if (isset($this->params['_flash'][$name])) {
             $resultToReturn = $this->params['_flash'][$name];
             unset($this->params['_flash'][$name]);
-            return (new Caster($resultToReturn))->cast($cast);
+            return $resultToReturn;
         }
-        return parent::get($name, $default, $cast);
+        return parent::get($name, $default);
     }
 
     /**

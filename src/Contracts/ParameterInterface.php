@@ -4,18 +4,22 @@ namespace Wandu\Http\Contracts;
 interface ParameterInterface
 {
     /**
-     * @param array $casts
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
+     * @return \Wandu\Http\Contracts\ParameterInterface|null
+     */
+    public function setFallback(ParameterInterface $fallback);
+
+    /**
      * @return array
      */
-    public function toArray(array $casts = []);
+    public function toArray();
 
     /**
      * @param string $key
      * @param mixed $default
-     * @param string $cast
      * @return mixed
      */
-    public function get($key, $default = null, $cast = null);
+    public function get($key, $default = null);
 
     /**
      * @param string $key

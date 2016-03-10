@@ -4,7 +4,6 @@ namespace Wandu\Http\Parameters;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Contracts\ParsedBodyInterface;
 use Wandu\Http\Contracts\QueryParamsInterface;
-use Wandu\Http\Support\Caster;
 
 class Parameter implements QueryParamsInterface, ParsedBodyInterface
 {
@@ -27,14 +26,21 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     /**
      * {@inheritdoc}
      */
-    public function toArray(array $casts = [])
+    public function setFallback(ParameterInterface $fallback)
+    {
+        $oldFallback = $this->fallback;
+        $this->fallback = $fallback;
+        return $oldFallback;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
     {
         $arrayToReturn = $this->params;
-        foreach ($casts as $name => $cast) {
-            $arrayToReturn[$name] = (new Caster($arrayToReturn[$name]))->cast($cast);
-        }
         if (isset($this->fallback)) {
-            return $arrayToReturn + $this->fallback->toArray($casts);
+            return $arrayToReturn + $this->fallback->toArray();
         }
         return $arrayToReturn;
     }
@@ -42,16 +48,15 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null, $cast = null)
+    public function get($key, $default = null)
     {
         if (array_key_exists($key, $this->params)) {
-            $value = $this->params[$key];
-        } elseif (isset($this->fallback)) {
-            $value = $this->fallback->get($key, $default, $cast);
-        } else {
-            $value = $default;
+            return $this->params[$key];
         }
-        return (new Caster($value))->cast($cast);
+        if (isset($this->fallback)) {
+            return $this->fallback->get($key, $default);
+        }
+        return $default;
     }
 
     /**
@@ -66,13 +71,5 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
             return true;
         }
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $dataSet)
-    {
-        // TODO: Implement setData() method.
     }
 }
