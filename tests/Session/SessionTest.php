@@ -141,4 +141,20 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
         $this->assertNull($this->session->get('flash'));
     }
+
+    public function testToArrayWithFlash()
+    {
+        $this->session->flash('flash', 'hello world!');
+
+        $this->assertEquals([
+            'flash' => 'hello world!',
+            'id' => 37,
+            'username' => 'wan2land'
+        ], $this->session->toArray());
+
+        $this->assertEquals([
+            'id' => 37,
+            'username' => 'wan2land'
+        ], $this->session->toArray());
+    }
 }

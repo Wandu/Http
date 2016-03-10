@@ -30,15 +30,25 @@ class Session extends Parameter implements SessionInterface
         return $this->id;
     }
 
+    public function toArray()
+    {
+        $arrayToReturn = parent::toArray();
+        if (isset($arrayToReturn['__flash__'])) {
+            $arrayToReturn = $arrayToReturn + $arrayToReturn['__flash__'];
+            unset($arrayToReturn['__flash__'], $this->params['__flash__']);
+        }
+        return $arrayToReturn;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function get($name, $default = null)
     {
         $this->validNameArgument($name);
-        if (isset($this->params['_flash'][$name])) {
-            $resultToReturn = $this->params['_flash'][$name];
-            unset($this->params['_flash'][$name]);
+        if (isset($this->params['__flash__'][$name])) {
+            $resultToReturn = $this->params['__flash__'][$name];
+            unset($this->params['__flash__'][$name]);
             return $resultToReturn;
         }
         return parent::get($name, $default);
@@ -60,10 +70,10 @@ class Session extends Parameter implements SessionInterface
     public function flash($name, $value)
     {
         unset($this->params[$name]);
-        if (!isset($this->params['_flash'])) {
-            $this->params['_flash'] = [];
+        if (!isset($this->params['__flash__'])) {
+            $this->params['__flash__'] = [];
         }
-        $this->params['_flash'][$name] = $value;
+        $this->params['__flash__'][$name] = $value;
         return $this;
     }
 
@@ -73,8 +83,8 @@ class Session extends Parameter implements SessionInterface
     public function has($name)
     {
         $this->validNameArgument($name);
-        return parent::has($name) || // or, _flash exists check.
-            (isset($this->params['_flash']) && array_key_exists($name, $this->params['_flash']));
+        return parent::has($name) || // or, __flash__ exists check.
+            (isset($this->params['__flash__']) && array_key_exists($name, $this->params['__flash__']));
     }
 
     /**
