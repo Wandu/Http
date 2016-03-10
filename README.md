@@ -31,22 +31,26 @@ use Wandu\Http\Psr\Sender\ResponseSender;
 use Wandu\Http\Session\Adapter\FileAdapter;
 use Wandu\Http\Session\SessionFactory;
 
+// Factory 객체들을 생성합니다.
 $requestFactory = new ServerRequestFactory(new UploadedFileFactory());
-$request = $requestFactory->fromGlobals();
-
 $cookieManager = new CookieJarFactory();
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+$responseFactory = new ResponseFactory();
+$responseSender = new ResponseSender();
+
+// 전역변수에서 ServerRequestInterface 객체를 생성합니다.
+$request = $requestFactory->createFromGlobals();
+
+// ServerRequestInterface를 이용하여 CookieJarInterface 객체를 생성합니다.
 $cookie = $cookieManager->fromServerRequest($request);
 
-$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+// CookieJarInterface를 이용하여 SessionInterface 객체를 생성합니다.
 $session = $sessionManager->fromCookieJar($cookie);
 
-$responseFactory = new ResponseFactory();
+// Closure 내부에서 echo로 출력된 내용을 ResponseInterface로 변형합니다.
 $response = $responseFactory->capture(function () use ($cookie, $session) {
-    //$cookie->set('cookie3', 'new33!!');
-    //$cookie->set('cookie4', 'new444');
-    //
-    //$session->set('sess3', '!!');
-    //$session->set('sess4', '??');
+    $cookie->set('is_wandu_http', true);
+    $session->set('is_login', true);
 
     echo "<h3>Cookie!!</h3>";
     echo "<pre>";
@@ -58,11 +62,14 @@ $response = $responseFactory->capture(function () use ($cookie, $session) {
     echo "</pre>";
 });
 
+// 위에서 처리된 SessionInterface를 CookieJarInterface에 반영시킵니다.
 $sessionManager->toCookieJar($session, $cookie);
+
+// 위에서 처리된 CookieJarInterface를 ResponseInterface에 반영시킵니다.
 $response = $cookieManager->toResponse($cookie, $response);
 
-$responseSender = new ResponseSender;
-$responseSender->send($response);
+// 해당 ResponseInterface를 PHP에서 처리합니다.
+$responseSender->sendToGlobal($response);
 
 ```
 
@@ -70,18 +77,23 @@ It's so simple! :D
 
 ## Documents
 
+PSR-7 구현체에 대한 설명을 보고 싶으시다면 하위에 [PSR-7 Implementations](#psr7-implementations) 항목 부터 읽어주시면 됩니다. PSR-7을 이미 어느정도 아신다는 가정하에 **Wandu Http**에서만 제공하는 편리한 내용을 먼저 설명하겠습니다.
+
 ### File Uploader
 
-Wandu Http는 PSR7에서 사용하기 쉽게 몇가지 기능들을 제공하고 있습니다. 그 중 하나가 바로 File Uploader입니다.
+Wandu Http는 PSR7에서 사용하기 쉽게 몇가지 기능들을 제공하고 있습니다. 그 중 하나가 바로 File Uploader입니다. PSR-7에서는 업로드 객체를 만들어 주는 내용까지만 명시되어있습니다. 이 객체를 활용한 업로더를 제공하지 않는데요, 
 
 **Example.**
 
 ```php
-$request; // ServerRequestInterface.
+use Wandu\Http\File\Uploader;
 
-$uploader = new \Wandu\Http\Psr\File\Uploader(__DIR__ . '/files');
+$uploader = new Uploader(__DIR__ . '/files');
+$result = $uploader->uploadFiles($request->getUploadedFiles());
 
-$uploader->uploadFiles($request->getUploadedFiles()); // uploaded files' name return.
+// uploaded files' name return.
+// ex. ['thumbnail' => '/your/path/files/edd93193acab5bedf1c27a8efc095e7ba0a79945.jpg']
+print_r($result);
 ```
 
 ### Cookie
@@ -190,10 +202,11 @@ $sessionManager->toCookieJar($session, $cookie);
 
 ### Session Adapter
 
-There are two adapters.
+There are three adapters.
 
- - `FileAdapter`
- - `RedisAdapter`
+ - `File Adapter`
+ - `Redis Adapter`
+ - `Global Adapter`
  
 #### File Adapter
 
@@ -219,13 +232,43 @@ $sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
 **Example.**
 
 ```php
-$sessionManager = new SessionFactory(new GlobalAdapter());
+$sessionManager = new SessionFactory(new GlobalAdapter()); // get session by $_SESSION
 ```
 
 ### Parameter
 
 #### Parameter
 
+```php
+namespace Wandu\Http\Contracts;
+
+interface ParameterInterface
+{
+    /**
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
+     * @return \Wandu\Http\Contracts\ParameterInterface|null
+     */
+    public function setFallback(ParameterInterface $fallback);
+
+    /**
+     * @return array
+     */
+    public function toArray();
+
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get($key, $default = null);
+
+    /**
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key);
+}
+```
 
 ### Psr7 Implementations
 
