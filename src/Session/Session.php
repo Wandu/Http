@@ -30,6 +30,9 @@ class Session extends Parameter implements SessionInterface
         return $this->id;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $arrayToReturn = parent::toArray();
@@ -38,6 +41,14 @@ class Session extends Parameter implements SessionInterface
             unset($arrayToReturn['__flash__'], $this->params['__flash__']);
         }
         return $arrayToReturn;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRawParams()
+    {
+        return $this->params;
     }
 
     /**

@@ -25,6 +25,11 @@ interface SessionInterface extends ArrayAccess, ParameterInterface
     public function flash($name, $value);
 
     /**
+     * @return array
+     */
+    public function getRawParams();
+
+    /**
      * @param string $name
      * @return self
      */

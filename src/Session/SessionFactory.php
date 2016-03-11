@@ -53,7 +53,7 @@ class SessionFactory
     public function toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
     {
         $sessionName = $this->config['name'];
-        $this->adapter->write($session->getId(), $session->toArray());
+        $this->adapter->write($session->getId(), $session->getRawParams());
         if (!$cookieJar->has($sessionName)) {
             $sessionId = $this->generateId();
         } else {
