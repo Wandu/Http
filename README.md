@@ -103,13 +103,30 @@ print_r($result);
 `Wandu\Http\Cookie\CookieJar` is implementation of `Wandu\Http\Contracts\CookieJarInterface`
 
 ```php
-Wandu\Http\Cookie\CookieJar::get(string $name) :string
+namespace Wandu\Http\Contracts;
 
-Wandu\Http\Cookie\CookieJar::set(string $name, string $value, DateTime $expire = null) :self
+use Wandu\Http\Contracts\ParameterInterface;
 
-Wandu\Http\Cookie\CookieJar::has(string $name) :bool
+interface CookieJarInterface extends ArrayAccess, IteratorAggregate, ParameterInterface
+{
 
-Wandu\Http\Cookie\CookieJar::remove(string $name) :self
+    /* Methods */
+
+    public CookieJarInterface set(string $name, string $value, DateTime $expire = null)
+
+    public CookieJarInterface remove(string $name)
+
+
+    /* Inherited methods (from ParameterInterface) */
+
+    public ParameterInterface? setFallback(ParameterInterface $fallback)
+
+    public array toArray()
+
+    public mixed get(string $key, mixed $default = null)
+
+    public boolean has(string $key)
+}
 ```
 
 #### CookieJarFactory
@@ -117,16 +134,21 @@ Wandu\Http\Cookie\CookieJar::remove(string $name) :self
 This is useful for bringing a cookie jar object(`CookieJarInterface`) from the server request object(`ServerRequestInterface`). And a cookie jar object brought from the server request object must apply to the response object(`ResponseInterface`).
 
 ```php
-// from ServerRequestInterface
-Wandu\Http\Cookie\CookieJarFactory::fromServerRequest(
-    Psr\Http\Message\ServerRequestInterface $request
-) :Wandu\Http\Contracts\CookieJarInterface
+namespace Wandu\Http\Cookie;
 
-// to ResponseInterface
-Wandu\Http\Cookie\CookieJarFactory::toResponse(
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar,
-    Psr\Http\Message\ResponseInterface $response
-) :Psr\Http\Message\ResponseInterface
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Wandu\Http\Contracts\CookieJarInterface;
+
+class CookieJarFactory
+{
+
+    /* Methods */
+
+    public CookieJarInterface fromServerRequest(ServerRequestInterface $request)
+
+    public ResponseInterface toResponse(CookieJarInterface $cookieJar, ResponseInterface $response)
+}
 ```
 
 **Example.**
@@ -154,17 +176,36 @@ $response = $cookieFactory->toResponse($cookie, $response);
 `Wandu\Http\Session\Session` is implementation of `Wandu\Http\Contracts\SessionInterface`
 
 ```php
-Wandu\Http\Session\Session::getId() :string
+namespace Wandu\Http\Contracts;
 
-Wandu\Http\Session\Session::get(string $name, mixed $default = null) :mixed
+use Wandu\Http\Contracts\ParameterInterface;
 
-Wandu\Http\Session\Session::set(string $name, mixed $value) :self
+interface SessionInterface extends ArrayAccess, ParameterInterface
+{
 
-Wandu\Http\Session\Session::flash(string $name, mixed $value) :self
+    /* Methods */
 
-Wandu\Http\Session\Session::has(string $name) :bool
+    public string getId()
 
-Wandu\Http\Session\Session::remove(string $name) :self
+    public SessionInterface set(string $name, mixed $value)
+
+    public SessionInterface flash(string $name, mixed $value)
+
+    public array getRawParams()
+
+    public SessionInterface remove(string $name)
+    
+
+    /* Inherited methods (from ParameterInterface) */
+
+    public ParameterInterface? setFallback(ParameterInterface $fallback)
+
+    public array toArray()
+
+    public mixed get(string $key, mixed $default = null)
+
+    public boolean has(string $key)
+}
 ```
 
 #### SessionFactory
@@ -172,16 +213,24 @@ Wandu\Http\Session\Session::remove(string $name) :self
 This is useful for bringing a session object(`SessionInterface`) from the cookie jar  object(`CookieJarInterface`). And a session object brought from the cookie jar object must apply to the same cookie jar object(`CookieJarInterface`).
 
 ```php
-// from CookieJarInterface
-Wandu\Http\Session\SessionFactory::fromCookieJar(
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar
-) :Wandu\Http\Contracts\SessionInterface
+namespace Wandu\Http\Session;
 
-// to CookieJarInterface
-Wandu\Http\Session\SessionFactory::toCookieJar(
-    Wandu\Http\Contracts\SessionInterface $session,
-    Wandu\Http\Contracts\CookieJarInterface $cookieJar
-) :void
+use DateTime;
+use Wandu\Http\Contracts\CookieJarInterface;
+use Wandu\Http\Contracts\SessionAdapterInterface;
+use Wandu\Http\Contracts\SessionInterface;
+
+class SessionFactory
+{
+
+    /* Methods */
+
+    public __construct(SessionAdapterInterface $adapter, array $config = [])
+
+    public SessionInterface fromCookieJar(CookieJarInterface $cookieJar)
+
+    public SessionInterface toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
+}
 ```
 
 **Example.**
@@ -204,17 +253,19 @@ $sessionManager->toCookieJar($session, $cookie);
 
 There are three adapters.
 
- - `File Adapter`
- - `Redis Adapter`
- - `Global Adapter`
+1. `File Adapter`
+1. `Redis Adapter`
+1. `Global Adapter`
  
 #### File Adapter
 
 **Example.**
 
 ```php
-$redisClient = new \Predis\Client();
-$sessionManager = new SessionFactory(new RedisAdapter($redisClient));
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\FileAdapter;
+
+$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
 ```
 
 #### Redis Adapter
@@ -222,16 +273,25 @@ $sessionManager = new SessionFactory(new RedisAdapter($redisClient));
 **Example.**
 
 ```php
-$sessionManager = new SessionFactory(new FileAdapter(__DIR__ . '/_sess'));
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\RedisAdapter;
+
+$redisClient = new \Predis\Client();
+$sessionManager = new SessionFactory(new RedisAdapter($redisClient));
 ```
 
-#### Global Adapter (for, refactoring only)
+#### Global Adapter
+
+**refactoring only**
 
 리팩토링 할 때만 사용하여 주십시오. 그 외에는 권장하지 않습니다.
 
 **Example.**
 
 ```php
+use Wandu\Http\Session\SessionFactory;
+use Wandu\Http\Session\Adapter\GlobalAdapter;
+
 $sessionManager = new SessionFactory(new GlobalAdapter()); // get session by $_SESSION
 ```
 
@@ -239,61 +299,178 @@ $sessionManager = new SessionFactory(new GlobalAdapter()); // get session by $_S
 
 #### Parameter
 
+`ServerRequestInterface`::`getParsedBody()` and `getQueryParams()` return array. If you want to use these array as a object, use `Parameter` class.
+
 ```php
 namespace Wandu\Http\Contracts;
 
 interface ParameterInterface
 {
-    /**
-     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
-     * @return \Wandu\Http\Contracts\ParameterInterface|null
-     */
-    public function setFallback(ParameterInterface $fallback);
 
-    /**
-     * @return array
-     */
-    public function toArray();
+    /* Methods */
 
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function get($key, $default = null);
+    public ParameterInterface? setFallback(ParameterInterface $fallback)
 
-    /**
-     * @param string $key
-     * @return boolean
-     */
-    public function has($key);
+    public array toArray()
+
+    public mixed get(string $key, mixed $default = null)
+
+    public boolean has(string $key)
 }
+
+interface QueryParamsInterface extends ParameterInterface
+{
+}
+
+interface ParsedBodyInterface extends ParameterInterface
+{
+}
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Parameters\Parameter;
+
+$parsedBody = new Parameter($request->getParsedBody());
+
+$userId = $parsedBody->get('user_id', 0); // return user_id, or 0.
+```
+
+```php
+use Wandu\Http\Parameters\Parameter;
+
+$queryParams = new Parameter($request->getQueryParams());
+
+$userId = $queryParams->get('user_id', 0); // return user_id, or 0.
 ```
 
 ### Psr7 Implementations
 
 #### Stream
 
+There are very useful 4 streams.
+
+1. `Default Stream`
+1. `String Stream`
+1. `PHP Input Stream`
+1. `Generator Stream`
+
+##### Default Stream
+
 ```php
-Wandu\Http\Psr\Stream::__construct(
-    string $stream = 'php://memory',
-    string $mode = 'r'
-)
+namespace Wandu\Http\Psr;
+
+use Psr\Http\Message\StreamInterface;
+
+class Stream implements StreamInterface
+{
+
+    public __construct(string $stream = 'php://memory', string $mode = 'r')
+    
+    /* Inherited methods (from StreamInterface) */
+    ...
+}
 ```
 
 **Example.**
 
-Read / Write Stream.
-
 ```php
+use Wandu\Http\Psr\Stream;
+
+// read / write
 $stream = new Stream('php://memory', 'w+');
-```
 
-From HTTP Request body.
-
-```php
+// from http request body (do not use. use PHP Input Stream)
 $stream = new Stream('php://input');
 ```
+
+##### String Stream
+
+```php
+namespace Wandu\Http\Psr\Stream;
+
+use Psr\Http\Message\StreamInterface;
+
+class StringStream implements StreamInterface
+{
+
+    public __construct(string $context = '')
+    
+    /* Inherited methods (from StreamInterface) */
+    ...
+}
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Psr\Stream\StringStream;
+
+$stream = new StringStream('hello world!!');
+echo $stream->__toString(); // "hello world!!"
+```
+
+##### PHP Input Stream
+
+```php
+namespace Wandu\Http\Psr\Stream;
+
+use Psr\Http\Message\StreamInterface;
+
+class PhpInputStream implements StreamInterface
+{
+    /* Inherited methods (from StreamInterface) */
+    ...
+}
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Psr\Stream\PhpInputStream;
+
+$stream = new PhpInputStream();
+
+echo $stream->__toString(); // print php://input.
+echo $stream->__toString(); // also print php://input.
+```
+
+##### Generator Stream
+
+It's very useful to print **big** csv, xml, json and so on.
+
+```php
+namespace Wandu\Http\Psr\Stream;
+
+use Closure;
+use Psr\Http\Message\StreamInterface;
+
+class GeneratorStream implements StreamInterface
+{
+
+    public __construct(Closure $handler)
+
+    /* Inherited methods (from StreamInterface) */
+    ...
+}
+```
+
+**Example.**
+
+```php
+use Wandu\Http\Psr\Stream\GeneratorStream;
+
+$stream = new GeneratorStream(function () {
+    for ($i = 0; $i < 10; $i++) {
+        yield sprintf("%02d\n", $i);
+    }
+});
+
+echo $stream->__toString(); // print '00\n01\n ... 08\n09\n'
+echo $stream->__toString(); // also print '00\n01\n ... 08\n09\n'
+```
+
 
 #### Message
 
