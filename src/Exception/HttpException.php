@@ -5,6 +5,7 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use Wandu\Http\Psr\Response;
 use Wandu\Http\Traits\MessageTrait;
 use Wandu\Http\Traits\ResponseTrait;
 
@@ -16,7 +17,7 @@ class HttpException extends Exception implements ResponseInterface
     /**
      * @param int $statusCode
      * @param string $reasonPhrase
-     * @param \Psr\Http\Message\StreamInterface|null $body
+     * @param \Psr\Http\Message\StreamInterface $body
      * @param array $headers
      * @param string $protocolVersion
      */
@@ -41,10 +42,64 @@ class HttpException extends Exception implements ResponseInterface
     }
 
     /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function toResponse()
+    {
+        return new Response(
+            $this->getStatusCode(),
+            $this->getReasonPhrase(),
+            $this->getProtocolVersion(),
+            $this->getHeaders(),
+            $this->getBody()
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function withStatus($code, $reasonPhrase = '')
     {
         throw new RuntimeException("cannot change status in HttpException.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withProtocolVersion($version)
+    {
+        throw new RuntimeException("cannot change protocolVersion in HttpException.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHeader($name, $value)
+    {
+        throw new RuntimeException("cannot change header in HttpException.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withAddedHeader($name, $value)
+    {
+        throw new RuntimeException("cannot change header in HttpException.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutHeader($name)
+    {
+        throw new RuntimeException("cannot change header in HttpException.");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withBody(StreamInterface $body)
+    {
+        throw new RuntimeException("cannot change body in HttpException.");
     }
 }
