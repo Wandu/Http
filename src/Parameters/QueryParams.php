@@ -1,0 +1,17 @@
+<?php
+namespace Wandu\Http\Parameters;
+
+use Psr\Http\Message\ServerRequestInterface;
+use Wandu\Http\Contracts\ParameterInterface;
+
+class QueryParams extends Parameter
+{
+    /**
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
+     */
+    public function __construct(ServerRequestInterface $request, ParameterInterface $fallback = null)
+    {
+        parent::__construct($request->getQueryParams(), $fallback);
+    }
+}
