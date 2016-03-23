@@ -124,10 +124,10 @@ trait ServerRequestTrait
      */
     public function getAttribute($name, $default = null)
     {
-        if (!isset($this->attributes[$name])) {
-            return $default;
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
         }
-        return $this->attributes[$name];
+        return $default;
     }
 
     /**
