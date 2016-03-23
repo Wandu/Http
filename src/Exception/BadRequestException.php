@@ -9,14 +9,16 @@ class BadRequestException extends HttpException
      * @param \Psr\Http\Message\StreamInterface $body
      * @param array $headers
      * @param string $protocolVersion
+     * @param array $attributes
      */
     public function __construct(
         $statusCode = 400,
         $reasonPhrase = '',
         $body = null,
         array $headers = [],
-        $protocolVersion = '1.1'
+        $protocolVersion = '1.1',
+        array $attributes = []
     ) {
-        parent::__construct($statusCode, $reasonPhrase, $body, $headers, $protocolVersion);
+        parent::__construct($statusCode, $reasonPhrase, $body, $headers, $protocolVersion, $attributes);
     }
 }

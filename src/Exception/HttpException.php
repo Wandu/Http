@@ -14,19 +14,24 @@ class HttpException extends Exception implements ResponseInterface
     use MessageTrait;
     use ResponseTrait;
 
+    /** @var array */
+    protected $attributes;
+
     /**
      * @param int $statusCode
      * @param string $reasonPhrase
      * @param \Psr\Http\Message\StreamInterface $body
      * @param array $headers
      * @param string $protocolVersion
+     * @param array $attributes
      */
     public function __construct(
         $statusCode = 500,
         $reasonPhrase = '',
         StreamInterface $body = null,
         array $headers = [],
-        $protocolVersion = '1.1'
+        $protocolVersion = '1.1',
+        array $attributes = []
     ) {
         $this->validStatusCode($statusCode);
 
@@ -39,6 +44,7 @@ class HttpException extends Exception implements ResponseInterface
             $this->headers[$name] = $header;
         }
         $this->protocolVersion = $protocolVersion;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -101,5 +107,26 @@ class HttpException extends Exception implements ResponseInterface
     public function withBody(StreamInterface $body)
     {
         throw new RuntimeException("cannot change body in HttpException.");
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
+        }
+        return $default;
     }
 }
