@@ -15,6 +15,12 @@ interface ParameterInterface
     public function toArray();
 
     /**
+     * @param array $keyOrDefaults
+     * @return array
+     */
+    public function getMany(array $keyOrDefaults = []);
+
+    /**
      * @param string $key
      * @param mixed $default
      * @return mixed

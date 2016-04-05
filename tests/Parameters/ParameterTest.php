@@ -4,7 +4,6 @@ namespace Wandu\Http\Parameters;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 use Wandu\Http\Contracts\ParameterInterfaceTestTrait;
-use Wandu\Http\Support\CastProviderTrait;
 
 class ParameterTest extends PHPUnit_Framework_TestCase
 {
@@ -36,6 +35,5 @@ class ParameterTest extends PHPUnit_Framework_TestCase
             'string1' => 'string 1 fallback!',
             'fallback' => 'fallback!',
         ]));
-
     }
 }

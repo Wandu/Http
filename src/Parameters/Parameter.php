@@ -48,6 +48,24 @@ class Parameter implements QueryParamsInterface, ParsedBodyInterface
     /**
      * {@inheritdoc}
      */
+    public function getMany(array $keyOrDefaults = [])
+    {
+        $dataToReturn = [];
+        foreach ($keyOrDefaults as $key => $value) {
+            if (is_integer($key)) {
+                if ($this->has($value)) {
+                    $dataToReturn[$value] = $this->get($value);
+                }
+            } else {
+                $dataToReturn[$key] = $this->get($key, $value);
+            }
+        }
+        return $dataToReturn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get($key, $default = null)
     {
         if (array_key_exists($key, $this->params)) {

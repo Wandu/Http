@@ -91,4 +91,48 @@ trait ParameterInterfaceTestTrait
         $this->assertTrue($params->has('fallback'));
         $this->assertFalse($params->has('undefined'));
     }
+
+
+    public function testGetMany()
+    {
+        $params = $this->param1;
+
+        $this->assertSame(
+            [
+                'string' => 'string!',
+                'number' => '10'
+            ],
+            $params->getMany(['string', 'number'])
+        );
+
+        $this->assertSame(
+            [
+                'string' => 'string!',
+            ],
+            $params->getMany(['string'])
+        );
+
+        $this->assertSame(
+            [
+                'string' => 'string!',
+            ],
+            $params->getMany(['string', 'unknown'])
+        );
+
+        $this->assertSame(
+            [
+                'string' => 'string!',
+                'unknown' => null,
+            ],
+            $params->getMany(['string', 'unknown' => null])
+        );
+
+        $this->assertSame(
+            [
+                'string' => 'string!',
+                'unknown' => false,
+            ],
+            $params->getMany(['string' => false, 'unknown' => false])
+        );
+    }
 }
