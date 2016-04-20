@@ -3,29 +3,13 @@
     "description": "Http Psr-7 Implementation with Session and Cookie.",
     "keywords": ["wandu", "http", "psr7", "session", "cookie"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Changwan Jun",
-            "email": "im@wani.kr"
-        }
-    ],
     "require": {
         "php": ">=7.0.0",
         "psr/http-message": "^1"
     },
-    "require-dev": {
-        "phpunit/phpunit": "4.5.*",
-        "mockery/mockery": "0.9.*",
-        "predis/predis": "~1.0"
-    },
     "autoload": {
         "psr-4": {
-            "Wandu\\Http\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Wandu\\Http\\": "tests/"
+            "Wandu\\Http\\": ""
         }
     },
     "provide": {
@@ -33,7 +17,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2-dev"
+            "dev-master": "3.0-dev"
         }
     },
     "suggest": {
