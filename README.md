@@ -6,10 +6,6 @@ Wandu Http
 [![Total Downloads](https://poser.pugx.org/wandu/http/downloads.svg)](https://packagist.org/packages/wandu/http)
 [![License](https://poser.pugx.org/wandu/http/license.svg)](https://packagist.org/packages/wandu/http)
 
-[![Build Status](https://img.shields.io/travis/Wandu/Http/master.svg)](https://travis-ci.org/Wandu/Http)
-[![Code Coverage](https://scrutinizer-ci.com/g/Wandu/Http/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Wandu/Http/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Wandu/Http/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Wandu/Http/?branch=master)
-
 Http Psr-7(Based on 1.0.0) Implementation. More details: [www.php-fig.org/psr/psr-7](http://www.php-fig.org/psr/psr-7/)
 
 Reference [phly/http](https://github.com/phly/http).
