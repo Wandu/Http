@@ -15,12 +15,12 @@
     "provide": {
         "psr/http-message-implementation": "1.0"
     },
+    "suggest": {
+        "predis/predis": "for Redis Session"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
         }
-    },
-    "suggest": {
-        "predis/predis": "for Redis Session"
     }
 }
