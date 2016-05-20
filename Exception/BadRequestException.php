@@ -1,6 +1,9 @@
 <?php
 namespace Wandu\Http\Exception;
 
+/**
+ * @deprecated use HttpBadRequestException
+ */
 class BadRequestException extends HttpException
 {
     /**

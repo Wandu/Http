@@ -9,6 +9,9 @@ use Wandu\Http\Psr\Response;
 use Wandu\Http\Traits\MessageTrait;
 use Wandu\Http\Traits\ResponseTrait;
 
+/**
+ * @deprecated use InternalServerErrorException
+ */
 class HttpException extends Exception implements ResponseInterface
 {
     use MessageTrait;

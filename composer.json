@@ -10,7 +10,10 @@
     "autoload": {
         "psr-4": {
             "Wandu\\Http\\": ""
-        }
+        },
+        "files" : [
+            "functions.php"
+        ]
     },
     "provide": {
         "psr/http-message-implementation": "1.0"

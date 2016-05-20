@@ -1,6 +1,9 @@
 <?php
 namespace Wandu\Http\Exception;
 
+/**
+ * @deprecated use HttpUnauthorizedException
+ */
 class UnauthorizedException extends HttpException
 {
     /**

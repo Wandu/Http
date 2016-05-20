@@ -1,6 +1,9 @@
 <?php
 namespace Wandu\Http\Exception;
 
+/**
+ * @deprecated use HttpNotFoundException
+ */
 class NotFoundException extends HttpException
 {
     /**

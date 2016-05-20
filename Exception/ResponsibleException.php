@@ -4,6 +4,9 @@ namespace Wandu\Http\Exception;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * @deprecated use 
+ */
 class ResponsibleException extends Exception
 {
     /** @var \Psr\Http\Message\ResponseInterface */

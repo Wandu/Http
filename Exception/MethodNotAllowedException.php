@@ -1,6 +1,9 @@
 <?php
 namespace Wandu\Http\Exception;
 
+/**
+ * @deprecated use HttpMethodNotAllowedException
+ */
 class MethodNotAllowedException extends HttpException
 {
     /**
