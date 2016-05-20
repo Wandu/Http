@@ -29,7 +29,15 @@ class Responsify
      */
     public function handle(ServerRequestInterface $request, Closure $next)
     {
-        $response = $next($request);
+        return $this->castToResponseInterface($next($request));
+    }
+
+    /**
+     * @param mixed $response
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function castToResponseInterface($response)
+    {
         if ($response instanceof ResponseInterface) {
             return $response;
         }
