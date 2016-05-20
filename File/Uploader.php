@@ -2,6 +2,7 @@
 namespace Wandu\Http\File;
 
 use InvalidArgumentException;
+use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 use Wandu\Http\Psr\UploadedFile;
 
@@ -26,7 +27,7 @@ class Uploader
     }
 
     /**
-     * @param \Wandu\Http\Psr\UploadedFile[] $files
+     * @param \Psr\Http\Message\UploadedFileInterface[] $files
      * @return array
      */
     public function uploadFiles(array $files)
@@ -51,10 +52,10 @@ class Uploader
     }
 
     /**
-     * @param \Wandu\Http\Psr\UploadedFile $file
+     * @param \Psr\Http\Message\UploadedFileInterface $file
      * @return string
      */
-    public function uploadFile(UploadedFile $file)
+    public function uploadFile(UploadedFileInterface $file)
     {
         if ($file->getError() === UploadedFile::OK) {
             $fileName = pathinfo($file->getClientFilename());
