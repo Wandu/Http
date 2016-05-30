@@ -1,10 +1,10 @@
 <?php
-namespace Wandu\Http\Session\Adapter;
+namespace Wandu\Http\Session\Handler;
 
 use Predis\Client;
-use Wandu\Http\Contracts\SessionAdapterInterface;
+use SessionHandlerInterface;
 
-class RedisAdapter implements SessionAdapterInterface
+class RedisHandler implements SessionHandlerInterface
 {
     /** @var \Predis\Client */
     private $client;
@@ -36,17 +36,41 @@ class RedisAdapter implements SessionAdapterInterface
     public function read($sessionId)
     {
         if ($dataSet = $this->client->get("wandu.http.sess.{$sessionId}")) {
-            return unserialize($dataSet);
+            return $dataSet;
         }
-        return [];
+        return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function write($sessionId, array $dataSet)
+    public function write($sessionId, $dataSet)
     {
-        $this->client->set("wandu.http.sess.{$sessionId}", serialize($dataSet));
+        $this->client->set("wandu.http.sess.{$sessionId}", $dataSet);
         $this->client->expire("wandu.http.sess.{$sessionId}", $this->expire);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function gc($maxlifetime)
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function open($savePath, $sessionId)
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+        return true;
     }
 }

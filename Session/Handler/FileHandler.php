@@ -38,7 +38,11 @@ class FileHandler implements SessionHandlerInterface
      */
     public function destroy($sessionId)
     {
-        unlink($this->path . '/' . $sessionId);
+        $path = $this->path . '/' . $sessionId;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return true;
     }
 
     /**
@@ -60,6 +64,7 @@ class FileHandler implements SessionHandlerInterface
     {
         $path = $this->path . '/' . $sessionId;
         file_put_contents($path, $sessionData);
+        return true;
     }
 
     /**

@@ -12,7 +12,7 @@ class Session extends Parameter implements SessionInterface
     protected $id;
 
     /**
-     * @param array $id
+     * @param string $id
      * @param array $dataSet
      * @param \Wandu\Http\Contracts\ParameterInterface|null $fallback
      */

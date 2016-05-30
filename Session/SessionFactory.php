@@ -2,14 +2,14 @@
 namespace Wandu\Http\Session;
 
 use DateTime;
+use SessionHandlerInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
-use Wandu\Http\Contracts\SessionAdapterInterface;
 use Wandu\Http\Contracts\SessionInterface;
 
 class SessionFactory
 {
-    /** @var \Wandu\Http\Contracts\SessionAdapterInterface */
-    protected $adapter;
+    /** @var \SessionHandlerInterface */
+    protected $handler;
 
     /** @var bool */
     protected $reset = false;
@@ -18,15 +18,16 @@ class SessionFactory
     protected $config;
 
     /**
-     * @param \Wandu\Http\Contracts\SessionAdapterInterface $adapter
+     * @param \SessionHandlerInterface $handler
      * @param array $config
      */
-    public function __construct(SessionAdapterInterface $adapter, array $config = [])
+    public function __construct(SessionHandlerInterface $handler, array $config = [])
     {
-        $this->adapter = $adapter;
+        $this->handler = $handler;
         $this->config = $config + [
                 'timeout' => 3600,
                 'name' => 'WdSessId',
+                'gc_frequency' => 100,
             ];
     }
 
@@ -37,14 +38,15 @@ class SessionFactory
     public function fromCookieJar(CookieJarInterface $cookieJar)
     {
         $sessionName = $this->config['name'];
-        if (!$cookieJar->has($sessionName)) {
+        if ($cookieJar->has($sessionName)) {
+            $sessionId = $cookieJar->get($sessionName);
+        } else {
             $sessionId = $this->generateId();
-            return new Session($sessionId, $this->adapter->read($sessionId));
         }
-        $sessionId = $cookieJar->get($sessionName);
-        return new Session($sessionId, $this->adapter->read($sessionId));
+        $data = @unserialize($this->handler->read($sessionId));
+        return new Session($sessionId, $data ? $data : []);
     }
-
+    
     /**
      * @param \Wandu\Http\Contracts\SessionInterface $session
      * @param \Wandu\Http\Contracts\CookieJarInterface $cookieJar
@@ -53,17 +55,22 @@ class SessionFactory
     public function toCookieJar(SessionInterface $session, CookieJarInterface $cookieJar)
     {
         $sessionName = $this->config['name'];
-        $this->adapter->write($session->getId(), $session->getRawParams());
-        if (!$cookieJar->has($sessionName)) {
-            $sessionId = $this->generateId();
-        } else {
-            $sessionId = $cookieJar->get($sessionName);
-        }
+
+        // save to handler
+        $this->handler->write($session->getId(), serialize($session->getRawParams()));
+
+        // apply to cookie-jar
         $cookieJar->set(
             $sessionName,
-            $sessionId,
+            $session->getId(),
             (new DateTime())->setTimestamp(time() + $this->config['timeout'])
         );
+        
+        // garbage collection
+        $pick = rand(1, max(1, $this->config['gc_frequency']));
+        if ($pick === 1) {
+            $this->handler->gc($this->config['timeout']);
+        }
         return $session;
     }
 
