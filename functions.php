@@ -1,6 +1,6 @@
 <?php
-namespace Wandu\Http {
-
+namespace Wandu\Http
+{
     use Closure;
     use Psr\Http\Message\ServerRequestInterface;
     use Wandu\Http\Exception\HttpBadRequestException;
