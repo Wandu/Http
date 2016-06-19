@@ -10,8 +10,11 @@ class ParsedBody extends Parameter
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Wandu\Http\Contracts\ParameterInterface $fallback
      */
-    public function __construct(ServerRequestInterface $request, ParameterInterface $fallback = null)
+    public function __construct(ServerRequestInterface $request = null, ParameterInterface $fallback = null)
     {
-        parent::__construct($request->getParsedBody(), $fallback);
+        parent::__construct(
+            $request ? $request->getQueryParams() : null,
+            $fallback
+        );
     }
 }
