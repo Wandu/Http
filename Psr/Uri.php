@@ -3,29 +3,36 @@ namespace Wandu\Http\Psr;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+use Wandu\Http\Contracts\ExtendedUriInterface;
 
-class Uri implements UriInterface
+class Uri implements UriInterface, ExtendedUriInterface
 {
     /** @var string */
-    private $scheme;
+    protected $scheme;
 
     /** @var string */
-    private $host;
+    protected $host;
 
     /** @var int */
-    private $port;
+    protected $port;
 
     /** @var string */
-    private $userInfo;
+    protected $userInfo;
 
     /** @var string */
-    private $path;
+    protected $path;
 
     /** @var string */
-    private $query;
+    protected $query;
 
     /** @var string */
-    private $fragment;
+    protected $fragment;
+
+    /** @var array */
+    protected $queryParams;
+
+    /** @var bool */
+    protected $isStrict;
 
     /** @var array */
     protected static $allowedSchemes = [
@@ -35,8 +42,9 @@ class Uri implements UriInterface
 
     /**
      * @param string $uri
+     * @param bool $isStrict
      */
-    public function __construct($uri)
+    public function __construct($uri, $isStrict = false)
     {
         $parsedUrl = parse_url(rawurldecode($uri));
 
@@ -51,6 +59,11 @@ class Uri implements UriInterface
 
         $this->path = isset($parsedUrl['path']) ? $this->filterPath($parsedUrl['path']) : '';
         $this->query = isset($parsedUrl['query']) ? $this->filterQuery($parsedUrl['query']) : '';
+
+        parse_str($this->getQuery(), $params);
+        $this->queryParams = $params;
+        $this->isStrict = $isStrict;
+
         $this->fragment = isset($parsedUrl['fragment']) ? $this->filterFragment($parsedUrl['fragment']) : '';
     }
 
@@ -217,9 +230,72 @@ class Uri implements UriInterface
         }
         $new = clone $this;
         $new->query = $this->filterQuery($query);
+        parse_str($new->query, $params);
+        $new->queryParams = $params;
         return $new;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function hasQueryParam($name)
+    {
+        /* Same Source :-)
+        if ($this->isStrict) {
+            return array_key_exists($name, $this->queryParams);
+        }
+        return array_key_exists($name, $this->queryParams) && $this->queryParams[$name];
+        */
+        return array_key_exists($name, $this->queryParams) && (
+            $this->isStrict || $this->queryParams[$name]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueryParam($name, $default = null)
+    {
+        if ($this->hasQueryParam($name)) {
+            return $this->queryParams[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withQueryParam($name, $value)
+    {
+        $queryParams = $this->filteredQueryParams();
+        $queryParams[$name] = $value;
+        return $this->withQuery(http_build_query($queryParams));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutQueryParam($name)
+    {
+        $queryParams = $this->filteredQueryParams();
+        unset($queryParams[$name]);
+        return $this->withQuery(http_build_query($queryParams));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function filteredQueryParams()
+    {
+        $queryParams = [];
+        foreach (array_keys($this->queryParams) as $key) {
+            if ($this->hasQueryParam($key)) {
+                $queryParams[$key] = $this->queryParams[$key];
+            }
+        }
+        return $queryParams;
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -258,26 +334,25 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param Uri $uriToJoin
-     * @return Uri
+     * {@inheritdoc}
      */
-    public function join(Uri $uriToJoin)
+    public function join(UriInterface $uriToJoin)
     {
         // other host
-        if ($uriToJoin->scheme !== '' || $uriToJoin->host !== '') {
+        if ($uriToJoin->getScheme() !== '' || $uriToJoin->getHost() !== '') {
             return clone $uriToJoin;
         }
 
         $uriToReturn = clone $this;
 
         // current path.
-        if ($uriToJoin->path === '' || $uriToJoin->path === '.') {
+        if ($uriToJoin->getPath() === '' || $uriToJoin->getPath() === '.') {
             return $uriToReturn;
         }
 
         $newPathItems = explode('/', $uriToReturn->path);
 
-        $pathItemToJoin = explode('/', $uriToJoin->path);
+        $pathItemToJoin = explode('/', $uriToJoin->getPath());
         if (isset($pathItemToJoin[0])) {
             array_pop($newPathItems);
         }
@@ -299,8 +374,8 @@ class Uri implements UriInterface
         }
 
         $uriToReturn->path = implode('/', $pathItemsToReturn);
-        $uriToReturn->query = $uriToJoin->query;
-        $uriToReturn->fragment = $uriToJoin->fragment;
+        $uriToReturn->query = $uriToJoin->getQuery();
+        $uriToReturn->fragment = $uriToJoin->getFragment();
 
         return $uriToReturn;
     }
