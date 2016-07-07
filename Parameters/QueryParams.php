@@ -13,7 +13,7 @@ class QueryParams extends Parameter
     public function __construct(ServerRequestInterface $request = null, ParameterInterface $fallback = null)
     {
         parent::__construct(
-            $request ? $request->getQueryParams() : null,
+            $request ? $request->getQueryParams() : [],
             $fallback
         );
     }

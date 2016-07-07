@@ -41,6 +41,14 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
     }
 
     /**
+     * @param ResponseInterface $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+    }
+
+    /**
      * @return array
      */
     public function getAttributes()
