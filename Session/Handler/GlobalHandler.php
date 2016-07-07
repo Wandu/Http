@@ -66,7 +66,7 @@ class GlobalHandler implements SessionHandlerInterface
     protected function bootSession()
     {
         if (session_status() == \PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
     }
 }
