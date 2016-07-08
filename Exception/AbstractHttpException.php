@@ -138,7 +138,7 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        throw new RuntimeException("cannot change status in HttpException.");
+        throw new RuntimeException("cannot change status in " . static::class . ".");
     }
 
     /**
@@ -146,7 +146,7 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withProtocolVersion($version)
     {
-        throw new RuntimeException("cannot change protocolVersion in HttpException.");
+        throw new RuntimeException("cannot change protocolVersion in " . static::class . ".");
     }
 
     /**
@@ -154,7 +154,7 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withHeader($name, $value)
     {
-        throw new RuntimeException("cannot change header in HttpException.");
+        throw new RuntimeException("cannot change header in " . static::class . ".");
     }
 
     /**
@@ -162,7 +162,7 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withAddedHeader($name, $value)
     {
-        throw new RuntimeException("cannot change header in HttpException.");
+        throw new RuntimeException("cannot change header in " .  static::class . ".");
     }
 
     /**
@@ -170,7 +170,7 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withoutHeader($name)
     {
-        throw new RuntimeException("cannot change header in HttpException.");
+        throw new RuntimeException("cannot change header in " . static::class . ".");
     }
 
     /**
@@ -178,6 +178,6 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withBody(StreamInterface $body)
     {
-        throw new RuntimeException("cannot change body in HttpException.");
+        throw new RuntimeException("cannot change body in " . static::class . ".");
     }
 }

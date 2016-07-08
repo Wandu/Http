@@ -2,7 +2,7 @@
 namespace Wandu\Http\Support;
 
 use Psr\Http\Message\ResponseInterface;
-use Wandu\Http\Exception\HttpNotFoundException;
+use Wandu\Http\Exception\NotFoundException;
 use Wandu\Http\Psr\Factory\ServerRequestFactory;
 use Wandu\Http\Psr\Sender\ResponseSender;
 
@@ -62,7 +62,7 @@ class HttpServer
             // check if we really recived an Response object
             // if not return a 404 response object
             if (!$response || !$response instanceof ResponseInterface) {
-                $response = new HttpNotFoundException();
+                $response = new NotFoundException();
             }
 
             // make a string out of our response

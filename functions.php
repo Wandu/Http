@@ -3,7 +3,7 @@ namespace Wandu\Http
 {
     use Closure;
     use Psr\Http\Message\ServerRequestInterface;
-    use Wandu\Http\Exception\HttpBadRequestException;
+    use Wandu\Http\Exception\BadRequestException;
     use Wandu\Http\Psr\Factory\ResponseFactory;
 
     /**
@@ -84,14 +84,14 @@ namespace Wandu\Http
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @return \Psr\Http\Message\ResponseInterface
-     * @throws \Wandu\Http\Exception\HttpBadRequestException
+     * @throws \Wandu\Http\Exception\BadRequestException
      */
     function back(ServerRequestInterface $request)
     {
         if ($request->hasHeader('referer')) {
             return redirect($request->getHeader('referer'));
         }
-        throw new HttpBadRequestException();
+        throw new BadRequestException();
     }
 
     /**

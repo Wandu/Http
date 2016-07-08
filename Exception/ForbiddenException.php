@@ -1,27 +1,18 @@
 <?php
 namespace Wandu\Http\Exception;
 
-/**
- * @deprecated use HttpForbiddenException
- */
-class ForbiddenException extends HttpException
+use Psr\Http\Message\ResponseInterface;
+
+class ForbiddenException extends AbstractHttpException
 {
     /**
-     * @param int $statusCode
-     * @param string $reasonPhrase
-     * @param \Psr\Http\Message\StreamInterface $body
-     * @param array $headers
-     * @param string $protocolVersion
+     * @param \Psr\Http\Message\ResponseInterface $response
      * @param array $attributes
      */
     public function __construct(
-        $statusCode = 403,
-        $reasonPhrase = '',
-        $body = null,
-        array $headers = [],
-        $protocolVersion = '1.1',
+        ResponseInterface $response = null,
         array $attributes = []
     ) {
-        parent::__construct($statusCode, $reasonPhrase, $body, $headers, $protocolVersion, $attributes);
+        parent::__construct(403, $response, $attributes);
     }
 }
