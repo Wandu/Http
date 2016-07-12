@@ -4,10 +4,8 @@ namespace Wandu\Http\Exception;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
-use Wandu\Http\Psr\Response;
 
-abstract class AbstractHttpException extends Exception implements ResponseInterface
+class HttpException extends Exception implements ResponseInterface
 {
     /** @var \Psr\Http\Message\ResponseInterface */
     protected $response;
@@ -16,19 +14,14 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
     protected $attributes;
 
     /**
-     * @param int $statusCode
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param array $attributes
      */
     public function __construct(
-        $statusCode,
-        ResponseInterface $response = null,
+        ResponseInterface $response,
         array $attributes = []
     ) {
-        if (!isset($response)) {
-            $response = new Response();
-        }
-        $this->response = $response->withStatus($statusCode);
+        $this->response = $response;
         $this->attributes = $attributes;
     }
 
@@ -41,9 +34,9 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
     }
 
     /**
-     * @param ResponseInterface $response
+     * @param \Psr\Http\Message\ResponseInterface $response
      */
-    public function setResponse($response)
+    public function setResponse(ResponseInterface $response)
     {
         $this->response = $response;
     }
@@ -138,7 +131,10 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        throw new RuntimeException("cannot change status in " . static::class . ".");
+        return new HttpException(
+            $this->response->withStatus($code, $reasonPhrase),
+            $this->attributes
+        );
     }
 
     /**
@@ -146,7 +142,10 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withProtocolVersion($version)
     {
-        throw new RuntimeException("cannot change protocolVersion in " . static::class . ".");
+        return new HttpException(
+            $this->response->withProtocolVersion($version),
+            $this->attributes
+        );
     }
 
     /**
@@ -154,7 +153,10 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withHeader($name, $value)
     {
-        throw new RuntimeException("cannot change header in " . static::class . ".");
+        return new HttpException(
+            $this->response->withHeader($name, $value),
+            $this->attributes
+        );
     }
 
     /**
@@ -162,7 +164,10 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withAddedHeader($name, $value)
     {
-        throw new RuntimeException("cannot change header in " .  static::class . ".");
+        return new HttpException(
+            $this->response->withAddedHeader($name, $value),
+            $this->attributes
+        );
     }
 
     /**
@@ -170,7 +175,10 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withoutHeader($name)
     {
-        throw new RuntimeException("cannot change header in " . static::class . ".");
+        return new HttpException(
+            $this->response->withoutHeader($name),
+            $this->attributes
+        );
     }
 
     /**
@@ -178,6 +186,9 @@ abstract class AbstractHttpException extends Exception implements ResponseInterf
      */
     public function withBody(StreamInterface $body)
     {
-        throw new RuntimeException("cannot change body in " . static::class . ".");
+        return new HttpException(
+            $this->response->withBody($body),
+            $this->attributes
+        );
     }
 }

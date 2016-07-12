@@ -2,8 +2,9 @@
 namespace Wandu\Http\Exception;
 
 use Psr\Http\Message\ResponseInterface;
+use Wandu\Http\Psr\Response;
 
-class NotFoundException extends AbstractHttpException
+class NotFoundException extends HttpException
 {
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
@@ -13,6 +14,7 @@ class NotFoundException extends AbstractHttpException
         ResponseInterface $response = null,
         array $attributes = []
     ) {
-        parent::__construct(404, $response, $attributes);
+        $response = $response ?: new Response();
+        parent::__construct($response->withStatus(404), $attributes);
     }
 }

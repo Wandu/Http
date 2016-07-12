@@ -2,8 +2,9 @@
 namespace Wandu\Http\Exception;
 
 use Psr\Http\Message\ResponseInterface;
+use Wandu\Http\Psr\Response;
 
-class BadRequestException extends AbstractHttpException
+class BadRequestException extends HttpException
 {
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
@@ -13,6 +14,7 @@ class BadRequestException extends AbstractHttpException
         ResponseInterface $response = null,
         array $attributes = []
     ) {
-        parent::__construct(400, $response, $attributes);
+        $response = $response ?: new Response();
+        parent::__construct($response->withStatus(400), $attributes);
     }
 }
