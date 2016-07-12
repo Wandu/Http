@@ -14,12 +14,12 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $serverParams
      * @param array $cookieParams
      * @param array $queryParams
-     * @param array $uploadedFiles
      * @param array $parsedBody
+     * @param array $uploadedFiles
      * @param array $attributes
      * @param string $method
      * @param \Psr\Http\Message\UriInterface|string $uri
-     * @param \Psr\Http\Message\StreamInterface $body
+     * @param \Psr\Http\Message\StreamInterface|null $body
      * @param array $headers
      * @param string $protocolVersion
      */
@@ -27,8 +27,8 @@ class ServerRequest extends Request implements ServerRequestInterface
         array $serverParams = [],
         array $cookieParams = [],
         array $queryParams = [],
-        array $uploadedFiles = [],
         array $parsedBody = [],
+        array $uploadedFiles = [],
         array $attributes = [],
         $method = null,
         $uri = null,
@@ -41,8 +41,8 @@ class ServerRequest extends Request implements ServerRequestInterface
         $this->serverParams = $serverParams;
         $this->cookieParams = $cookieParams;
         $this->queryParams = $queryParams;
-        $this->uploadedFiles = $uploadedFiles;
         $this->parsedBody = $parsedBody;
+        $this->uploadedFiles = $uploadedFiles;
         $this->attributes = $attributes;
 
         parent::__construct($method, $uri, $body, $headers, $protocolVersion);
