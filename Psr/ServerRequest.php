@@ -12,9 +12,9 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * ServerRequest constructor.
      * @param array $serverParams
-     * @param array $cookieParams
      * @param array $queryParams
      * @param array $parsedBody
+     * @param array $cookieParams
      * @param array $uploadedFiles
      * @param array $attributes
      * @param string $method
@@ -25,9 +25,9 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function __construct(
         array $serverParams = [],
-        array $cookieParams = [],
         array $queryParams = [],
         array $parsedBody = [],
+        array $cookieParams = [],
         array $uploadedFiles = [],
         array $attributes = [],
         $method = null,

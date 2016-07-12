@@ -93,9 +93,9 @@ class ServerRequestFactory
         }
         return new ServerRequest(
             $server,
-            $cookies,
             $get,
             $post,
+            $cookies,
             $this->fileFactory->createFromFiles($files),
             [],
             isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET',
