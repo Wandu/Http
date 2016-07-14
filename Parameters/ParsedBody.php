@@ -3,8 +3,9 @@ namespace Wandu\Http\Parameters;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Wandu\Http\Contracts\ParameterInterface;
+use Wandu\Http\Contracts\ParsedBodyInterface;
 
-class ParsedBody extends Parameter
+class ParsedBody extends Parameter implements ParsedBodyInterface
 {
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request

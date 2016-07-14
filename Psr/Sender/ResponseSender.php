@@ -26,12 +26,8 @@ class ResponseSender
             header(sprintf('%s: %s', $name, $response->getHeaderLine($name)));
         }
         $body = $response->getbody();
-        if ($body instanceof GeneratorStream) {
-            foreach ($body->getGenerator() as $value) {
-                echo $value;
-            }
-        } else {
-            echo $response->getBody();
+        if ($body) {
+            echo $body->__toString();
         }
     }
 

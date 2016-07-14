@@ -27,13 +27,13 @@ interface ExtendedUriInterface extends UriInterface
     /**
      * @param string $name
      * @param string $value
-     * @return static
+     * @return \Wandu\Http\Contracts\ExtendedUriInterface
      */
     public function withQueryParam($name, $value);
 
     /**
      * @param string $name
-     * @return static
+     * @return \Wandu\Http\Contracts\ExtendedUriInterface
      */
     public function withoutQueryParam($name);
 }

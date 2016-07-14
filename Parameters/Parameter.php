@@ -2,10 +2,8 @@
 namespace Wandu\Http\Parameters;
 
 use Wandu\Http\Contracts\ParameterInterface;
-use Wandu\Http\Contracts\ParsedBodyInterface;
-use Wandu\Http\Contracts\QueryParamsInterface;
 
-class Parameter implements QueryParamsInterface, ParsedBodyInterface
+class Parameter implements ParameterInterface
 {
     /** @var array */
     protected $params;
