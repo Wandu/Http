@@ -1,8 +1,8 @@
 <?php
-namespace Wandu\Http\Psr\Factory;
+namespace Wandu\Http\Factory;
 
 use Psr\Http\Message\StreamInterface;
-use Wandu\Http\Psr\Factory\Exception\CannotCreateRequestException;
+use Wandu\Http\Factory\Exception\CannotCreateRequestException;
 use Wandu\Http\Psr\Request;
 use Wandu\Http\Psr\Stream;
 
@@ -11,6 +11,7 @@ class RequestFactory
     use HelperTrait;
 
     /**
+     * @param array $serverParams
      * @return \Psr\Http\Message\RequestInterface
      */
     public function createFromGlobals(array $serverParams = null)
@@ -36,7 +37,7 @@ class RequestFactory
      * @param array $plainHeaders
      * @param \Psr\Http\Message\StreamInterface|null $stream
      * @return \Psr\Http\Message\RequestInterface
-     * @throws \Wandu\Http\Psr\Factory\Exception\CannotCreateRequestException
+     * @throws \Wandu\Http\Factory\Exception\CannotCreateRequestException
      */
     public function createRequest(array $plainHeaders, StreamInterface $stream = null)
     {

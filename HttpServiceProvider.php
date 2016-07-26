@@ -5,7 +5,7 @@ use Predis\Client;
 use SessionHandlerInterface;
 use Wandu\DI\ContainerInterface;
 use Wandu\DI\ServiceProviderInterface;
-use Wandu\Http\Psr\Factory\ResponseFactory;
+use Wandu\Http\Factory\ResponseFactory;
 use Wandu\Http\Session\Handler\FileHandler;
 use Wandu\Http\Session\Handler\GlobalHandler;
 use Wandu\Http\Session\Handler\RedisHandler;

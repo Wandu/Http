@@ -1,33 +1,26 @@
 <?php
 namespace Wandu\Http\Psr\Stream;
 
-use Closure;
 use Generator;
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 class GeneratorStream implements StreamInterface
 {
-    /** @var \Closure */
-    protected $handler;
-
     /** @var \Generator */
     protected $generator;
 
+    /** @var string */
+    protected $cachedContents;
+    
     /** @var bool */
     protected $isEof = false;
 
     /**
-     * @param \Closure $handler
+     * @param \Generator $generator
      */
-    public function __construct(Closure $handler)
+    public function __construct(Generator $generator)
     {
-        $generator = $handler();
-        if (!($generator instanceof Generator)) {
-            throw new InvalidArgumentException('first parameter must be closure that contain generator(yield syntax).');
-        }
-        $this->handler = $handler;
         $this->generator = $generator;
     }
 
@@ -109,7 +102,7 @@ class GeneratorStream implements StreamInterface
      */
     public function rewind()
     {
-        $this->generator = $this->handler->__invoke();
+//        $this->generator->rewind();
         $this->isEof = false;
     }
 
@@ -150,14 +143,18 @@ class GeneratorStream implements StreamInterface
      */
     public function getContents()
     {
-        $contents = '';
         if (!$this->eof()) {
-            foreach ($this->generator as $value) {
-                $contents .= $value;
+            if (!isset($this->cachedContents)) {
+                $contents = '';
+                foreach ($this->generator as $value) {
+                    $contents .= $value;
+                }
+                $this->cachedContents = $contents;
             }
             $this->isEof = true;
+            return $this->cachedContents;
         }
-        return $contents;
+        return '';
     }
 
     /**

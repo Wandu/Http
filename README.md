@@ -20,9 +20,9 @@ Wandu Http는 PSR-7를 구현한 컴포넌트입니다. 그리고 PSR-7에서 �
 
 ```php
 use Wandu\Http\Cookie\CookieJarFactory;
-use Wandu\Http\Psr\Factory\ResponseFactory;
-use Wandu\Http\Psr\Factory\ServerRequestFactory;
-use Wandu\Http\Psr\Factory\UploadedFileFactory;
+use Wandu\Http\Factory\ResponseFactory;
+use Wandu\Http\Factory\ServerRequestFactory;
+use Wandu\Http\Factory\UploadedFileFactory;
 use Wandu\Http\Psr\Sender\ResponseSender;
 use Wandu\Http\Session\Adapter\FileAdapter;
 use Wandu\Http\Session\SessionFactory;
@@ -598,7 +598,7 @@ new Uri('http://blog.wani.kr/path/name?hello=world#fragment');
 #### UploadedFileFactory
 
 ```php
-Wandu\Http\Psr\Factory\UploadedFileFactory::fromFiles(
+Wandu\Http\Factory\UploadedFileFactory::fromFiles(
     array $files
 )
 ```
@@ -606,7 +606,7 @@ Wandu\Http\Psr\Factory\UploadedFileFactory::fromFiles(
 **Example.**
 
 ```php
-use Wandu\Http\Psr\Factory\UploadedFileFactory;
+use Wandu\Http\Factory\UploadedFileFactory;
 
 $factory = new UploadedFileFactory();
 $treeOfFiles = $factory->fromFiles($_FILES);
@@ -616,18 +616,18 @@ $treeOfFiles; // array of UploadedFile object.
 #### ServerRequestFactory
 
 ```php
-Wandu\Http\Psr\Factory\ServerRequestFactory::__construct(
-    Wandu\Http\Psr\Factory\UploadedFileFactory $fileFactory
+Wandu\Http\Factory\ServerRequestFactory::__construct(
+    Wandu\Http\Factory\UploadedFileFactory $fileFactory
 )
 
-Wandu\Http\Psr\Factory\ServerRequestFactory::fromGlobals()
+Wandu\Http\Factory\ServerRequestFactory::fromGlobals()
 ```
 
 **Example.**
 
 ```php
-use Wandu\Http\Psr\Factory\ServerRequestFactory;
-use Wandu\Http\Psr\Factory\UploadedFileFactory;
+use Wandu\Http\Factory\ServerRequestFactory;
+use Wandu\Http\Factory\UploadedFileFactory;
 
 $requestFactory = new ServerRequestFactory(new UploadedFileFactory());
 $serverRequest = $requestFactory->fromGlobals();

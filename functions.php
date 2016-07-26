@@ -1,13 +1,11 @@
 <?php
 namespace Wandu\Http
 {
-    use Closure;
-    use Psr\Http\Message\ServerRequestInterface;
-    use Wandu\Http\Exception\BadRequestException;
-    use Wandu\Http\Psr\Factory\ResponseFactory;
+
+    use Wandu\Http\Factory\ResponseFactory;
 
     /**
-     * @return \Wandu\Http\Psr\Factory\ResponseFactory
+     * @return \Wandu\Http\Factory\ResponseFactory
      */
     function response()
     {
@@ -17,7 +15,15 @@ namespace Wandu\Http
         }
         return $factory;
     }
-    
+}
+namespace Wandu\Http\Response
+{
+    use Closure;
+    use Generator;
+    use Psr\Http\Message\ServerRequestInterface;
+    use Wandu\Http\Exception\BadRequestException;
+    use function Wandu\Http\response;
+
     /**
      * @param string $content
      * @param int $status
@@ -95,12 +101,12 @@ namespace Wandu\Http
     }
 
     /**
-     * @param \Closure $generator
+     * @param \Generator $generator
      * @param int $status
      * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
-    function generator(Closure $generator, $status = 200, array $headers = [])
+    function generator(Generator $generator, $status = 200, array $headers = [])
     {
         return response()->generator($generator, $status, $headers);
     }

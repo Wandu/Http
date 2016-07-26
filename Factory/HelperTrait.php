@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Psr\Factory;
+namespace Wandu\Http\Factory;
 
 use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;

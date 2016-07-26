@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Psr\Factory;
+namespace Wandu\Http\Factory;
 
 use Psr\Http\Message\StreamInterface;
 use Wandu\Http\Psr\ServerRequest;
@@ -11,11 +11,11 @@ class ServerRequestFactory
 {
     use HelperTrait;
 
-    /** @var \Wandu\Http\Psr\Factory\UploadedFileFactory */
+    /** @var \Wandu\Http\Factory\UploadedFileFactory */
     protected $fileFactory;
 
     /**
-     * @param \Wandu\Http\Psr\Factory\UploadedFileFactory $fileFactory
+     * @param \Wandu\Http\Factory\UploadedFileFactory $fileFactory
      */
     public function __construct(UploadedFileFactory $fileFactory)
     {
@@ -23,34 +23,25 @@ class ServerRequestFactory
     }
 
     /**
-     * @deprecated
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    public function fromGlobals()
-    {
-        return $this->createFromGlobals();
-    }
-
-    /**
      * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function createFromGlobals()
     {
-        return $this->factory($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new PhpInputStream());
+        return $this->create($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES, new PhpInputStream());
     }
 
     /**
      * @param string $body
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function fromSocketBody($body)
+    public function createFromSocketBody($body)
     {
         $lines = array_map('trim', explode("\n", $body));
         $blankKey = array_search('', $lines);
 
         $phpServer = $this->getPhpServerValuesFromPlainHeader(array_slice($lines, 0, $blankKey));
 
-        return $this->factory($phpServer, [], [], [], []);
+        return $this->create($phpServer, [], [], [], []);
     }
 
     /**
@@ -62,7 +53,7 @@ class ServerRequestFactory
      * @param \Psr\Http\Message\StreamInterface $stream
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function factory(
+    public function create(
         array $server,
         array $get,
         array $post,

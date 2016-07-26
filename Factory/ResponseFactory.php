@@ -1,8 +1,11 @@
 <?php
-namespace Wandu\Http\Psr\Factory;
+namespace Wandu\Http\Factory;
 
 use Closure;
+use Generator;
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use Wandu\Http\Psr\Response;
 use Wandu\Http\Psr\Stream\GeneratorStream;
 use Wandu\Http\Psr\Stream\StringStream;
@@ -10,20 +13,17 @@ use Wandu\Http\Psr\Stream\StringStream;
 class ResponseFactory
 {
     /**
-     * @param string $content
+     * @param \Psr\Http\Message\StreamInterface|string $content
      * @param int $status
      * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function create($content = null, $status = 200, array $headers = [])
     {
-        return new Response(
-            $status,
-            isset($content) ? new StringStream($content) : null,
-            $headers,
-            '',
-            '1.1'
-        );
+        if (isset($content) && !($content instanceof StreamInterface)) {
+            $content = new StringStream($content);
+        }
+        return new Response($status, $content, $headers, '', '1.1');
     }
 
     /**
@@ -42,9 +42,9 @@ class ResponseFactory
     }
 
     /**
-     * @param  string|array  $data
-     * @param  int  $status
-     * @param  array  $headers
+     * @param string|array $data
+     * @param int $status
+     * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function json($data = [], $status = 200, array $headers = [])
@@ -54,9 +54,9 @@ class ResponseFactory
     }
 
     /**
-     * @param  string  $file
-     * @param  string  $name
-     * @param  array  $headers
+     * @param string $file
+     * @param string $name
+     * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function download($file, $name = null, array $headers = [])
@@ -77,32 +77,29 @@ class ResponseFactory
     }
 
     /**
-     * @param string $path
+     * @param \Psr\Http\Message\UriInterface|string $path
      * @param int $status
      * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function redirect($path, $status = 302, $headers = [])
     {
+        if ($path instanceof UriInterface) {
+            $path = $path->__toString();
+        }
         return $this->create(null, $status, $headers)
             ->withStatus($status)
             ->withAddedHeader('Location', $path);
     }
 
     /**
-     * @param \Closure $generator
+     * @param \Generator $generator
      * @param int $status
      * @param array $headers
-     * @return \Wandu\Http\Psr\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function generator(Closure $generator, $status = 200, array $headers = [])
+    public function generator(Generator $generator, $status = 200, array $headers = [])
     {
-        return new Response(
-            $status,
-            new GeneratorStream($generator),
-            $headers,
-            '',
-            '1.1'
-        );
+        return $this->create(new GeneratorStream($generator), $status, $headers);
     }
 }

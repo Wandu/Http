@@ -1,23 +1,13 @@
 <?php
-namespace Wandu\Http\Psr\Factory;
+namespace Wandu\Http\Factory;
 
 use Wandu\Http\Psr\UploadedFile;
 
 class UploadedFileFactory
 {
     /**
-     * @deprecated
      * @param array $files
-     * @return array
-     */
-    public function fromFiles(array $files)
-    {
-        return $this->createFromFiles($files);
-    }
-
-    /**
-     * @param array $files
-     * @return array
+     * @return \Psr\Http\Message\UploadedFileInterface[]|array
      */
     public function createFromFiles(array $files)
     {
@@ -40,7 +30,7 @@ class UploadedFileFactory
      * @param array|int $errorDatas
      * @param array|string $nameDatas
      * @param array|string $typeDatas
-     * @return array
+     * @return \Psr\Http\Message\UploadedFileInterface|\Psr\Http\Message\UploadedFileInterface[]|array
      */
     protected function factoryFilesTree($fileDatas, $sizeDatas, $errorDatas, $nameDatas, $typeDatas)
     {

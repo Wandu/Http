@@ -2,7 +2,6 @@
 namespace Wandu\Http\Psr\Sender;
 
 use Psr\Http\Message\ResponseInterface;
-use Wandu\Http\Psr\Stream\GeneratorStream;
 
 class ResponseSender
 {
@@ -25,7 +24,7 @@ class ResponseSender
             }
             header(sprintf('%s: %s', $name, $response->getHeaderLine($name)));
         }
-        $body = $response->getbody();
+        $body = $response->getBody();
         if ($body) {
             echo $body->__toString();
         }
@@ -56,14 +55,5 @@ class ResponseSender
         }
 
         return implode(" \r\n", $lines) . "\r\n\r\n" . $response->getBody()->__toString();
-    }
-
-    /**
-     * @deprecated
-     * @param \Psr\Http\Message\ResponseInterface $response
-     */
-    public function send(ResponseInterface $response)
-    {
-        $this->sendToGlobal($response);
     }
 }
