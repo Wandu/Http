@@ -2,6 +2,7 @@
 namespace Wandu\Http\Sender;
 
 use Psr\Http\Message\ResponseInterface;
+use Wandu\Http\Psr\Stream\GeneratorStream;
 
 class ResponseSender
 {
@@ -26,7 +27,14 @@ class ResponseSender
         }
         $body = $response->getBody();
         if ($body) {
-            echo $body->__toString();
+            // faster and less memory!
+            if ($response instanceof GeneratorStream) {
+                foreach ($response->getGenerator() as $contents) {
+                    echo $contents;
+                }
+            } else {
+                echo $body->__toString();
+            }
         }
     }
 
