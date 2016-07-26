@@ -1,5 +1,5 @@
 <?php
-namespace Wandu\Http\Psr\Sender;
+namespace Wandu\Http\Sender;
 
 use Psr\Http\Message\ResponseInterface;
 
