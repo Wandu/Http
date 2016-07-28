@@ -34,7 +34,7 @@ class Uploader
     {
         $arrayToReturn = [];
         foreach ($files as $name => $file) {
-            if ($file instanceof UploadedFile) {
+            if ($file instanceof UploadedFileInterface) {
                 $result = $this->uploadFile($file);
                 if ($result) {
                     $arrayToReturn[$name] = $result;
