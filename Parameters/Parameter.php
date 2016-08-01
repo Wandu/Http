@@ -2,6 +2,7 @@
 namespace Wandu\Http\Parameters;
 
 use Wandu\Http\Contracts\ParameterInterface;
+use Wandu\Support\Exception\CannotCallMethodException;
 
 class Parameter implements ParameterInterface
 {
@@ -87,5 +88,41 @@ class Parameter implements ParameterInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        if (strpos($offset, '||') !== false) {
+            list($offset, $default) = explode('||', $offset);
+            return $this->get($offset, $default);
+        }
+        return $this->get($offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new CannotCallMethodException(__FUNCTION__, __CLASS__);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        throw new CannotCallMethodException(__FUNCTION__, __CLASS__);
     }
 }

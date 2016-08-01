@@ -5,7 +5,8 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "psr/http-message": "^1"
+        "psr/http-message": "^1",
+        "wandu/support": "^3.0"
     },
     "autoload": {
         "psr-4": {

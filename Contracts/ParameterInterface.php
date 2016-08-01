@@ -1,7 +1,9 @@
 <?php
 namespace Wandu\Http\Contracts;
 
-interface ParameterInterface
+use ArrayAccess;
+
+interface ParameterInterface extends ArrayAccess 
 {
     /**
      * @param \Wandu\Http\Contracts\ParameterInterface $fallback
