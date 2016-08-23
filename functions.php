@@ -1,7 +1,6 @@
 <?php
 namespace Wandu\Http
 {
-
     use Wandu\Http\Factory\ResponseFactory;
 
     /**
@@ -16,6 +15,7 @@ namespace Wandu\Http
         return $factory;
     }
 }
+
 namespace Wandu\Http\Response
 {
     use Closure;
