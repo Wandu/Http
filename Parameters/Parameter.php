@@ -125,4 +125,12 @@ class Parameter implements ParameterInterface
     {
         throw new CannotCallMethodException(__FUNCTION__, __CLASS__);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    function jsonSerialize()
+    {
+        return $this->toArray();
+    }
 }

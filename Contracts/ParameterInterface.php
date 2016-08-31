@@ -2,8 +2,9 @@
 namespace Wandu\Http\Contracts;
 
 use ArrayAccess;
+use JsonSerializable;
 
-interface ParameterInterface extends ArrayAccess 
+interface ParameterInterface extends ArrayAccess, JsonSerializable
 {
     /**
      * @param \Wandu\Http\Contracts\ParameterInterface $fallback

@@ -3,6 +3,7 @@ namespace Wandu\Http\Traits;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UploadedFileInterface;
+use Wandu\Http\Contracts\AttributeInterface;
 
 trait ServerRequestTrait
 {
@@ -125,7 +126,11 @@ trait ServerRequestTrait
     public function getAttribute($name, $default = null)
     {
         if (array_key_exists($name, $this->attributes)) {
-            return $this->attributes[$name];
+            $attribute = $this->attributes[$name];
+            if ($attribute instanceof AttributeInterface) {
+                return $this->attributes[$name] = $attribute->getAttribute($this);
+            }
+            return $attribute;
         }
         return $default;
     }

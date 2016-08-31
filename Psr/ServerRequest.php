@@ -3,6 +3,7 @@ namespace Wandu\Http\Psr;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Wandu\Http\Contracts\AttributeInterface;
 use Wandu\Http\Traits\ServerRequestTrait;
 
 class ServerRequest extends Request implements ServerRequestInterface
@@ -46,5 +47,15 @@ class ServerRequest extends Request implements ServerRequestInterface
         $this->attributes = $attributes;
 
         parent::__construct($method, $uri, $body, $headers, $protocolVersion);
+    }
+    
+    public function __sleep()
+    {
+        foreach ($this->attributes as $key => $attribute) {
+            if ($attribute instanceof AttributeInterface) {
+                $this->attributes[$key] = $attribute->getAttribute($this);
+            }
+        }
+        return array_keys(get_object_vars($this));
     }
 }
