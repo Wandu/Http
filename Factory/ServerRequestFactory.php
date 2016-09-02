@@ -74,10 +74,10 @@ class ServerRequestFactory
                 // because, it use only in POST method.
                 // ref. en: https://issues.apache.org/jira/browse/FILEUPLOAD-197#comment-13595136
                 // ref. kr: https://blog.outsider.ne.kr/1001
-                if (strpos($headers['content-type'][0], 'application/json') === 0) {
+                if (strpos($headers['content-type'], 'application/json') === 0) {
                     $jsonBody = json_decode($bodyContent, true);
                     $post = $jsonBody ? $jsonBody : $post;
-                } elseif (strpos($headers['content-type'][0], 'application/x-www-form-urlencoded') === 0) {
+                } elseif (strpos($headers['content-type'], 'application/x-www-form-urlencoded') === 0) {
                     parse_str($bodyContent, $post);
                 }
             }

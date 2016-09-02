@@ -80,10 +80,11 @@ trait MessageTrait
      */
     public function withHeader($name, $value)
     {
-        $values = $this->filterHeaderValue($value);
+        $lowerName = strtolower($name);
+        $values = $this->filterHeaderValue($value, $lowerName);
 
         $new = clone $this;
-        $new->headerNames[strtolower($name)] = $name;
+        $new->headerNames[$lowerName] = $name;
         $new->headers[$name] = $values;
         return $new;
     }
@@ -95,12 +96,13 @@ trait MessageTrait
      */
     public function withAddedHeader($name, $value)
     {
-        $values = $this->filterHeaderValue($value);
+        $lowerName = strtolower($name);
+        $values = $this->filterHeaderValue($value, $lowerName);
         if (!$this->hasHeader($name)) {
             return $this->withHeader($name, $value);
         }
         $new = clone $this;
-        $headerName = $new->headerNames[strtolower($name)];
+        $headerName = $new->headerNames[$lowerName];
         $new->headers[$headerName] = array_merge($this->headers[$headerName], $values);
         return $new;
     }
@@ -142,14 +144,21 @@ trait MessageTrait
     }
 
     /**
-     * @param mixed $value
+     * @param string|array $value
+     * @param string $name
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function filterHeaderValue($value)
+    protected function filterHeaderValue($value, $name = null)
     {
         if (is_string($value)) {
-            $value = [$value];
+            if ($name === 'user-agent') {
+                $value = [$value];
+            } else {
+                $value = array_map(function ($item) {
+                    return trim($item);
+                }, explode(',', $value));
+            }
         }
         if (!is_array($value) || !$this->isArrayOfString($value)) {
             throw new InvalidArgumentException('Invalid header value. It must be a string or array of strings.');

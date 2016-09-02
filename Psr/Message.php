@@ -18,8 +18,9 @@ class Message implements MessageInterface
     {
         $this->body = $body;
         foreach ($headers as $name => $header) {
-            $this->headerNames[strtolower($name)] = $name;
-            $this->headers[$name] = $header;
+            $lowerName = strtolower($name);
+            $this->headerNames[$lowerName] = $name;
+            $this->headers[$name] = $this->filterHeaderValue($header, $lowerName);
         }
         $this->protocolVersion = $protocolVersion;
     }

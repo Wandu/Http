@@ -32,7 +32,7 @@ trait HelperTrait
                 $name = strtr(substr($key, 5), '_', ' ');
                 $name = strtr(ucwords(strtolower($name)), ' ', '-');
                 $name = strtolower($name);
-                $headers[$name] = explode(',', $value);
+                $headers[$name] = $value;
                 continue;
             }
             if ($value && strpos($key, 'CONTENT_') === 0) {

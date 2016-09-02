@@ -26,7 +26,7 @@ class HttpServiceProvider implements ServiceProviderInterface
         $app->closure(SessionFactory::class, function ($app) {
             return new SessionFactory($app[SessionHandlerInterface::class], [
                 'timeout' => config('session.timeout', 3600),
-                'name' => config('session.name', 'WdSessId'),
+                'name' => config('session.name', ini_get('session.name') ?: 'WdSessId'),
                 'gc_frequency' => config('session.gc_frequency', 100),
             ]);
         });
