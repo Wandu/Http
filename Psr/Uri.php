@@ -4,6 +4,7 @@ namespace Wandu\Http\Psr;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Wandu\Http\Contracts\ExtendedUriInterface;
+use function Wandu\Http\parseUrl;
 
 class Uri implements UriInterface, ExtendedUriInterface
 {
@@ -38,6 +39,9 @@ class Uri implements UriInterface, ExtendedUriInterface
     protected static $allowedSchemes = [
         'http'  => 80,
         'https' => 443,
+        'ftp' => 21,
+        'sftp' => 22,
+        'ssh' => 22,
     ];
 
     /**
@@ -46,7 +50,7 @@ class Uri implements UriInterface, ExtendedUriInterface
      */
     public function __construct($uri, $isStrict = false)
     {
-        $parsedUrl = parse_url(rawurldecode($uri));
+        $parsedUrl = parseUrl(rawurldecode($uri));
 
         $this->scheme = isset($parsedUrl['scheme']) ? $this->filterScheme($parsedUrl['scheme']) : '';
         $this->host = isset($parsedUrl['host']) ? $this->filterHost($parsedUrl['host']) : '';
@@ -389,9 +393,6 @@ class Uri implements UriInterface, ExtendedUriInterface
         $scheme = rtrim(strtolower($scheme), ':/');
         if ($scheme === '') {
             return '';
-        }
-        if (!isset(static::$allowedSchemes[$scheme])) {
-            throw new InvalidArgumentException("Unsupported scheme \"{$scheme}\".");
         }
         return $scheme;
     }
