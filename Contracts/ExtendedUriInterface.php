@@ -13,16 +13,18 @@ interface ExtendedUriInterface extends UriInterface
 
     /**
      * @param string $name
+     * @param bool $emptyStrict
      * @return bool
      */
-    public function hasQueryParam($name);
+    public function hasQueryParam($name, $emptyStrict = false);
 
     /**
      * @param string $name
      * @param string $default
+     * @param bool $emptyStrict
      * @return string
      */
-    public function getQueryParam($name, $default = null);
+    public function getQueryParam($name, $default = null, $emptyStrict = false);
 
     /**
      * @param string $name

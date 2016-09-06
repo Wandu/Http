@@ -32,9 +32,6 @@ class Uri implements UriInterface, ExtendedUriInterface
     /** @var array */
     protected $queryParams;
 
-    /** @var bool */
-    protected $isStrict;
-
     /** @var array */
     protected static $allowedSchemes = [
         'http'  => 80,
@@ -46,9 +43,8 @@ class Uri implements UriInterface, ExtendedUriInterface
 
     /**
      * @param string $uri
-     * @param bool $isStrict
      */
-    public function __construct($uri, $isStrict = false)
+    public function __construct($uri)
     {
         $parsedUrl = parseUrl(rawurldecode($uri));
 
@@ -66,7 +62,6 @@ class Uri implements UriInterface, ExtendedUriInterface
 
         parse_str($this->getQuery(), $params);
         $this->queryParams = $params;
-        $this->isStrict = $isStrict;
 
         $this->fragment = isset($parsedUrl['fragment']) ? $this->filterFragment($parsedUrl['fragment']) : '';
     }
@@ -242,25 +237,25 @@ class Uri implements UriInterface, ExtendedUriInterface
     /**
      * {@inheritdoc}
      */
-    public function hasQueryParam($name)
+    public function hasQueryParam($name, $emptyStrict = false)
     {
         /* Same Source :-)
-        if ($this->isStrict) {
+        if ($emptyStrict) {
             return array_key_exists($name, $this->queryParams);
         }
         return array_key_exists($name, $this->queryParams) && $this->queryParams[$name];
         */
         return array_key_exists($name, $this->queryParams) && (
-            $this->isStrict || $this->queryParams[$name]
+            $emptyStrict || $this->queryParams[$name]
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQueryParam($name, $default = null)
+    public function getQueryParam($name, $default = null, $emptyStrict = false)
     {
-        if ($this->hasQueryParam($name)) {
+        if ($this->hasQueryParam($name, $emptyStrict)) {
             return $this->queryParams[$name];
         }
         return $default;
@@ -293,7 +288,7 @@ class Uri implements UriInterface, ExtendedUriInterface
     {
         $queryParams = [];
         foreach (array_keys($this->queryParams) as $key) {
-            if ($this->hasQueryParam($key)) {
+            if ($this->hasQueryParam($key, true)) {
                 $queryParams[$key] = $this->queryParams[$key];
             }
         }
