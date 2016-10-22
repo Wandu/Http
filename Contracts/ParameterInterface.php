@@ -19,16 +19,18 @@ interface ParameterInterface extends ArrayAccess, JsonSerializable
 
     /**
      * @param array $keyOrDefaults
+     * @param bool $isStrict
      * @return array
      */
-    public function getMany(array $keyOrDefaults = []);
+    public function getMany(array $keyOrDefaults = [], $isStrict = false);
 
     /**
      * @param string $key
      * @param mixed $default
+     * @param bool $isStrict
      * @return mixed
      */
-    public function get($key, $default = null);
+    public function get($key, $default = null, $isStrict = false);
 
     /**
      * @param string $key

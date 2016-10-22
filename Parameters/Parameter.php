@@ -47,16 +47,14 @@ class Parameter implements ParameterInterface
     /**
      * {@inheritdoc}
      */
-    public function getMany(array $keyOrDefaults = [])
+    public function getMany(array $keyOrDefaults = [], $isStrict = false)
     {
         $dataToReturn = [];
         foreach ($keyOrDefaults as $key => $value) {
             if (is_integer($key)) {
-                if ($this->has($value)) {
-                    $dataToReturn[$value] = $this->get($value);
-                }
+                $dataToReturn[$value] = $this->get($value, null, $isStrict);
             } else {
-                $dataToReturn[$key] = $this->get($key, $value);
+                $dataToReturn[$key] = $this->get($key, $value, $isStrict);
             }
         }
         return $dataToReturn;
@@ -65,9 +63,9 @@ class Parameter implements ParameterInterface
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null, $isStrict = false)
     {
-        if (array_key_exists($key, $this->params)) {
+        if (isset($this->params[$key]) && ($isStrict || !$isStrict && $this->params[$key])) {
             return $this->params[$key];
         }
         if (isset($this->fallback)) {
@@ -81,7 +79,7 @@ class Parameter implements ParameterInterface
      */
     public function has($key)
     {
-        if (array_key_exists($key, $this->params)) {
+        if (isset($this->params[$key])) {
             return true;
         }
         if (isset($this->fallback) && $this->fallback->has($key)) {

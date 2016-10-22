@@ -37,12 +37,12 @@ class CookieJar extends Parameter implements CookieJarInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, $default = null)
+    public function get($name, $default = null, $isStrict = false)
     {
         if (isset($this->setCookies[$name]) && $this->setCookies[$name]->getValue()) {
             return $this->setCookies[$name]->getValue();
         }
-        return parent::get($name, $default);
+        return parent::get($name, $default, $isStrict);
     }
 
     /**

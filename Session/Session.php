@@ -54,15 +54,15 @@ class Session extends Parameter implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, $default = null)
+    public function get($name, $default = null, $isStrict = false)
     {
         $this->validNameArgument($name);
-        if (isset($this->params['__flash__'][$name])) {
+        if (isset($this->params['__flash__'][$name]) && ($isStrict || !$isStrict && $this->params['__flash__'][$name])) {
             $resultToReturn = $this->params['__flash__'][$name];
             unset($this->params['__flash__'][$name]);
             return $resultToReturn;
         }
-        return parent::get($name, $default);
+        return parent::get($name, $default, $isStrict);
     }
 
     /**
