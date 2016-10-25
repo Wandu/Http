@@ -6,7 +6,7 @@ Wandu Http
 [![Total Downloads](https://poser.pugx.org/wandu/http/downloads.svg)](https://packagist.org/packages/wandu/http)
 [![License](https://poser.pugx.org/wandu/http/license.svg)](https://packagist.org/packages/wandu/http)
 
-Http Psr-7(Based on 1.0.0) Implementation. More details: [www.php-fig.org/psr/psr-7](http://www.php-fig.org/psr/psr-7/)
+Http Psr-7 Implementation with Session and Cookie. More details: [www.php-fig.org/psr/psr-7](http://www.php-fig.org/psr/psr-7/)
 
 ## Websites
 
