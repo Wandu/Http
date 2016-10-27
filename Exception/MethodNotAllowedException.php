@@ -1,20 +1,14 @@
 <?php
 namespace Wandu\Http\Exception;
 
-use Psr\Http\Message\ResponseInterface;
-use Wandu\Http\Psr\Response;
-
 class MethodNotAllowedException extends HttpException
 {
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param \Psr\Http\Message\ResponseInterface|\Psr\Http\Message\StreamInterface|string $response
      * @param array $attributes
      */
-    public function __construct(
-        ResponseInterface $response = null,
-        array $attributes = []
-    ) {
-        $response = $response ?: new Response();
-        parent::__construct($response->withStatus(405), $attributes);
+    public function __construct($response = null, array $attributes = []) {
+        parent::__construct($response, $attributes);
+        $this->response = $this->response->withStatus(405);
     }
 }

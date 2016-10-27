@@ -4,6 +4,8 @@ namespace Wandu\Http\Exception;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Wandu\Http\Psr\Response;
+use Wandu\Http\Psr\Stream\StringStream;
 
 class HttpException extends Exception implements ResponseInterface
 {
@@ -14,13 +16,20 @@ class HttpException extends Exception implements ResponseInterface
     protected $attributes;
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param \Psr\Http\Message\ResponseInterface|\Psr\Http\Message\StreamInterface|string $response
      * @param array $attributes
      */
-    public function __construct(
-        ResponseInterface $response,
-        array $attributes = []
-    ) {
+    public function __construct($response = null, array $attributes = []) {
+        if (!isset($response)) {
+            $response = new Response();
+        } else {
+            if (is_string($response)) {
+                $response = new StringStream($response);
+            }
+            if ($response instanceof StreamInterface) {
+                $response = new Response(200, $response);
+            }
+        }
         $this->response = $response;
         $this->attributes = $attributes;
     }
