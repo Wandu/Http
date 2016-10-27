@@ -22,6 +22,7 @@ trait ResponseTrait
         206 => 'Partial Content',
         207 => 'Multi-status',
         208 => 'Already Reported',
+        226 => 'IM Used',
 
         // REDIRECTION CODES
         300 => 'Multiple Choices',
@@ -32,6 +33,7 @@ trait ResponseTrait
         305 => 'Use Proxy',
         306 => 'Switch Proxy', // Deprecated
         307 => 'Temporary Redirect',
+        308	=> 'Permanent Redirect',
 
         // CLIENT ERROR
         400 => 'Bad Request',
@@ -53,6 +55,7 @@ trait ResponseTrait
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
         418 => 'I\'m a teapot',
+        421 => 'Misdirected Request',
         422 => 'Unprocessable Entity',
         423 => 'Locked',
         424 => 'Failed Dependency',
@@ -73,6 +76,7 @@ trait ResponseTrait
         506 => 'Variant Also Negotiates',
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
+        510 => 'Not Extended',
         511 => 'Network Authentication Required',
     ];
 
