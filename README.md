@@ -10,7 +10,7 @@ Http Psr-7 Implementation with Session and Cookie. More details: [www.php-fig.or
 
 ## Websites
 
-- [wandu.github.io/#http](https://wandu.github.io/#http)
+- [wandu.github.io/docs/http](https://wandu.github.io/docs/http)
 
 ## Reference
 
