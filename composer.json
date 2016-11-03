@@ -20,7 +20,7 @@
         "psr/http-message-implementation": "1.0"
     },
     "suggest": {
-        "predis/predis": "for Redis session"
+        "predis/predis": "for the Redis session."
     },
     "extra": {
         "branch-alias": {
