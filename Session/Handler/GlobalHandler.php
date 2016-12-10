@@ -11,7 +11,7 @@ class GlobalHandler implements SessionHandlerInterface
     public function destroy($sessionId)
     {
         $this->bootSession();
-        session_destroy();
+        @session_destroy();
         return true;
     }
 
