@@ -6,6 +6,9 @@ use SessionHandlerInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\SessionInterface;
 
+/**
+ * @deprecated use \Wandu\Http\Parameters\Session
+ */
 class SessionFactory
 {
     /** @var \SessionHandlerInterface */

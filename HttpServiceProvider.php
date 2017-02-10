@@ -6,10 +6,10 @@ use SessionHandlerInterface;
 use Wandu\DI\ContainerInterface;
 use Wandu\DI\ServiceProviderInterface;
 use Wandu\Http\Factory\ResponseFactory;
+use Wandu\Http\Session\Configuration;
 use Wandu\Http\Session\Handler\FileHandler;
 use Wandu\Http\Session\Handler\GlobalHandler;
 use Wandu\Http\Session\Handler\RedisHandler;
-use Wandu\Http\Session\SessionFactory;
 use function Wandu\Foundation\config;
 use function Wandu\Foundation\path;
 
@@ -23,8 +23,8 @@ class HttpServiceProvider implements ServiceProviderInterface
         $app->closure(ResponseFactory::class, function () {
             return response(); // singleton
         });
-        $app->closure(SessionFactory::class, function ($app) {
-            return new SessionFactory($app[SessionHandlerInterface::class], [
+        $app->closure(Configuration::class, function () {
+            return new Configuration([
                 'timeout' => config('session.timeout', 3600),
                 'name' => config('session.name', ini_get('session.name') ?: 'WdSessId'),
                 'gc_frequency' => config('session.gc_frequency', 100),

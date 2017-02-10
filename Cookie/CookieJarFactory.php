@@ -5,6 +5,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
 
+/**
+ * @deprecated use \Wandu\Http\Parameters\CookieJar
+ */
 class CookieJarFactory
 {
     /**

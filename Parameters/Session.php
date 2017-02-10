@@ -1,36 +1,40 @@
 <?php
-namespace Wandu\Http\Session;
+namespace Wandu\Http\Parameters;
 
 use InvalidArgumentException;
+use SessionHandlerInterface;
+use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Contracts\SessionInterface;
-use Wandu\Http\Parameters\Parameter;
+use Wandu\Http\Session\Configuration;
 
-/**
- * @deprecated use \Wandu\Http\Parameters\Session
- */
-class Session extends Parameter implements SessionInterface
+class Session extends Parameter implements SessionInterface  
 {
+    /** @var \SessionHandlerInterface */
+    protected $handler;
+    
+    /** @var \Wandu\Http\Session\Configuration */
+    protected $config;
+
     /** @var string */
     protected $id;
 
-    /**
-     * @param string $id
-     * @param array $dataSet
-     * @param \Wandu\Http\Contracts\ParameterInterface|null $fallback
-     */
-    public function __construct($id, array $dataSet = [], ParameterInterface $fallback = null)
-    {
-        $this->id = $id;
-        parent::__construct($dataSet, $fallback);
-    }
+    public function __construct(
+        CookieJarInterface $cookieJar,
+        SessionHandlerInterface $handler,
+        Configuration $config = null,
+        ParameterInterface $fallback = null
+    ) {
+        $this->handler = $handler;
+        $this->config = $config ?: new Configuration();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return $this->id;
+        $sessionName = $this->config->getName();
+
+        $this->id = $cookieJar->has($sessionName)
+            ? $cookieJar->get($sessionName)
+            : $this->config->getUniqueId();
+
+        parent::__construct(@unserialize($handler->read($this->id)), $fallback);
     }
 
     /**
@@ -44,14 +48,6 @@ class Session extends Parameter implements SessionInterface
             unset($arrayToReturn['__flash__'], $this->params['__flash__']);
         }
         return $arrayToReturn;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRawParams()
-    {
-        return $this->params;
     }
 
     /**
@@ -98,7 +94,7 @@ class Session extends Parameter implements SessionInterface
     {
         $this->validNameArgument($name);
         return parent::has($name) || // or, __flash__ exists check.
-            (isset($this->params['__flash__']) && array_key_exists($name, $this->params['__flash__']));
+        (isset($this->params['__flash__']) && array_key_exists($name, $this->params['__flash__']));
     }
 
     /**
@@ -154,5 +150,29 @@ class Session extends Parameter implements SessionInterface
     public function offsetUnset($offset)
     {
         $this->remove($offset);
+    }
+
+    /**
+     * @param \Wandu\Http\Contracts\CookieJarInterface $cookieJar
+     */
+    public function applyToCookieJar(CookieJarInterface $cookieJar)
+    {
+        $sessionName = $this->config->getName();
+
+        // save to handler
+        $this->handler->write($this->id, serialize($this->params));
+
+        // apply to cookie-jar
+        $cookieJar->set(
+            $sessionName,
+            $this->id,
+            (new \DateTime())->setTimestamp(time() + $this->config->getTimeout())
+        );
+
+        // garbage collection
+        $pick = rand(1, max(1, $this->config->getGcFrequency()));
+        if ($pick === 1) {
+            $this->handler->gc($this->config->getTimeout());
+        }
     }
 }

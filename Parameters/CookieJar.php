@@ -1,28 +1,26 @@
 <?php
-namespace Wandu\Http\Cookie;
+namespace Wandu\Http\Parameters;
 
 use ArrayIterator;
 use DateTime;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
 use Wandu\Http\Contracts\ParameterInterface;
-use Wandu\Http\Parameters\Parameter;
+use Wandu\Http\Cookie\Cookie;
 
-/**
- * @deprecated use \Wandu\Http\Parameters\CookieJar
- */
 class CookieJar extends Parameter implements CookieJarInterface
 {
     /** @var \Wandu\Http\Cookie\Cookie[] */
-    protected $setCookies;
+    protected $setCookies = [];
 
     /**
-     * @param array $cookieParams
+     * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Wandu\Http\Contracts\ParameterInterface $fallback
      */
-    public function __construct(array $cookieParams = [], ParameterInterface $fallback = null)
+    public function __construct(ServerRequestInterface $request, ParameterInterface $fallback = null)
     {
-        parent::__construct($cookieParams, $fallback);
-        $this->setCookies = [];
+        parent::__construct($request->getCookieParams(), $fallback);
     }
 
     /**
@@ -116,5 +114,17 @@ class CookieJar extends Parameter implements CookieJarInterface
     public function offsetUnset($offset)
     {
         $this->remove($offset);
+    }
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function applyToResponse(ResponseInterface $response)
+    {
+        foreach ($this->setCookies as $cookie) {
+            $response = $response->withAddedHeader('Set-Cookie', $cookie->__toString());
+        }
+        return $response;
     }
 }

@@ -81,7 +81,7 @@ class Cookie
     }
 
     /**
-     * @return int
+     * @return \DateTime
      */
     public function getExpire()
     {
