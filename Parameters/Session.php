@@ -34,7 +34,8 @@ class Session extends Parameter implements SessionInterface
             ? $cookieJar->get($sessionName)
             : $this->config->getUniqueId();
 
-        parent::__construct(@unserialize($handler->read($this->id)), $fallback);
+        $params = @unserialize($handler->read($this->id));
+        parent::__construct(isset($params) && is_array($params) ? $params : [], $fallback);
     }
 
     /**
