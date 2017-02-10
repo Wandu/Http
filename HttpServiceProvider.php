@@ -11,7 +11,6 @@ use Wandu\Http\Session\Handler\FileHandler;
 use Wandu\Http\Session\Handler\GlobalHandler;
 use Wandu\Http\Session\Handler\RedisHandler;
 use function Wandu\Foundation\config;
-use function Wandu\Foundation\path;
 
 class HttpServiceProvider implements ServiceProviderInterface
 {
@@ -30,10 +29,10 @@ class HttpServiceProvider implements ServiceProviderInterface
                 'gc_frequency' => config('session.gc_frequency', 100),
             ]);
         });
-        $app->closure(SessionHandlerInterface::class, function ($app) {
+        $app->closure(SessionHandlerInterface::class, function (ContainerInterface $app) {
             switch (config('session.type')) {
                 case 'file':
-                    return new FileHandler(path(config('session.path', 'cache/sessions')));
+                    return new FileHandler(config('session.path', 'cache/sessions'));
                 case 'redis':
                     return new RedisHandler($app[Client::class], config('session.timeout', 3600));
                 default:
