@@ -1,9 +1,7 @@
 <?php
 namespace Wandu\Http\Contracts;
 
-use ArrayAccess;
-
-interface SessionInterface extends ArrayAccess, ParameterInterface
+interface SessionInterface extends ParameterInterface
 {
     /**
      * @param string $name

@@ -124,22 +124,6 @@ class Session extends Parameter implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);

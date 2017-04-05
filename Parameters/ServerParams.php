@@ -2,6 +2,7 @@
 namespace Wandu\Http\Parameters;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Http\Contracts\ServerParamsInterface;
 
 class ServerParams extends Parameter implements ServerParamsInterface 
@@ -29,11 +30,12 @@ class ServerParams extends Parameter implements ServerParamsInterface
     
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Wandu\Http\Contracts\ParameterInterface $fallback
      */
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(ServerRequestInterface $request, ParameterInterface $fallback = null)
     {
         $this->request = $request;
-        parent::__construct($request->getServerParams());
+        parent::__construct($request->getServerParams(), $fallback);
     }
 
     /**

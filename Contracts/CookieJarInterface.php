@@ -1,11 +1,9 @@
 <?php
 namespace Wandu\Http\Contracts;
 
-use ArrayAccess;
 use DateTime;
-use IteratorAggregate;
 
-interface CookieJarInterface extends ArrayAccess, IteratorAggregate, ParameterInterface
+interface CookieJarInterface extends ParameterInterface
 {
     /**
      * @param string $name

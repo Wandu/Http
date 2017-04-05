@@ -1,6 +1,7 @@
 <?php
 namespace Wandu\Http\Parameters;
 
+use ArrayIterator;
 use Wandu\Http\Contracts\ParameterInterface;
 use Wandu\Support\Exception\CannotCallMethodException;
 
@@ -65,8 +66,23 @@ class Parameter implements ParameterInterface
      */
     public function get($key, $default = null, $isStrict = false)
     {
-        if (isset($this->params[$key]) && ($isStrict || !$isStrict && $this->params[$key])) {
-            return $this->params[$key];
+        if ($key === '') {
+            return $this->params;
+        }
+        $keys = explode('.', $key);
+        $dataToReturn = $this->params;
+        while (count($keys)) {
+            $key = array_shift($keys);
+            if (!is_array($dataToReturn) || !array_key_exists($key, $dataToReturn)) {
+                if (isset($this->fallback)) {
+                    return $this->fallback->get($key, $default);
+                }
+                return $default;
+            }
+            $dataToReturn = $dataToReturn[$key];
+        }
+        if (isset($dataToReturn) && ($isStrict || !$isStrict && $dataToReturn)) {
+            return $dataToReturn;
         }
         if (isset($this->fallback)) {
             return $this->fallback->get($key, $default);
@@ -79,13 +95,22 @@ class Parameter implements ParameterInterface
      */
     public function has($key)
     {
-        if (isset($this->params[$key])) {
+        if ($key === '') {
             return true;
         }
-        if (isset($this->fallback) && $this->fallback->has($key)) {
-            return true;
+        $keys = explode('.', $key);
+        $dataToReturn = $this->params;
+        while (count($keys)) {
+            $key = array_shift($keys);
+            if (!is_array($dataToReturn) || !isset($dataToReturn[$key])) {
+                if (isset($this->fallback) && $this->fallback->has($key)) {
+                    return true;
+                }
+                return false;
+            }
+            $dataToReturn = $dataToReturn[$key];
         }
-        return false;
+        return true;
     }
 
     /**
@@ -130,5 +155,13 @@ class Parameter implements ParameterInterface
     function jsonSerialize()
     {
         return $this->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->toArray());
     }
 }

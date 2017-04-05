@@ -1,7 +1,6 @@
 <?php
 namespace Wandu\Http\Parameters;
 
-use ArrayIterator;
 use DateTime;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,11 +27,15 @@ class CookieJar extends Parameter implements CookieJarInterface
      */
     public function toArray()
     {
-        $resultToReturn = [];
+        $resultToReturn = parent::toArray();
         foreach ($this->setCookies as $name => $setCookie) {
-            $resultToReturn[$name] = $setCookie->getValue();
+            if ($value = $setCookie->getValue()) {
+                $resultToReturn[$name] = $value;
+            } else {
+                unset($resultToReturn[$name]);
+            }
         }
-        return $resultToReturn + parent::toArray();
+        return $resultToReturn;
     }
 
     /**
@@ -74,30 +77,6 @@ class CookieJar extends Parameter implements CookieJarInterface
         $this->setCookies[$name] = new Cookie($name);
         unset($this->params[$name]);
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->setCookies);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
     }
 
     /**
