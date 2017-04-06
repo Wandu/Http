@@ -11,6 +11,7 @@ class GlobalHandler implements SessionHandlerInterface
     public function destroy($sessionId)
     {
         $this->bootSession();
+        $_SESSION = []; // destroy
         @session_destroy();
         return true;
     }
@@ -65,7 +66,9 @@ class GlobalHandler implements SessionHandlerInterface
     
     protected function bootSession()
     {
-        if (session_status() == \PHP_SESSION_NONE) {
+        if (\PHP_SAPI === 'cli' && !isset($_SESSION)) {
+            $_SESSION = [];
+        } else if (\PHP_SAPI !== 'cli' && session_status() == \PHP_SESSION_NONE) {
             @session_start();
         }
     }
