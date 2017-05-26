@@ -31,7 +31,7 @@ trait HelperTrait
             if ($value && strpos($key, 'HTTP_') === 0) {
                 $name = strtr(substr($key, 5), '_', ' ');
                 $name = strtr(ucwords(strtolower($name)), ' ', '-');
-                $name = strtolower($name);
+                $name = trim(strtolower($name), '-');
                 $headers[$name] = $value;
                 continue;
             }
