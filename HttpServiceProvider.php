@@ -4,6 +4,7 @@ namespace Wandu\Http;
 use Predis\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use SessionHandlerInterface;
+use Wandu\Config\Contracts\ConfigInterface;
 use Wandu\DI\ContainerInterface;
 use Wandu\DI\ServiceProviderInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
@@ -22,7 +23,6 @@ use Wandu\Http\Session\Configuration;
 use Wandu\Http\Session\Handler\FileHandler;
 use Wandu\Http\Session\Handler\GlobalHandler;
 use Wandu\Http\Session\Handler\RedisHandler;
-use function Wandu\Foundation\config;
 
 class HttpServiceProvider implements ServiceProviderInterface
 {
@@ -34,19 +34,19 @@ class HttpServiceProvider implements ServiceProviderInterface
         $app->closure(ResponseFactory::class, function () {
             return response(); // singleton
         });
-        $app->closure(Configuration::class, function () {
+        $app->closure(Configuration::class, function (ConfigInterface $config) {
             return new Configuration([
-                'timeout' => config('session.timeout', 3600),
-                'name' => config('session.name', ini_get('session.name') ?: 'WdSessId'),
-                'gc_frequency' => config('session.gc_frequency', 100),
+                'timeout' => $config->get('session.timeout', 3600),
+                'name' => $config->get('session.name', ini_get('session.name') ?: 'WdSessId'),
+                'gc_frequency' => $config->get('session.gc_frequency', 100),
             ]);
         });
-        $app->closure(SessionHandlerInterface::class, function (ContainerInterface $app) {
-            switch (config('session.type')) {
+        $app->closure(SessionHandlerInterface::class, function (ConfigInterface $config, ContainerInterface $app) {
+            switch ($config->get('session.type')) {
                 case 'file':
-                    return new FileHandler(config('session.path', 'cache/sessions'));
+                    return new FileHandler($config->get('session.path', 'cache/sessions'));
                 case 'redis':
-                    return new RedisHandler($app[Client::class], config('session.timeout', 3600));
+                    return new RedisHandler($app[Client::class], $config->get('session.timeout', 3600));
                 default:
                     return new GlobalHandler();
             }
