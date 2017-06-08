@@ -4,7 +4,7 @@ namespace Wandu\Http;
 use Predis\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use SessionHandlerInterface;
-use Wandu\Config\Contracts\ConfigInterface;
+use Wandu\Config\Contracts\Config;
 use Wandu\DI\ContainerInterface;
 use Wandu\DI\ServiceProviderInterface;
 use Wandu\Http\Contracts\CookieJarInterface;
@@ -34,14 +34,14 @@ class HttpServiceProvider implements ServiceProviderInterface
         $app->closure(ResponseFactory::class, function () {
             return response(); // singleton
         });
-        $app->closure(Configuration::class, function (ConfigInterface $config) {
+        $app->closure(Configuration::class, function (Config $config) {
             return new Configuration([
                 'timeout' => $config->get('session.timeout', 3600),
                 'name' => $config->get('session.name', ini_get('session.name') ?: 'WdSessId'),
                 'gc_frequency' => $config->get('session.gc_frequency', 100),
             ]);
         });
-        $app->closure(SessionHandlerInterface::class, function (ConfigInterface $config, ContainerInterface $app) {
+        $app->closure(SessionHandlerInterface::class, function (Config $config, ContainerInterface $app) {
             switch ($config->get('session.type')) {
                 case 'file':
                     return new FileHandler($config->get('session.path', 'cache/sessions'));
