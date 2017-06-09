@@ -3,7 +3,7 @@ namespace Wandu\Http\Parameters;
 
 use ArrayIterator;
 use Wandu\Http\Contracts\ParameterInterface;
-use Wandu\Support\Exception\CannotCallMethodException;
+use Wandu\Http\Exception\CannotCallMethodException;
 
 class Parameter implements ParameterInterface
 {
