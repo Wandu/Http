@@ -10,30 +10,38 @@ use Wandu\Http\Session\Configuration;
 
 class Session extends Parameter implements SessionInterface  
 {
+    /** @var string */
+    protected $id;
+
     /** @var \SessionHandlerInterface */
     protected $handler;
     
     /** @var \Wandu\Http\Session\Configuration */
     protected $config;
 
-    /** @var string */
-    protected $id;
-
-    public function __construct(
+    public static function createFromCookieJar(
         CookieJarInterface $cookieJar,
         SessionHandlerInterface $handler,
         Configuration $config = null,
         ParameterInterface $fallback = null
     ) {
-        $this->handler = $handler;
-        $this->config = $config ?: new Configuration();
-
-        $sessionName = $this->config->getName();
-
-        $this->id = $cookieJar->has($sessionName)
+        $config = $config ?: new Configuration();
+        $sessionName = $config->getName();
+        $id = $cookieJar->has($sessionName)
             ? $cookieJar->get($sessionName)
-            : $this->config->getUniqueId();
-
+            : $config->getUniqueId();
+        return new static($id, $handler, $config, $fallback);
+    }
+    
+    public function __construct(
+        $id,
+        SessionHandlerInterface $handler,
+        Configuration $config,
+        ParameterInterface $fallback = null
+    ) {
+        $this->id = $id;
+        $this->handler = $handler;
+        $this->config = $config;
         $params = @unserialize($handler->read($this->id));
         parent::__construct(isset($params) && is_array($params) ? $params : [], $fallback);
     }
