@@ -152,7 +152,7 @@ trait MessageTrait
     protected function filterHeaderValue($value, $name = null)
     {
         if (is_string($value)) {
-            if ($name === 'user-agent') {
+            if ($name === 'user-agent' || $name === 'set-cookie') {
                 $value = [$value];
             } else {
                 $value = array_map(function ($item) {
