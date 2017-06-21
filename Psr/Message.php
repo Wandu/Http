@@ -20,7 +20,7 @@ class Message implements MessageInterface
         foreach ($headers as $name => $header) {
             $lowerName = strtolower($name);
             $this->headerNames[$lowerName] = $name;
-            $this->headers[$name] = $this->filterHeaderValue($header, $lowerName);
+            $this->headers[$name] = $this->filterHeaderValue($header);
         }
         $this->protocolVersion = $protocolVersion;
     }

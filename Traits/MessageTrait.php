@@ -80,12 +80,10 @@ trait MessageTrait
      */
     public function withHeader($name, $value)
     {
-        $lowerName = strtolower($name);
-        $values = $this->filterHeaderValue($value, $lowerName);
-
         $new = clone $this;
+        $lowerName = strtolower($name);
         $new->headerNames[$lowerName] = $name;
-        $new->headers[$name] = $values;
+        $new->headers[$name] = $this->filterHeaderValue($value);
         return $new;
     }
 
@@ -96,14 +94,13 @@ trait MessageTrait
      */
     public function withAddedHeader($name, $value)
     {
-        $lowerName = strtolower($name);
-        $values = $this->filterHeaderValue($value, $lowerName);
         if (!$this->hasHeader($name)) {
             return $this->withHeader($name, $value);
         }
         $new = clone $this;
+        $lowerName = strtolower($name);
         $headerName = $new->headerNames[$lowerName];
-        $new->headers[$headerName] = array_merge($this->headers[$headerName], $values);
+        $new->headers[$headerName] = array_merge($this->headers[$headerName], $this->filterHeaderValue($value));
         return $new;
     }
 
@@ -145,38 +142,21 @@ trait MessageTrait
 
     /**
      * @param string|array $value
-     * @param string $name
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function filterHeaderValue($value, $name = null)
+    protected function filterHeaderValue($value)
     {
         if (is_string($value)) {
-            if ($name === 'user-agent' || $name === 'set-cookie') {
-                $value = [$value];
-            } else {
-                $value = array_map(function ($item) {
-                    return trim($item);
-                }, explode(',', $value));
-            }
+            $value = [$value];
         }
-        if (!is_array($value) || !$this->isArrayOfString($value)) {
+        return array_map(function ($value) {
+            if (
+                is_scalar($value)
+             || (is_object($value) && method_exists($value, '__toString'))) {
+                return trim($value);
+            }
             throw new InvalidArgumentException('Invalid header value. It must be a string or array of strings.');
-        }
-        return $value;
-    }
-
-    /**
-     * @param array $values
-     * @return bool
-     */
-    protected function isArrayOfString(array $values)
-    {
-        foreach ($values as $value) {
-            if (!is_string($value)) {
-                return false;
-            }
-        }
-        return true;
+        }, is_array($value) ? $value : [$value]);
     }
 }

@@ -67,7 +67,7 @@ class ServerParams extends Parameter implements ServerParamsInterface
         } elseif (is_string($contentTypes)) {
             $contentTypes = [$contentTypes];
         }
-        $accepts = $this->request->getHeader('accept');
+        $accepts = array_filter(explode(',', $this->request->getHeaderLine('accept')));
         if (count($accepts) === 0) return true;
         foreach ($accepts as $accept) {
             list($acceptType, $acceptSubType) = $this->splitType($accept);
@@ -88,7 +88,7 @@ class ServerParams extends Parameter implements ServerParamsInterface
     {
         return array_map(function ($language) {
             return strtok($language, ';');
-        }, $this->request->getHeader('accept-language'));
+        }, explode(',', $this->request->getHeaderLine('accept-language')));
     }
 
     /**
