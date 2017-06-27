@@ -89,6 +89,14 @@ class Cookie
     }
 
     /**
+     * @return int
+     */
+    public function getMaxAge()
+    {
+        return max(-1, $this->expire->getTimestamp() - time());
+    }
+
+    /**
      * @return string
      */
     public function getPath()
@@ -129,11 +137,12 @@ class Cookie
         if ($this->value) {
             $stringToReturn .= urlencode($this->value);
             if (isset($this->expire)) {
-                $stringToReturn .= '; Expires=' .
-                    $this->expire->setTimezone(new DateTimeZone('GMT'))->format("l, d-M-Y H:i:s T");
+                $expire = $this->expire->setTimezone(new DateTimeZone('GMT'))->format("l, d-M-Y H:i:s T");
+                $maxAge = $this->getMaxAge();
+                $stringToReturn .= "; Expires={$expire}; Max-Age={$maxAge}";
             }
         } else {
-            $stringToReturn .= 'deleted; Expires=Thursday, 01-Jan-1970 00:00:00 GMT';
+            $stringToReturn .= 'deleted; Expires=Thursday, 01-Jan-1970 00:00:00 GMT; Max-Age=0';
         }
         if (isset($this->path)) {
             $stringToReturn .= '; Path=' . $this->path;
