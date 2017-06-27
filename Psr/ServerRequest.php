@@ -11,31 +11,30 @@ class ServerRequest extends Request implements ServerRequestInterface
     use ServerRequestTrait;
 
     /**
-     * ServerRequest constructor.
+     * @param string $method
+     * @param \Psr\Http\Message\UriInterface|string $uri
+     * @param \Psr\Http\Message\StreamInterface|null $body
+     * @param array $headers
+     * @param string $protocolVersion
      * @param array $serverParams
      * @param array $queryParams
      * @param array $parsedBody
      * @param array $cookieParams
      * @param array $uploadedFiles
      * @param array $attributes
-     * @param string $method
-     * @param \Psr\Http\Message\UriInterface|string $uri
-     * @param \Psr\Http\Message\StreamInterface|null $body
-     * @param array $headers
-     * @param string $protocolVersion
      */
     public function __construct(
+        $method = null,
+        $uri = null,
+        StreamInterface $body = null,
+        array $headers = [],
+        $protocolVersion = '1.1',
         array $serverParams = [],
         array $queryParams = [],
         array $parsedBody = [],
         array $cookieParams = [],
         array $uploadedFiles = [],
-        array $attributes = [],
-        $method = null,
-        $uri = null,
-        StreamInterface $body = null,
-        array $headers = [],
-        $protocolVersion = '1.1'
+        array $attributes = []
     ) {
         $this->validArrayOfUploadedFiles($uploadedFiles);
 

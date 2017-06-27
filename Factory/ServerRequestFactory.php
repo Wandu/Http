@@ -83,17 +83,16 @@ class ServerRequestFactory
             }
         }
         return new ServerRequest(
-            $server,
-            $get,
-            $post,
-            $cookies,
-            $this->fileFactory->createFromFiles($files),
-            [],
             isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET',
             $this->getUri($server),
             $stream,
             $headers,
-            '1.1'
+            '1.1',
+            $server,
+            $get,
+            $post,
+            $cookies,
+            $this->fileFactory->createFromFiles($files)
         );
     }
 
