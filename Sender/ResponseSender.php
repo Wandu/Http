@@ -28,8 +28,8 @@ class ResponseSender
         $body = $response->getBody();
         if ($body) {
             // faster and less memory!
-            if ($response instanceof GeneratorStream) {
-                foreach ($response->getGenerator() as $contents) {
+            if ($body instanceof GeneratorStream) {
+                foreach ($body->getGenerator() as $contents) {
                     echo $contents;
                 }
             } else {
