@@ -4,7 +4,7 @@ namespace Wandu\Http\Exception;
 class UnauthorizedException extends HttpException
 {
     /**
-     * @param \Psr\Http\Message\ResponseInterface|\Psr\Http\Message\StreamInterface|string $response
+     * @param mixed $response
      * @param array $attributes
      */
     public function __construct($response = null, array $attributes = []) {
