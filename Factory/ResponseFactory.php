@@ -15,19 +15,16 @@ class ResponseFactory
 {
     /** @var \Wandu\Http\Factory\ResponseFactory */
     public static $instance;
-    
+
     /**
-     * @param \Psr\Http\Message\StreamInterface|string $content
+     * @param \Psr\Http\Message\StreamInterface $stream
      * @param int $status
      * @param array $headers
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function create($content = null, $status = 200, array $headers = [])
+    public function create(StreamInterface $stream = null, $status = 200, array $headers = [])
     {
-        if (isset($content) && !($content instanceof StreamInterface)) {
-            $content = new StringStream($content);
-        }
-        return new Response($status, $content, $headers, '', '1.1');
+        return new Response($status, $stream, $headers, '', '1.1');
     }
 
     /**
@@ -42,9 +39,20 @@ class ResponseFactory
         $area();
         $contents = ob_get_contents();
         ob_end_clean();
-        return $this->create($contents, $status, $headers);
+        return $this->string($contents, $status, $headers);
     }
 
+    /**
+     * @param string $contents
+     * @param int $status
+     * @param array $headers
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function string(string $contents, $status = 200, array $headers = [])
+    {
+        return $this->create(new StringStream($contents), $status, $headers);
+    }
+    
     /**
      * @param string|array $data
      * @param int $status
@@ -53,7 +61,7 @@ class ResponseFactory
      */
     public function json($data = [], $status = 200, array $headers = [])
     {
-        return $this->create(json_encode($data), $status, $headers)
+        return $this->create(new StringStream(json_encode($data)), $status, $headers)
             ->withHeader('Content-Type', 'application/json');
     }
 
@@ -68,7 +76,7 @@ class ResponseFactory
         if (!is_file($file)) {
             new InvalidArgumentException("\"{$file}\" is not a file.");
         }
-        return $this->create(file_get_contents($file), 200, $headers)
+        return $this->create(new StringStream(file_get_contents($file)), 200, $headers)
             ->withHeader('Pragma', 'public')
             ->withHeader('Expires', '0')
             ->withHeader('Content-Type', 'application/octet-stream')
