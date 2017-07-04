@@ -1,7 +1,6 @@
 <?php
 namespace Wandu\Http\Factory;
 
-use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;
 
 trait HelperTrait

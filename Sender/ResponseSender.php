@@ -2,7 +2,7 @@
 namespace Wandu\Http\Sender;
 
 use Psr\Http\Message\ResponseInterface;
-use Wandu\Http\Psr\Stream\GeneratorStream;
+use Traversable;
 
 class ResponseSender
 {
@@ -28,8 +28,8 @@ class ResponseSender
         $body = $response->getBody();
         if ($body) {
             // faster and less memory!
-            if ($body instanceof GeneratorStream) {
-                foreach ($body->getGenerator() as $contents) {
+            if ($body instanceof Traversable) {
+                foreach ($body as $contents) {
                     echo $contents;
                 }
             } else {

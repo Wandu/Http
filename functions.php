@@ -1,6 +1,7 @@
 <?php
 namespace Wandu\Http
 {
+
     use Wandu\Http\Factory\ResponseFactory;
 
     /**
@@ -8,11 +9,10 @@ namespace Wandu\Http
      */
     function response()
     {
-        static $factory;
-        if (!isset($factory)) {
-            $factory = new ResponseFactory();
+        if (!isset(ResponseFactory::$instance)) {
+            ResponseFactory::$instance = new ResponseFactory();
         }
-        return $factory;
+        return ResponseFactory::$instance;
     }
 
     /**
@@ -37,9 +37,11 @@ namespace Wandu\Http
 
 namespace Wandu\Http\Response
 {
+
     use Closure;
     use Generator;
     use Psr\Http\Message\ServerRequestInterface;
+    use Traversable;
     use Wandu\Http\Exception\BadRequestException;
     use function Wandu\Http\response;
 
@@ -120,6 +122,8 @@ namespace Wandu\Http\Response
     }
 
     /**
+     * @deprecated use iterator
+     * 
      * @param \Generator $generator
      * @param int $status
      * @param array $headers
@@ -127,6 +131,17 @@ namespace Wandu\Http\Response
      */
     function generator(Generator $generator, $status = 200, array $headers = [])
     {
-        return response()->generator($generator, $status, $headers);
+        return response()->iterator($generator, $status, $headers);
+    }
+
+    /**
+     * @param \Traversable $iterator
+     * @param int $status
+     * @param array $headers
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    function iterator(Traversable $iterator, $status = 200, array $headers = [])
+    {
+        return response()->iterator($iterator, $status, $headers);
     }
 }

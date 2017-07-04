@@ -6,12 +6,16 @@ use Generator;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Traversable;
 use Wandu\Http\Psr\Response;
-use Wandu\Http\Psr\Stream\GeneratorStream;
+use Wandu\Http\Psr\Stream\IteratorStream;
 use Wandu\Http\Psr\Stream\StringStream;
 
 class ResponseFactory
 {
+    /** @var \Wandu\Http\Factory\ResponseFactory */
+    public static $instance;
+    
     /**
      * @param \Psr\Http\Message\StreamInterface|string $content
      * @param int $status
@@ -93,6 +97,8 @@ class ResponseFactory
     }
 
     /**
+     * @deprecated use iterator
+     * 
      * @param \Generator $generator
      * @param int $status
      * @param array $headers
@@ -100,6 +106,17 @@ class ResponseFactory
      */
     public function generator(Generator $generator, $status = 200, array $headers = [])
     {
-        return $this->create(new GeneratorStream($generator), $status, $headers);
+        return $this->create(new Iteratorstream($generator), $status, $headers);
+    }
+
+    /**
+     * @param \Traversable $iterator
+     * @param int $status
+     * @param array $headers
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function iterator(Traversable $iterator, $status = 200, array $headers = [])
+    {
+        return $this->create(new IteratorStream($iterator), $status, $headers);
     }
 }

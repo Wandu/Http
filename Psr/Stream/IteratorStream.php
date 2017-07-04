@@ -1,31 +1,28 @@
 <?php
 namespace Wandu\Http\Psr\Stream;
 
-use Generator;
 use IteratorAggregate;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use Traversable;
 
-/**
- * @deprecated use IteratorStream
- */
-class GeneratorStream implements StreamInterface, IteratorAggregate
+class IteratorStream implements StreamInterface, IteratorAggregate
 {
-    /** @var \Generator */
-    protected $generator;
+    /** @var \Iterator */
+    protected $iterator;
 
     /** @var string */
     protected $cachedContents;
-    
+
     /** @var bool */
     protected $isEof = false;
 
     /**
-     * @param \Generator $generator
+     * @param \Traversable $iterator
      */
-    public function __construct(Generator $generator)
+    public function __construct(Traversable $iterator)
     {
-        $this->generator = $generator;
+        $this->iterator = $iterator;
     }
 
     /**
@@ -42,7 +39,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function getIterator()
     {
-        return $this->generator;
+        return $this->iterator;
     }
 
     /**
@@ -66,7 +63,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function getSize()
     {
-        throw new RuntimeException('GeneratorStream cannot getSize.');
+        throw new RuntimeException('IteratorStream cannot getSize.');
     }
 
     /**
@@ -74,7 +71,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function tell()
     {
-        throw new RuntimeException('GeneratorStream cannot tell.');
+        throw new RuntimeException('IteratorStream cannot tell.');
     }
 
     /**
@@ -98,7 +95,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        throw new RuntimeException('GeneratorStream cannot seek.');
+        throw new RuntimeException('IteratorStream cannot seek.');
     }
 
     /**
@@ -106,7 +103,6 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function rewind()
     {
-//        $this->generator->rewind();
         $this->isEof = false;
     }
 
@@ -123,7 +119,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function write($string)
     {
-        throw new RuntimeException('GeneratorStream cannot write.');
+        throw new RuntimeException('IteratorStream cannot write.');
     }
 
     /**
@@ -139,7 +135,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
      */
     public function read($length)
     {
-        throw new RuntimeException('GeneratorStream cannot read.');
+        throw new RuntimeException('IteratorStream cannot read.');
     }
 
     /**
@@ -150,7 +146,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
         if (!$this->eof()) {
             if (!isset($this->cachedContents)) {
                 $contents = '';
-                foreach ($this->generator as $value) {
+                foreach ($this->iterator as $value) {
                     $contents .= $value;
                 }
                 $this->cachedContents = $contents;
@@ -168,7 +164,7 @@ class GeneratorStream implements StreamInterface, IteratorAggregate
     {
         $metadata = [
             'eof' => $this->eof(),
-            'stream_type' => 'generator',
+            'stream_type' => 'iterator',
             'seekable' => false
         ];
         if (!isset($key)) {
