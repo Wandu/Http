@@ -51,14 +51,12 @@ class ResponseFactory
             return $this->json($contents, $status, $headers);
         }
         if (is_object($contents)) {
-            if ($contents instanceof JsonSerializable) {
-                return $this->json($contents, $status, $headers);
-            }
             if ($contents instanceof Traversable) {
                 return $this->iterator($contents, $status, $headers);
-            }
-            if (method_exists($contents, '__toString')) {
+            } elseif (method_exists($contents, '__toString')) {
                 return $this->string($contents, $status, $headers);
+            } else {
+                return $this->json($contents, $status, $headers);
             }
         }
         if (is_resource($contents)) {
