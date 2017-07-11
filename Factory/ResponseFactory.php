@@ -53,6 +53,8 @@ class ResponseFactory
         if (is_object($contents)) {
             if ($contents instanceof Traversable) {
                 return $this->iterator($contents, $status, $headers);
+            } elseif ($contents instanceof JsonSerializable) {
+                return $this->json($contents, $status, $headers);
             } elseif (method_exists($contents, '__toString')) {
                 return $this->string($contents, $status, $headers);
             } else {
