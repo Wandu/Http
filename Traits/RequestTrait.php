@@ -15,19 +15,6 @@ trait RequestTrait
     /** @var string */
     protected $requestTarget;
 
-    /** @var array */
-    protected static $validMethods = [
-        'CONNECT' => true,
-        'DELETE' => true,
-        'GET' => true,
-        'HEAD' => true,
-        'OPTIONS' => true,
-        'PATCH' => true,
-        'POST' => true,
-        'PUT' => true,
-        'TRACE' => true,
-    ];
-
     /**
      * @return string
      */
@@ -120,10 +107,6 @@ trait RequestTrait
         if (!is_string($method)) {
             throw new InvalidArgumentException('Unsupported HTTP method. It must be a string.');
         }
-        $method = strtoupper($method);
-        if (!isset(static::$validMethods[$method])) {
-            throw new InvalidArgumentException("Unsupported HTTP method. \"{$method}\" provided.");
-        }
-        return $method;
+        return strtoupper($method);
     }
 }
