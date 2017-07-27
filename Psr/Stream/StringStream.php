@@ -18,6 +18,7 @@ class StringStream implements StreamInterface
     public function __construct($context = '')
     {
         $this->context = $context;
+        $this->seek(strlen($context));
     }
 
     /**
