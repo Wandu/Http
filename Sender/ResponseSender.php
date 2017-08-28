@@ -15,7 +15,7 @@ class ResponseSender
         $reasonPhrase = $response->getReasonPhrase();
         $protocolVersion = $response->getProtocolVersion();
 
-        header("HTTP/{$protocolVersion} $statusCode $reasonPhrase");
+        header("HTTP/{$protocolVersion} $statusCode $reasonPhrase", true, $statusCode);
         foreach ($response->getHeaders() as $name => $values) {
             if (strtolower($name) === 'set-cookie') {
                 foreach ($values as $cookie) {
