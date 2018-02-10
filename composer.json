@@ -4,7 +4,7 @@
     "keywords": ["wandu", "http", "psr7", "session", "cookie"],
     "license": "MIT",
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "psr/http-message": "^1"
     },
     "autoload": {
